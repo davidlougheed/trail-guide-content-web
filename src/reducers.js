@@ -6,6 +6,7 @@ import categories from "./modules/categories/reducer";
 import modals from "./modules/modals/reducer";
 import pages from "./modules/pages/reducer";
 import sections from "./modules/sections/reducer";
+import settings from "./modules/settings/reducer";
 import stations from "./modules/stations/reducer";
 
 const rootReducer = combineReducers({
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
     modals,
     pages,
     sections,
+    settings,
     stations,
 });
 

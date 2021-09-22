@@ -36,7 +36,7 @@ export const networkAction = (types, url, method="GET", params={}, body={}) => (
     };
 
 export const makeIfNeededAction = (action, reducer) => () => (dispatch, getState) => {
-    if (getState()[reducer].isFetching) return;
+    if (getState()[reducer]?.isFetching) return;
     return dispatch(action());
 };
 
