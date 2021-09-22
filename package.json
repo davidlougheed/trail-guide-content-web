@@ -1,0 +1,51 @@
+{
+  "name": "trail-guide-content-web",
+  "version": "0.1.0",
+  "description": "A web interface for managing content for a trail guide app.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "npx webpack --watch --mode development",
+    "build-dev": "npx webpack --mode development",
+    "build": "npx webpack --mode production",
+    "start-dev": "npx webpack-dev-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidlougheed/trail-guide-content-web.git"
+  },
+  "author": "David Lougheed <david.lougheed@gmail.com>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/davidlougheed/trail-guide-content-web/issues"
+  },
+  "homepage": "https://github.com/davidlougheed/trail-guide-content-web#readme",
+  "dependencies": {
+    "@ant-design/icons": "^4.6.4",
+    "antd": "^4.16.13",
+    "babel-plugin-lodash": "^3.3.4",
+    "lodash": "^4.17.21",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-redux": "^7.2.5",
+    "react-router-dom": "^5.3.0",
+    "redux": "^4.1.1",
+    "redux-thunk": "^2.3.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.15.6",
+    "@babel/preset-react": "^7.14.5",
+    "babel-loader": "^8.2.2",
+    "babel-plugin-import": "^1.13.3",
+    "babel-polyfill": "^6.26.0",
+    "copy-webpack-plugin": "^9.0.1",
+    "css-loader": "^6.3.0",
+    "dotenv-webpack": "^7.0.3",
+    "html-webpack-plugin": "^5.3.2",
+    "style-loader": "^3.3.0",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.53.0",
+    "webpack-cli": "^4.8.0",
+    "webpack-dev-server": "^4.2.1"
+  }
+}
