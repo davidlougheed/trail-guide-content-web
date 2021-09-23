@@ -3,6 +3,8 @@ import {useSelector} from "react-redux";
 
 import {Button, Form, Input, Select, Switch} from "antd";
 
+import HTMLEditor from "../HTMLEditor";
+
 const StationsForm = () => {
     const [form] = Form.useForm();
 
@@ -46,7 +48,11 @@ const StationsForm = () => {
             {(fields, {add, remove}, {errors}) => (
                 <>
                     {fields.map(field => (
-                        <div key={field.key}>
+                        <div key={field.key} style={{
+                            border: "1px solid rgba(0, 0, 0, 0.3)",
+                            padding: "12px",
+                            marginBottom: "12px"
+                        }}>
                             <Form.Item noStyle={true}>
                                 <Form.Item {...field}
                                            key="content_type"
@@ -65,7 +71,7 @@ const StationsForm = () => {
                                            label="Content Before Fold"
                                            name={[field.name, "content_before_fold"]}
                                            fieldKey={[field.fieldKey, "content_before_fold"]}>
-                                    <Input placeholder="TODO" />
+                                    <HTMLEditor />
                                 </Form.Item>
                             </Form.Item>
                         </div>
