@@ -54,7 +54,7 @@ const App = (
     }, []);
 
     const location = useLocation();
-    const defaultSelectedKeys = [location.pathname || "stations"];
+    const defaultSelectedKeys = [location.pathname.split("/")[1] || "stations"];
 
     return <Layout style={{height: "100vh"}}>
         <Layout.Header style={{padding: "0 24px"}}>
@@ -75,30 +75,27 @@ const App = (
         <Layout>
             <Layout.Sider>
                 <Menu theme="dark" defaultSelectedKeys={defaultSelectedKeys}>
-                    <Menu.Item key="/stations" icon={<EnvironmentOutlined />}>
+                    <Menu.Item key="stations" icon={<EnvironmentOutlined />}>
                         <Link to="/stations">Stations</Link>
                     </Menu.Item>
-                    <Menu.Item key="/sections" icon={<DatabaseOutlined />}>
+                    <Menu.Item key="sections" icon={<DatabaseOutlined />}>
                         <Link to="/sections">Sections</Link>
                     </Menu.Item>
-                    <Menu.Item key="/pages" icon={<FileOutlined />}>
+                    <Menu.Item key="pages" icon={<FileOutlined />}>
                         <Link to="/pages">Pages</Link>
                     </Menu.Item>
-                    <Menu.Item key="/modals" icon={<CloseSquareOutlined />}>
+                    <Menu.Item key="modals" icon={<CloseSquareOutlined />}>
                         <Link to="/modals">Modals</Link>
                     </Menu.Item>
-                    <Menu.Item key="/assets" icon={<PictureOutlined />}>
+                    <Menu.Item key="assets" icon={<PictureOutlined />}>
                         <Link to="/assets">Assets</Link>
                     </Menu.Item>
-                    <Menu.Item key="/settings" icon={<SettingOutlined />}>
+                    <Menu.Item key="settings" icon={<SettingOutlined />}>
                         <Link to="/settings">Settings</Link>
                     </Menu.Item>
                 </Menu>
             </Layout.Sider>
-            <Layout.Content>
-                {/*{authError ? <Alert type="error" showIcon message="Authentication Error" description={authError} /> : null}*/}
-                {/*{metaError ? <Alert type="error" showIcon message="Site Metadata Error" description={metaError} /> : null}*/}
-                {/*{searchError ? <Alert type="error" showIcon message="Search Error" description={searchError} /> : null}*/}
+            <Layout.Content style={{overflowY: "auto"}}>
                 <Spin spinning={false}>
                     <Switch>
                         <Route path="/assets"><AssetsPage /></Route>
@@ -107,7 +104,6 @@ const App = (
                         <Route path="/sections"><SectionsPage /></Route>
                         <Route path="/settings"><SettingsPage /></Route>
                         <Route path="/stations"><StationsPage /></Route>
-                    {/*    <PrivateRoute path="/relations"><RelationsView /></PrivateRoute>*/}
                         <Redirect to={{pathname: "/stations"}} />
                     </Switch>
                 </Spin>
