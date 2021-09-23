@@ -1,8 +1,18 @@
 import React, {useEffect} from "react";
 import {connect} from "react-redux";
 
-import {AutoComplete, Layout, Input, Spin} from "antd";
-import {SearchOutlined} from "@ant-design/icons";
+import {AutoComplete, Layout, Input, Menu, Spin} from "antd";
+import {
+    CloseSquareOutlined,
+    DatabaseOutlined,
+    EnvironmentOutlined,
+    FileOutlined,
+    PictureOutlined,
+    SearchOutlined,
+    SettingOutlined,
+} from "@ant-design/icons";
+
+import {Link, Redirect, Route, Switch, useLocation} from "react-router-dom";
 
 import {fetchAssetTypesIfNeeded} from "../modules/asset_types/actions";
 import {fetchAssetsIfNeeded} from "../modules/assets/actions";
@@ -12,6 +22,13 @@ import {fetchPagesIfNeeded} from "../modules/pages/actions";
 import {fetchSectionsIfNeeded} from "../modules/sections/actions";
 import {fetchSettingsIfNeeded} from "../modules/settings/actions";
 import {fetchStationsIfNeeded} from "../modules/stations/actions";
+
+import AssetsPage from "./AssetsPage";
+import ModalsPage from "./ModalsPage";
+import PagesPage from "./PagesPage";
+import SectionsPage from "./SectionsPage";
+import StationsPage from "./stations/StationsPage";
+import SettingsPage from "./SettingsPage";
 
 const App = (
     {
@@ -36,33 +53,66 @@ const App = (
         fetchStationsIfNeeded();
     }, []);
 
-    return <Layout>
-        <Layout.Header style={{padding: "0 24px", height: "100%"}}>
+    const location = useLocation();
+    const defaultSelectedKeys = [location.pathname || "stations"];
+
+    return <Layout style={{height: "100vh"}}>
+        <Layout.Header style={{padding: "0 24px"}}>
             <div style={{display: "flex"}}>
-                <h1 style={{margin: "0 24px 0 0", padding: 0, color: "#DFDFDF"}}>
+                <h1 style={{minWidth: "220px", padding: 0, color: "#DFDFDF", flex: 1}}>
                     Trail Guide Content
                 </h1>
-                <div style={{flex: 1}}>
-                    <AutoComplete style={{marginTop: "12px", width: "100%", maxWidth: "800px", float: "right"}}>
+                <div style={{flex: 2}}>
+                    <AutoComplete style={{marginTop: "12px", width: "100%", float: "right"}}>
                         <Input size="large"
                                placeholder="THIS DOESN'T WORK YET"
                                prefix={<SearchOutlined />} />
                     </AutoComplete>
                 </div>
+                <div style={{flex: 1, color: "white", textAlign: "right"}}>David</div>
             </div>
         </Layout.Header>
-        <Layout.Content>
-            {/*{authError ? <Alert type="error" showIcon message="Authentication Error" description={authError} /> : null}*/}
-            {/*{metaError ? <Alert type="error" showIcon message="Site Metadata Error" description={metaError} /> : null}*/}
-            {/*{searchError ? <Alert type="error" showIcon message="Search Error" description={searchError} /> : null}*/}
-            <Spin spinning={false}>
-                {/*<Switch>*/}
-                {/*    <Route path="/sign-in" exact><SignInView /></Route>*/}
-                {/*    <PrivateRoute path="/relations"><RelationsView /></PrivateRoute>*/}
-                {/*    <Redirect to={{pathname: "/relations"}} />*/}
-                {/*</Switch>*/}
-            </Spin>
-        </Layout.Content>
+        <Layout>
+            <Layout.Sider>
+                <Menu theme="dark" defaultSelectedKeys={defaultSelectedKeys}>
+                    <Menu.Item key="/stations" icon={<EnvironmentOutlined />}>
+                        <Link to="/stations">Stations</Link>
+                    </Menu.Item>
+                    <Menu.Item key="/sections" icon={<DatabaseOutlined />}>
+                        <Link to="/sections">Sections</Link>
+                    </Menu.Item>
+                    <Menu.Item key="/pages" icon={<FileOutlined />}>
+                        <Link to="/pages">Pages</Link>
+                    </Menu.Item>
+                    <Menu.Item key="/modals" icon={<CloseSquareOutlined />}>
+                        <Link to="/modals">Modals</Link>
+                    </Menu.Item>
+                    <Menu.Item key="/assets" icon={<PictureOutlined />}>
+                        <Link to="/assets">Assets</Link>
+                    </Menu.Item>
+                    <Menu.Item key="/settings" icon={<SettingOutlined />}>
+                        <Link to="/settings">Settings</Link>
+                    </Menu.Item>
+                </Menu>
+            </Layout.Sider>
+            <Layout.Content>
+                {/*{authError ? <Alert type="error" showIcon message="Authentication Error" description={authError} /> : null}*/}
+                {/*{metaError ? <Alert type="error" showIcon message="Site Metadata Error" description={metaError} /> : null}*/}
+                {/*{searchError ? <Alert type="error" showIcon message="Search Error" description={searchError} /> : null}*/}
+                <Spin spinning={false}>
+                    <Switch>
+                        <Route path="/assets"><AssetsPage /></Route>
+                        <Route path="/modals"><ModalsPage /></Route>
+                        <Route path="/pages"><PagesPage /></Route>
+                        <Route path="/sections"><SectionsPage /></Route>
+                        <Route path="/settings"><SettingsPage /></Route>
+                        <Route path="/stations"><StationsPage /></Route>
+                    {/*    <PrivateRoute path="/relations"><RelationsView /></PrivateRoute>*/}
+                        <Redirect to={{pathname: "/stations"}} />
+                    </Switch>
+                </Spin>
+            </Layout.Content>
+        </Layout>
     </Layout>;
 }
 

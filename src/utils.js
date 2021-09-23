@@ -1,3 +1,5 @@
+import {message} from "antd";
+
 import {BASE_URL} from "./config";
 
 export const networkActionTypes = name => ({
@@ -6,7 +8,7 @@ export const networkActionTypes = name => ({
     ERROR: `${name}.ERROR`,
 });
 
-export const networkAction = (types, url, method="GET", params={}, body={}) => () =>
+export const networkAction = (types, url, method="GET") => (body={}, params={}) =>
     async dispatch => {
         await dispatch({params, type: types.REQUEST});
 
@@ -24,14 +26,18 @@ export const networkAction = (types, url, method="GET", params={}, body={}) => (
                 const data = await r.json();
                 await dispatch({type: types.RECEIVE, data, params});
             } else {
+                const err = `Request to ${url} encountered error status: ${r.message}`;
+                message.error(err);
                 await dispatch({
                     params,
                     type: types.ERROR,
-                    message: `Request encountered error status: ${r.message}`,
+                    message: err,
                 });
             }
         } catch (error) {
-            await dispatch({type: types.ERROR, message: error.toString()});
+            const err = `Request to ${url} encountered thrown error: ${error.toString()}`;
+            message.error(err);
+            await dispatch({type: types.ERROR, message: err});
         }
     };
 
@@ -40,21 +46,43 @@ export const makeIfNeededAction = (action, reducer) => () => (dispatch, getState
     return dispatch(action());
 };
 
-export const makeGenericNetworkReducer = (actionTypes) => (
+export const makeGenericNetworkReducer = (fetchTypes, addTypes, updateTypes) => (
     state = {
         isFetching: false,
+        isAdding: false,
+        isUpdating: false,
         items: [],
         error: "",
     },
     action,
 ) => {
     switch (action.type) {
-        case actionTypes.REQUEST:
+        case fetchTypes.REQUEST:
             return {...state, isFetching: true};
-        case actionTypes.RECEIVE:
-            return {...state, items: action.data, error: ""};
-        case actionTypes.ERROR:
-            return {...state, error: action.message};
+        case fetchTypes.RECEIVE:
+            return {...state, isFetching: false, items: action.data, error: ""};
+        case fetchTypes.ERROR:
+            return {...state, isFetching: false, error: action.message};
+
+        case addTypes.REQUEST:
+            return {...state, isAdding: true};
+        case addTypes.RECEIVE:
+            return {...state, isAdding: false, items: [...state.items, action.data], error: ""};
+        case addTypes.ERROR:
+            return {...state, isAdding: false, error: action.message};
+
+        case updateTypes.REQUEST:
+            return {...state, isUpdating: true};
+        case updateTypes.RECEIVE:
+            return {
+                ...state,
+                isUpdating: false,
+                items: state.items.map(i => i.id === action.data.id ? action.data : i),
+                error: "",
+            };
+        case updateTypes.ERROR:
+            return {...state, isUpdating: false, error: action.message};
+
         default:
             return state;
     }
