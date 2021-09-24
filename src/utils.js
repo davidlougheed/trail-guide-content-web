@@ -24,20 +24,23 @@ export const networkAction = (types, url, method="GET") => (body={}, params={}) 
 
             if (r.ok) {
                 const data = await r.json();
-                await dispatch({type: types.RECEIVE, data, params});
+                dispatch({type: types.RECEIVE, data, params});
+                return {error: false, data};
             } else {
                 const err = `Request to ${url} encountered error status: ${r.message}`;
                 message.error(err);
-                await dispatch({
+                dispatch({
                     params,
                     type: types.ERROR,
                     message: err,
                 });
+                return {error: true, message: err};
             }
         } catch (error) {
             const err = `Request to ${url} encountered thrown error: ${error.toString()}`;
             message.error(err);
-            await dispatch({type: types.ERROR, message: err});
+            dispatch({type: types.ERROR, message: err});
+            return {error: true, message: err};
         }
     };
 
