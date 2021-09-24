@@ -29,7 +29,7 @@ const COLUMNS = [
     },
 ];
 
-const StationsListView = () => {
+const StationListView = () => {
     const history = useHistory();
 
     const loadingStations = useSelector(state => state.stations.isFetching);
@@ -52,4 +52,4 @@ const StationsListView = () => {
     </>;
 };
 
-export default StationsListView;
+export default StationListView;

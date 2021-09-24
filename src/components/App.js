@@ -25,7 +25,7 @@ import {fetchStationsIfNeeded} from "../modules/stations/actions";
 
 import AssetsPage from "./AssetsPage";
 import ModalsPage from "./ModalsPage";
-import PagesPage from "./PagesPage";
+import PagesPage from "./pages/PagesPage";
 import SectionsPage from "./SectionsPage";
 import StationsPage from "./stations/StationsPage";
 import SettingsPage from "./SettingsPage";

@@ -1,58 +1,101 @@
 import React from "react";
 import {useSelector} from "react-redux";
 
-import {Button, Form, Input, Select, Switch} from "antd";
+import {Button, Col, Form, Input, InputNumber, Row, Select, Switch} from "antd";
+import {CloseCircleOutlined} from "@ant-design/icons";
 
 import HTMLEditor from "../HTMLEditor";
 
-const StationsForm = () => {
+const StationForm = props => {
     const [form] = Form.useForm();
 
     const sections = useSelector(state => state.sections.items);
     const categories = useSelector(state => state.categories.items);
     const assets = useSelector(state => state.assets.items);
 
-    const onFinish = v => {
-        console.log(v);
-    };
-
-    return <Form form={form} layout="vertical" onFinish={onFinish}>
-        <Form.Item name="title" label="Title" rules={[{required: true}]}>
-            <Input />
-        </Form.Item>
-        <Form.Item name="long_title" label="Long Title" rules={[{required: true}]}>
-            <Input />
-        </Form.Item>
-        <Form.Item name="subtitle" label="Subtitle" rules={[{required: true}]}>
-            <Input />
-        </Form.Item>
-        {/* TODO: Coordinates */}
-        <Form.Item name="section" label="Section" rules={[{required: true}]}>
-            <Select placeholder="Select app section for this station" options={sections.map(s => ({
-                value: s.id,
-                label: s.title,
-            }))} />
-        </Form.Item>
-        <Form.Item name="category" label="Category" rules={[{required: true}]}>
-            <Select placeholder="Select category for this station" options={categories.map(c => ({value: c}))} />
-        </Form.Item>
-        <Form.Item name="header_image" label="Header Image">
-            <Select placeholder="Select header image for this station"
-                    allowClear={true}
-                    options={assets.filter(a => a.asset_type === "image").map(a => ({
-                        value: a.id,
-                        label: a.file_name,
+    return <Form form={form} layout="vertical" {...props}>
+        <Row gutter={12}>
+            <Col span={8}>
+                <Form.Item name="title" label="Title" rules={[{required: true}]}>
+                    <Input />
+                </Form.Item>
+            </Col>
+            <Col span={16}>
+                <Form.Item name="long_title" label="Long Title" rules={[{required: true}]}>
+                    <Input />
+                </Form.Item>
+            </Col>
+        </Row>
+        <Row gutter={12}>
+            <Col span={20}>
+                <Form.Item name="subtitle" label="Subtitle" rules={[{required: true}]}>
+                    <Input />
+                </Form.Item>
+            </Col>
+            <Col span={4}>
+                <Form.Item name="enabled" label="Enabled" valuePropName="checked">
+                    <Switch />
+                </Form.Item>
+            </Col>
+        </Row>
+        <Row gutter={12}>
+            <Col span={8} >
+                <Form.Item name={["coordinates_utm", "zone"]} label="UTM Zone" rules={[{required: true}]}>
+                    <Select>
+                        <Select.Option value="18N">18N</Select.Option>
+                    </Select>
+                </Form.Item>
+            </Col>
+            <Col span={8}>
+                <Form.Item name={["coordinates_utm", "east"]} label="Easting" rules={[{required: true}]}>
+                    <Input type="number" addonAfter="E" />
+                </Form.Item>
+            </Col>
+            <Col span={8}>
+                <Form.Item name={["coordinates_utm", "north"]} label="Northing" rules={[{required: true}]}>
+                    <Input type="number" addonAfter="N" />
+                </Form.Item>
+            </Col>
+        </Row>
+        <Row gutter={12}>
+            <Col span={8}>
+                <Form.Item name="header_image" label="Header Image">
+                    <Select placeholder="Select header image for this station"
+                            allowClear={true}
+                            options={assets.filter(a => a.asset_type === "image").map(a => ({
+                                value: a.id,
+                                label: a.file_name,
+                            }))} />
+                </Form.Item>
+            </Col>
+            <Col span={8}>
+                <Form.Item name="section" label="Section" rules={[{required: true}]}>
+                    <Select placeholder="Select app section for this station" options={sections.map(s => ({
+                        value: s.id,
+                        label: s.title,
                     }))} />
-        </Form.Item>
+                </Form.Item>
+            </Col>
+            <Col span={8}>
+                <Form.Item name="category" label="Category" rules={[{required: true}]}>
+                    <Select placeholder="Select category for this station"
+                            options={categories.map(c => ({value: c}))} />
+                </Form.Item>
+            </Col>
+        </Row>
         <Form.List name="contents">
             {(fields, {add, remove}, {errors}) => (
                 <>
-                    {fields.map(field => (
+                    {fields.map((field) => (
                         <div key={field.key} style={{
                             border: "1px solid rgba(0, 0, 0, 0.3)",
                             padding: "12px",
-                            marginBottom: "12px"
+                            marginBottom: "12px",
+                            position: "relative"
                         }}>
+                            <CloseCircleOutlined
+                                onClick={() => remove(field.name)}
+                                style={{position: "absolute", top: "12px", right: "12px", zIndex: 1}} />
                             <Form.Item noStyle={true}>
                                 <Form.Item {...field}
                                            key="content_type"
@@ -82,13 +125,10 @@ const StationsForm = () => {
                 </>
             )}
         </Form.List>
-        <Form.Item name="enabled" label="Enabled" valuePropName="checked">
-            <Switch />
-        </Form.Item>
         <Form.Item>
             <Button type="primary" htmlType="submit">Submit</Button>
         </Form.Item>
     </Form>;
 };
 
-export default StationsForm;
+export default StationForm;

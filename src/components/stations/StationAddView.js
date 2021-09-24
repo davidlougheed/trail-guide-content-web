@@ -5,7 +5,7 @@ import {PageHeader} from "antd";
 
 import StationForm from "./StationForm";
 
-const StationsAddView = () => {
+const StationAddView = () => {
     const history = useHistory();
 
     return <>
@@ -20,4 +20,4 @@ const StationsAddView = () => {
     </>;
 };
 
-export default StationsAddView;
+export default StationAddView;
