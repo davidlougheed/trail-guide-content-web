@@ -10,13 +10,14 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
     const [form] = Form.useForm();
 
     const sections = useSelector(state => state.sections.items);
-    const stations = useSelector(state => state.stations.items);
+    const numStations = useSelector(state => state.stations.items.length);
     const categories = useSelector(state => state.categories.items);
     const assets = useSelector(state => state.assets.items);
 
     const oldInitialValues = initialValues ?? {};
+    console.log("initial values", oldInitialValues);
     const newInitialValues = {
-        rank: stations.length,  // Add station to the end of the list in the app by default
+        rank: numStations,  // Add station to the end of the list in the app by default
         ...oldInitialValues,
     };
 
@@ -70,7 +71,7 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
         <Row gutter={12}>
             <Col span={8} >
                 <Form.Item name={["coordinates_utm", "zone"]} label="UTM Zone" rules={[{required: true}]}>
-                    <Select>
+                    <Select defaultValue="18N">
                         <Select.Option value="18N">18N</Select.Option>
                     </Select>
                 </Form.Item>
@@ -143,6 +144,13 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
                                            label="Content Before Fold"
                                            name={[field.name, "content_before_fold"]}
                                            fieldKey={[field.fieldKey, "content_before_fold"]}>
+                                    <HTMLEditor />
+                                </Form.Item>
+                                <Form.Item {...field}
+                                           key="content_after_fold"
+                                           label="Content After Fold"
+                                           name={[field.name, "content_after_fold"]}
+                                           fieldKey={[field.fieldKey, "content_after_fold"]}>
                                     <HTMLEditor />
                                 </Form.Item>
                             </Form.Item>
