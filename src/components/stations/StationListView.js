@@ -35,21 +35,24 @@ const StationListView = () => {
     const loadingStations = useSelector(state => state.stations.isFetching);
     const stations = useSelector(state => state.stations.items);
 
-    return <>
-        <PageHeader
-            ghost={false}
-            title="Stations"
-            subTitle="Edit and create app stations" extra={[
+    return <PageHeader
+        ghost={false}
+        title="Stations"
+        subTitle="Edit and create app stations"
+        extra={[
             <Button key="add"
                     type="primary"
                     icon={<PlusOutlined />}
                     onClick={() => history.push("/stations/add")}>
                 Add New</Button>,
         ]}
-        >
-            <Table bordered={true} loading={loadingStations} columns={COLUMNS} dataSource={stations} />
-        </PageHeader>
-    </>;
+    >
+        <Table bordered={true}
+               loading={loadingStations}
+               columns={COLUMNS}
+               rowKey="id"
+               dataSource={stations} />
+    </PageHeader>;
 };
 
 export default StationListView;
