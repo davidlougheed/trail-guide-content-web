@@ -11,7 +11,7 @@ const _addStation = networkAction(ADD_STATION, "/stations", "POST");
 export const addStation = body => (dispatch, getState) => {
     const state = getState();
     if (state.isFetching || state.isAdding || state.isUpdating) return;
-    return _addStation(body);
+    return dispatch(_addStation(body));
 };
 
 export const updateStation = (stationID, stationData) => (dispatch, getState) => {
