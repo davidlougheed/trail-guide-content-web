@@ -18,11 +18,15 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
     console.log("initial values", oldInitialValues);
     const newInitialValues = {
         rank: numStations,  // Add station to the end of the list in the app by default
+        coordinates_utm: {
+            zone: "18N",
+            ...(oldInitialValues.coordinates_utm ?? {}),
+        },
         ...oldInitialValues,
     };
 
     const onFinish_ = values => {
-        onFinish({
+        (onFinish ?? (() => {}))({
             ...values,
 
             // Properly type everything
@@ -71,7 +75,7 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
         <Row gutter={12}>
             <Col span={8} >
                 <Form.Item name={["coordinates_utm", "zone"]} label="UTM Zone" rules={[{required: true}]}>
-                    <Select defaultValue="18N">
+                    <Select>
                         <Select.Option value="18N">18N</Select.Option>
                     </Select>
                 </Form.Item>
