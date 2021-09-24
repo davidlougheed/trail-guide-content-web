@@ -3,28 +3,7 @@ import {useSelector} from "react-redux";
 import {useHistory} from "react-router-dom";
 
 import {Button, PageHeader, Space, Table} from "antd";
-import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
-
-const COLUMNS = [
-    {
-        title: "Title",
-        dataIndex: "title",
-    },
-    {
-        title: "Enabled",
-        dataIndex: "enabled",
-        render: v => v ? (<CheckOutlined />) : (<CloseOutlined />),
-    },
-    {
-        title: "Actions",
-        key: "actions",
-        render: () => (
-            <Space size="middle">
-                <Button>Edit</Button>
-            </Space>
-        )
-    },
-];
+import {CheckOutlined, CloseOutlined, EditOutlined} from "@ant-design/icons";
 
 const PageListView = () => {
     const history = useHistory();
@@ -47,7 +26,8 @@ const PageListView = () => {
             key: "actions",
             render: page => (
                 <Space size="middle">
-                    <Button onClick={() => history.push(`/pages/edit/${page.id}`)}>Edit</Button>
+                    <Button icon={<EditOutlined />}
+                            onClick={() => history.push(`/pages/edit/${page.id}`)}>Edit</Button>
                 </Space>
             )
         },
