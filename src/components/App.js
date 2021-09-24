@@ -23,7 +23,7 @@ import {fetchSectionsIfNeeded} from "../modules/sections/actions";
 import {fetchSettingsIfNeeded} from "../modules/settings/actions";
 import {fetchStationsIfNeeded} from "../modules/stations/actions";
 
-import AssetsPage from "./AssetsPage";
+import AssetsPage from "./assets/AssetsPage";
 import ModalsPage from "./ModalsPage";
 import PagesPage from "./pages/PagesPage";
 import SectionsPage from "./SectionsPage";
