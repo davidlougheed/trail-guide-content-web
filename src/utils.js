@@ -8,26 +8,32 @@ export const networkActionTypes = name => ({
     ERROR: `${name}.ERROR`,
 });
 
-export const networkAction = (types, url, method="GET") => (body={}, params={}) =>
-    async dispatch => {
+export const networkAction = (types, url, method="GET", multipart=false) =>
+    (body={}, params={}) => async dispatch => {
         await dispatch({params, type: types.REQUEST});
 
         try {
             const r = await fetch(BASE_URL + url,
                 {
                     method,
-                    headers: {
-                        "Content-Type": "application/json",  // TODO: asset
-                    },
-                    ...(Object.keys(body).length ? {body: JSON.stringify(body)} : {})
+                    ...(multipart ? {
+                        // Don't set content type manually for uploading multipart/form-data
+                        body,
+                    } : {
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        ...(Object.keys(body).length ? {body: JSON.stringify(body)} : {}),
+                    }),
                 });
 
+            const data = await r.json();
+
             if (r.ok) {
-                const data = await r.json();
                 dispatch({type: types.RECEIVE, data, params});
                 return {error: false, data};
             } else {
-                const err = `Request to ${url} encountered error status: ${r.message}`;
+                const err = `Request to ${url} encountered error status: ${data.message}`;
                 message.error(err);
                 dispatch({
                     params,

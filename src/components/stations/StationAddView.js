@@ -15,9 +15,7 @@ const StationAddView = () => {
     const onFinish = async v => {
         console.log("adding station", v);
         const result = await dispatch(addStation(v));
-        if (result.error) {
-            message.error(result.message);
-        } else {
+        if (!result.error) {
             message.success(`Added new station: ${result.data.title}`);
             history.push(`/stations/edit/${result.data.id}`);
         }
