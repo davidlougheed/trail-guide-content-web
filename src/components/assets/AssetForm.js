@@ -1,0 +1,51 @@
+import React from "react";
+
+import {Button, Col, Form, Row, Select, Switch, Upload} from "antd";
+import {UploadOutlined} from "@ant-design/icons";
+
+const AssetForm = ({initialValues, ...props}) => {
+    const [form] = Form.useForm();
+
+    const oldInitialValues = initialValues ?? {};
+    console.log("initial values", oldInitialValues);
+    const newInitialValues = {
+        enabled: true,
+        ...oldInitialValues,
+        // TODO
+    };
+
+    return <Form {...props} form={form} layout="vertical" initialValues={newInitialValues}>
+        <Row gutter={12}>
+            <Col flex="80px">
+                <Form.Item name="enabled" label="Enabled" valuePropName="checked">
+                    <Switch />
+                </Form.Item>
+            </Col>
+            <Col flex={1}>
+                <Form.Item name="asset_type" label="Asset Type" rules={[{required: true}]}>
+                    <Select options={[
+                        {value: "image", label: "Image"},
+                        {value: "audio", label: "Audio"},
+                        {value: "video", label: "Video"},
+                    ]} />
+                </Form.Item>
+            </Col>
+            <Col flex={2}>
+                <Form.Item name="file"
+                           label="File"
+                           valuePropName="file"
+                           getValueFromEvent={e => e.file}
+                           rules={[{required: true}]}>
+                    <Upload maxCount={1} showUploadList={{showRemoveIcon: false}} beforeUpload={() => false} style={{width: "100%"}}>
+                        <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                    </Upload>
+                </Form.Item>
+            </Col>
+        </Row>
+        <Form.Item>
+            <Button type="primary" htmlType="submit">Submit</Button>
+        </Form.Item>
+    </Form>;
+};
+
+export default AssetForm;

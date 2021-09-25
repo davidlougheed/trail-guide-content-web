@@ -49,7 +49,7 @@ const AssetListView = () => {
                 Add New</Button>,
         ]}
     >
-        <Table bordered={true} loading={loadingAssets} columns={columns} dataSource={assets} />
+        <Table bordered={true} loading={loadingAssets} columns={columns} dataSource={assets} rowKey="id" />
     </PageHeader>;
 };
 

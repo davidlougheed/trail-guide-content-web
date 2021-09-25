@@ -7,7 +7,9 @@ export const UPDATE_ASSET = networkActionTypes("UPDATE_ASSET");
 const fetchAssets = networkAction(FETCH_ASSETS, "/assets");
 export const fetchAssetsIfNeeded = makeIfNeededAction(fetchAssets, "assets");
 
-export const addAsset = asset => dispatch => {
-    // TODO
-    console.error("UNIMPLEMENTED");
+const _addAsset = networkAction(ADD_ASSET, "/assets", "POST", true);
+export const addAsset = body => (dispatch, getState) => {
+    const state = getState();
+    if (state.isFetching || state.isAdding || state.isUpdating) return;
+    return dispatch(_addAsset(body));
 };
