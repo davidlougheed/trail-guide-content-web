@@ -17,7 +17,7 @@ const SettingsPage = () => {
         console.log("saving settings", v);
         const result = await dispatch(updateSettings(v));
         if (!result.error) {
-            message.success(`Saved changes to settings: ${result.data}`);
+            message.success("Saved changes to settings");
         }
     };
 
