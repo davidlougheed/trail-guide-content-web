@@ -1,10 +1,16 @@
 import React from "react";
 import {useSelector} from "react-redux";
 
-import {Button, Col, Form, Input, Row, Select, Switch} from "antd";
-import {CloseCircleOutlined} from "@ant-design/icons";
+import {Button, Card, Col, Form, Input, Row, Select, Switch} from "antd";
+import {CloseCircleOutlined, PlusOutlined} from "@ant-design/icons";
 
 import HTMLEditor from "../HTMLEditor";
+
+const contentTypes = [
+    {value: "html", label: "Rich Text"},
+    {value: "gallery", label: "Gallery"},
+    {value: "quiz", label: "Quiz"},
+];
 
 const StationForm = ({onFinish, initialValues, ...props}) => {
     const [form] = Form.useForm();
@@ -56,12 +62,12 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
             </Col>
         </Row>
         <Row gutter={12}>
-            <Col span={16}>
+            <Col flex={1}>
                 <Form.Item name="subtitle" label="Subtitle" rules={[{required: true}]}>
                     <Input />
                 </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col flex="80px">
                 <Form.Item name="enabled" label="Enabled" valuePropName="checked">
                     <Switch />
                 </Form.Item>
@@ -73,7 +79,7 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
             </Col>
         </Row>
         <Row gutter={12}>
-            <Col span={8} >
+            <Col span={8}>
                 <Form.Item name={["coordinates_utm", "zone"]} label="UTM Zone" rules={[{required: true}]}>
                     <Select>
                         <Select.Option value="18N">18N</Select.Option>
@@ -120,13 +126,17 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
         <Form.List name="contents">
             {(fields, {add, remove}, {errors}) => (
                 <>
+                    {errors}
                     {fields.map((field) => (
-                        <div key={field.key} style={{
-                            border: "1px solid rgba(0, 0, 0, 0.3)",
-                            padding: "12px",
-                            marginBottom: "12px",
-                            position: "relative"
-                        }}>
+                        <Card
+                            key={field.key}
+                            size="small"
+                            title="Content Item"
+                            style={{
+                                marginBottom: "12px",
+                                position: "relative"
+                            }}
+                        >
                             <CloseCircleOutlined
                                 onClick={() => remove(field.name)}
                                 style={{position: "absolute", top: "12px", right: "12px", zIndex: 1}} />
@@ -137,11 +147,7 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
                                            name={[field.name, "content_type"]}
                                            fieldKey={[field.fieldKey, "content_type"]}
                                            rules={[{required: true}]}>
-                                    <Select placeholder="Content Type" options={[
-                                        {value: "html", label: "Rich Text"},
-                                        {value: "gallery", label: "Gallery"},
-                                        {value: "quiz", label: "Quiz"},
-                                    ]} />
+                                    <Select placeholder="Content Type" options={contentTypes} />
                                 </Form.Item>
                                 <Form.Item {...field}
                                            key="content_before_fold"
@@ -158,10 +164,10 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
                                     <HTMLEditor />
                                 </Form.Item>
                             </Form.Item>
-                        </div>
+                        </Card>
                     ))}
                     <Form.Item>
-                        <Button onClick={() => add()}>Add Content Item</Button>
+                        <Button onClick={() => add()} icon={<PlusOutlined />}>Add Content Item</Button>
                     </Form.Item>
                 </>
             )}
