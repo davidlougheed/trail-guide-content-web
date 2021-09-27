@@ -7,7 +7,6 @@ import {updateSettings} from "../../modules/settings/actions";
 
 const SettingsPage = () => {
     const dispatch = useDispatch();
-
     const fetchingSettings = useSelector(state => state.settings.isFetching);
     const settings = useSelector(state => state.settings.data);
 

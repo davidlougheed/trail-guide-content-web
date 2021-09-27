@@ -13,11 +13,10 @@ const PageEditView = () => {
     const match = useRouteMatch();
 
     const fetchingPages = useSelector(state => state.pages.isFetching);
-    if (fetchingPages) return <div>Loading...</div>;
-
     const page = useSelector(state =>
         state.pages.items.find(p => p.id.toString() === match.params.id.toString()));
 
+    if (fetchingPages) return <div>Loading...</div>;
     if (!page) return <div>Page not found</div>;  // TODO: Nice error
 
     const onFinish = async v => {

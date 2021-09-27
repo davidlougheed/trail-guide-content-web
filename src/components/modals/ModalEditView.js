@@ -13,11 +13,10 @@ const ModalEditView = () => {
     const match = useRouteMatch();
 
     const fetchingModals = useSelector(state => state.modals.isFetching);
-    if (fetchingModals) return <div>Loading...</div>;
-
     const modal = useSelector(state =>
         state.modals.items.find(m => m.id.toString() === match.params.id.toString()));
 
+    if (fetchingModals) return <div>Loading...</div>;
     if (!modal) return <div>Modal not found</div>;  // TODO: Nice error
 
     const onFinish = async v => {
