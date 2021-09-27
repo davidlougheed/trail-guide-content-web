@@ -24,11 +24,11 @@ import {fetchSettingsIfNeeded} from "../modules/settings/actions";
 import {fetchStationsIfNeeded} from "../modules/stations/actions";
 
 import AssetsPage from "./assets/AssetsPage";
-import ModalsPage from "./ModalsPage";
+import ModalsPage from "./modals/ModalsPage";
 import PagesPage from "./pages/PagesPage";
-import SectionsPage from "./SectionsPage";
+import SectionsPage from "./sections/SectionsPage";
 import StationsPage from "./stations/StationsPage";
-import SettingsPage from "./SettingsPage";
+import SettingsPage from "./settings/SettingsPage";
 
 const App = (
     {
