@@ -8,13 +8,13 @@ import HTMLEditor from "../HTMLEditor";
 const PageForm = ({initialValues, ...props}) => {
     const [form] = Form.useForm();
 
-    const numPages = useSelector(state => state.stations.items.length);
+    const numPages = useSelector(state => state.pages.items.length);
     const assets = useSelector(state => state.assets.items);
 
     const oldInitialValues = initialValues ?? {};
     console.log("initial values", oldInitialValues);
     const newInitialValues = {
-        rank: numPages,  // Add station to the end of the list in the app by default
+        rank: numPages,  // Add page to the end of the list in the app by default
         ...oldInitialValues,
     };
 
