@@ -22,9 +22,7 @@ const StationEditView = () => {
     const onFinish = async v => {
         console.log("saving station", v);
         const result = await dispatch(updateStation(station.id, v));
-        if (result.error) {
-            message.error(result.message);
-        } else {
+        if (!result.error) {
             message.success(`Saved changes to station: ${result.data.title}`);
         }
     };

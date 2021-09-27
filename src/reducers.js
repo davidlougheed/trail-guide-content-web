@@ -9,7 +9,7 @@ import sections from "./modules/sections/reducer";
 import settings from "./modules/settings/reducer";
 import stations from "./modules/stations/reducer";
 
-const rootReducer = combineReducers({
+export default combineReducers({
     assetTypes,
     assets,
     categories,
@@ -19,5 +19,3 @@ const rootReducer = combineReducers({
     settings,
     stations,
 });
-
-export default rootReducer;

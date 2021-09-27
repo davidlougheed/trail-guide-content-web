@@ -14,7 +14,7 @@ export const addModal = body => (dispatch, getState) => {
     return dispatch(_addModal(body));
 };
 
-export const updateStation = (modalID, modalData) => (dispatch, getState) => {
+export const updateModal = (modalID, modalData) => (dispatch, getState) => {
     const state = getState();
     if (state.isFetching || state.isAdding || state.isUpdating) return;
     return dispatch(networkAction(UPDATE_MODAL, `/modals/${modalID}`, "PUT")(modalData));
