@@ -6,7 +6,7 @@ import {PageHeader} from "antd";
 
 import PageForm from "./PageForm";
 
-const StationAddView = () => {
+const PageEditView = () => {
     const history = useHistory();
     const match = useRouteMatch();
 
@@ -25,4 +25,4 @@ const StationAddView = () => {
     </PageHeader>;
 };
 
-export default StationAddView;
+export default PageEditView;
