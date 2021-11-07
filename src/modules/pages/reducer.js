@@ -1,3 +1,7 @@
+// A web interface to manage a trail guide mobile app's content and data.
+// Copyright (C) 2021  David Lougheed
+// See NOTICE for more information.
+
 import {ADD_PAGE, FETCH_PAGES, UPDATE_PAGE} from "./actions";
 import {makeGenericNetworkReducer} from "../../utils";
 

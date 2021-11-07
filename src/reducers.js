@@ -1,3 +1,7 @@
+// A web interface to manage a trail guide mobile app's content and data.
+// Copyright (C) 2021  David Lougheed
+// See NOTICE for more information.
+
 import {combineReducers} from "redux";
 
 import assetTypes from "./modules/asset_types/reducer";
