@@ -100,3 +100,6 @@ export const makeGenericNetworkReducer = (fetchTypes, addTypes, updateTypes) => 
             return state;
     }
 };
+
+
+export const findItemByID = (items, id) => items.find(obj => obj.id.toString() === id.toString());

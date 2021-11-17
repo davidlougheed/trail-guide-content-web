@@ -1,20 +1,20 @@
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {useHistory, useRouteMatch} from "react-router-dom";
+import {useHistory, useParams} from "react-router-dom";
 
 import {message, PageHeader} from "antd";
 
 import StationForm from "./StationForm";
 import {updateStation} from "../../modules/stations/actions";
+import {findItemByID} from "../../utils";
 
 const StationEditView = () => {
     const dispatch = useDispatch();
     const history = useHistory();
-    const match = useRouteMatch();
+    const {id: stationID} = useParams();
 
     const fetchingStations = useSelector(state => state.stations.isFetching);
-    const station = useSelector(state =>
-        state.stations.items.find(s => s.id.toString() === match.params.id.toString()));
+    const station = useSelector(state => findItemByID(state.stations.items, stationID));
 
     if (fetchingStations) return <div>Loading...</div>;  // TODO: Nice loading
     if (!station) return <div>Station not found</div>;  // TODO: Nice error

@@ -4,21 +4,21 @@
 
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {useHistory, useRouteMatch} from "react-router-dom";
+import {useHistory, useParams} from "react-router-dom";
 
 import {message, PageHeader} from "antd";
 
 import PageForm from "./PageForm";
 import {updatePage} from "../../modules/pages/actions";
+import {findItemByID} from "../../utils";
 
 const PageEditView = () => {
     const dispatch = useDispatch();
     const history = useHistory();
-    const match = useRouteMatch();
+    const {id: pageID} = useParams();
 
     const fetchingPages = useSelector(state => state.pages.isFetching);
-    const page = useSelector(state =>
-        state.pages.items.find(p => p.id.toString() === match.params.id.toString()));
+    const page = useSelector(state => findItemByID(state.pages.items, pageID));
 
     if (fetchingPages) return <div>Loading...</div>;
     if (!page) return <div>Page not found</div>;  // TODO: Nice error
