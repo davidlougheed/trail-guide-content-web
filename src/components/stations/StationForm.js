@@ -12,6 +12,8 @@ const contentTypes = [
     {value: "quiz", label: "Quiz"},
 ];
 
+const normalizeContents = c => ({...c, title: c.title || ""});
+
 const StationForm = ({onFinish, initialValues, ...props}) => {
     const [form] = Form.useForm();
 
@@ -29,6 +31,7 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
             ...(oldInitialValues.coordinates_utm ?? {}),
         },
         ...oldInitialValues,
+        contents: oldInitialValues.contents.map(normalizeContents) ?? []
     };
 
     const onFinish_ = values => {
@@ -42,7 +45,7 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
                 east: parseInt(values.coordinates_utm.east, 10),
                 north: parseInt(values.coordinates_utm.north, 10),
             },
-            contents: values.contents ?? [],
+            contents: values.contents.map(normalizeContents) ?? [],
             enabled: !!values.enabled,
             rank: parseInt(values.rank),
         });
@@ -148,6 +151,14 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
                                            fieldKey={[field.fieldKey, "content_type"]}
                                            rules={[{required: true}]}>
                                     <Select placeholder="Content Type" options={contentTypes} />
+                                </Form.Item>
+                                <Form.Item {...field}
+                                           key="title"
+                                           label="Title"
+                                           name={[field.name, "title"]}
+                                           fieldKey={[field.fieldKey, "title"]}
+                                           rules={[{required: true}]}>
+                                    <Input placeholder="Title" />
                                 </Form.Item>
                                 <Form.Item {...field}
                                            key="content_before_fold"
