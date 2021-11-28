@@ -31,7 +31,7 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
             ...(oldInitialValues.coordinates_utm ?? {}),
         },
         ...oldInitialValues,
-        contents: oldInitialValues.contents.map(normalizeContents) ?? []
+        contents: (oldInitialValues.contents ?? []).map(normalizeContents)
     };
 
     const onFinish_ = values => {
@@ -144,22 +144,28 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
                                 onClick={() => remove(field.name)}
                                 style={{position: "absolute", top: "12px", right: "12px", zIndex: 1}} />
                             <Form.Item noStyle={true}>
-                                <Form.Item {...field}
-                                           key="content_type"
-                                           label="Content Type"
-                                           name={[field.name, "content_type"]}
-                                           fieldKey={[field.fieldKey, "content_type"]}
-                                           rules={[{required: true}]}>
-                                    <Select placeholder="Content Type" options={contentTypes} />
-                                </Form.Item>
-                                <Form.Item {...field}
-                                           key="title"
-                                           label="Title"
-                                           name={[field.name, "title"]}
-                                           fieldKey={[field.fieldKey, "title"]}
-                                           rules={[{required: true}]}>
-                                    <Input placeholder="Title" />
-                                </Form.Item>
+                                <Row gutter={12}>
+                                    <Col span={8}>
+                                        <Form.Item {...field}
+                                                   key="content_type"
+                                                   label="Content Type"
+                                                   name={[field.name, "content_type"]}
+                                                   fieldKey={[field.fieldKey, "content_type"]}
+                                                   rules={[{required: true}]}>
+                                            <Select placeholder="Content Type" options={contentTypes} />
+                                        </Form.Item>
+                                    </Col>
+                                    <Col span={16}>
+                                        <Form.Item {...field}
+                                                   key="title"
+                                                   label="Title"
+                                                   name={[field.name, "title"]}
+                                                   fieldKey={[field.fieldKey, "title"]}
+                                                   rules={[{required: true}]}>
+                                            <Input placeholder="Title" />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
                                 <Form.Item {...field}
                                            key="content_before_fold"
                                            label="Content Before Fold"
