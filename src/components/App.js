@@ -1,7 +1,8 @@
 import React, {useEffect} from "react";
 import {useDispatch} from "react-redux";
+import {useAuth0} from "@auth0/auth0-react";
 
-import {AutoComplete, Layout, Input, Menu, Spin} from "antd";
+import {AutoComplete, Button, Layout, Input, Menu, Spin, Typography} from "antd";
 import {
     CloseSquareOutlined,
     DatabaseOutlined,
@@ -34,8 +35,11 @@ import StationsPage from "./stations/StationsPage";
 import SettingsPage from "./settings/SettingsPage";
 
 const App = () => {
+    const {loginWithRedirect, isAuthenticated, user} = useAuth0();
+
     const dispatch = useDispatch();
     useEffect(() => {
+        if (!isAuthenticated) return;
         [
             fetchAssetTypesIfNeeded,
             fetchAssetsIfNeeded,
@@ -47,7 +51,7 @@ const App = () => {
             fetchSettingsIfNeeded,
             fetchStationsIfNeeded,
         ].map(a => dispatch(a()));
-    }, []);
+    }, [isAuthenticated]);
 
     const location = useLocation();
     const defaultSelectedKeys = [location.pathname.split("/")[1] || "stations"];
@@ -59,17 +63,26 @@ const App = () => {
                     Trail Guide Content
                 </h1>
                 <div style={{flex: 2}}>
-                    <AutoComplete style={{marginTop: "12px", width: "100%", float: "right"}}>
+                    <AutoComplete style={{marginTop: "12px", width: "100%", float: "right"}}
+                                  disabled={!isAuthenticated}>
                         <Input size="large"
                                placeholder="THIS DOESN'T WORK YET"
                                prefix={<SearchOutlined />} />
                     </AutoComplete>
                 </div>
-                <div style={{flex: 1, color: "white", textAlign: "right"}}>David</div>
+                <div style={{flex: 1, color: "white", textAlign: "right"}}>
+                    {
+                        isAuthenticated ? (
+                            <span>{user.name}</span>
+                        ) : (
+                            <a style={{color: "#CCC"}} onClick={() => loginWithRedirect()}>Sign In</a>
+                        )
+                    }
+                </div>
             </div>
         </Layout.Header>
         <Layout>
-            <Layout.Sider>
+            <Layout.Sider collapsedWidth={0} collapsed={!isAuthenticated}>
                 <Menu theme="dark" defaultSelectedKeys={defaultSelectedKeys}>
                     <Menu.Item key="stations" icon={<EnvironmentOutlined />}>
                         <Link to="/stations">Stations</Link>
@@ -95,6 +108,7 @@ const App = () => {
                 </Menu>
             </Layout.Sider>
             <Layout.Content style={{overflowY: "auto"}}>
+                {isAuthenticated ? (
                 <Spin spinning={false}>
                     <Switch>
                         <Route path="/assets"><AssetsPage /></Route>
@@ -107,6 +121,23 @@ const App = () => {
                         <Redirect to={{pathname: "/stations"}} />
                     </Switch>
                 </Spin>
+                ) : (
+                    <div style={{
+                        height: "100%",
+                        backgroundColor: "white",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        textAlign: "center",
+                    }}>
+                        <div style={{paddingBottom: 8}}>
+                            <Typography.Text>You must be authenticated to see this content.</Typography.Text>
+                        </div>
+                        <div>
+                            <Button size="large" type="primary" onClick={() => loginWithRedirect()}>Sign In</Button>
+                        </div>
+                    </div>
+                )}
             </Layout.Content>
         </Layout>
     </Layout>;
