@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import {connect} from "react-redux";
+import {useDispatch} from "react-redux";
 
 import {AutoComplete, Layout, Input, Menu, Spin} from "antd";
 import {
@@ -10,6 +10,7 @@ import {
     PictureOutlined,
     SearchOutlined,
     SettingOutlined,
+    SolutionOutlined,
 } from "@ant-design/icons";
 
 import {Link, Redirect, Route, Switch, useLocation} from "react-router-dom";
@@ -17,6 +18,7 @@ import {Link, Redirect, Route, Switch, useLocation} from "react-router-dom";
 import {fetchAssetTypesIfNeeded} from "../modules/asset_types/actions";
 import {fetchAssetsIfNeeded} from "../modules/assets/actions";
 import {fetchCategoriesIfNeeded} from "../modules/categories/actions";
+import {fetchFeedbackIfNeeded} from "../modules/feedback/actions";
 import {fetchModalsIfNeeded} from "../modules/modals/actions";
 import {fetchPagesIfNeeded} from "../modules/pages/actions";
 import {fetchSectionsIfNeeded} from "../modules/sections/actions";
@@ -24,33 +26,27 @@ import {fetchSettingsIfNeeded} from "../modules/settings/actions";
 import {fetchStationsIfNeeded} from "../modules/stations/actions";
 
 import AssetsPage from "./assets/AssetsPage";
+import FeedbackPage from "./feedback/FeedbackPage";
 import ModalsPage from "./modals/ModalsPage";
 import PagesPage from "./pages/PagesPage";
 import SectionsPage from "./sections/SectionsPage";
 import StationsPage from "./stations/StationsPage";
 import SettingsPage from "./settings/SettingsPage";
 
-const App = (
-    {
-        fetchAssetTypesIfNeeded,
-        fetchAssetsIfNeeded,
-        fetchCategoriesIfNeeded,
-        fetchModalsIfNeeded,
-        fetchPagesIfNeeded,
-        fetchSectionsIfNeeded,
-        fetchSettingsIfNeeded,
-        fetchStationsIfNeeded,
-    }
-) => {
+const App = () => {
+    const dispatch = useDispatch();
     useEffect(() => {
-        fetchAssetTypesIfNeeded();
-        fetchAssetsIfNeeded();
-        fetchCategoriesIfNeeded();
-        fetchModalsIfNeeded();
-        fetchPagesIfNeeded();
-        fetchSectionsIfNeeded();
-        fetchSettingsIfNeeded();
-        fetchStationsIfNeeded();
+        [
+            fetchAssetTypesIfNeeded,
+            fetchAssetsIfNeeded,
+            fetchCategoriesIfNeeded,
+            fetchFeedbackIfNeeded,
+            fetchModalsIfNeeded,
+            fetchPagesIfNeeded,
+            fetchSectionsIfNeeded,
+            fetchSettingsIfNeeded,
+            fetchStationsIfNeeded,
+        ].map(a => dispatch(a()));
     }, []);
 
     const location = useLocation();
@@ -90,6 +86,9 @@ const App = (
                     <Menu.Item key="assets" icon={<PictureOutlined />}>
                         <Link to="/assets">Assets</Link>
                     </Menu.Item>
+                    <Menu.Item key="feedback" icon={<SolutionOutlined />}>
+                        <Link to="/feedback">Feedback</Link>
+                    </Menu.Item>
                     <Menu.Item key="settings" icon={<SettingOutlined />}>
                         <Link to="/settings">Settings</Link>
                     </Menu.Item>
@@ -99,6 +98,7 @@ const App = (
                 <Spin spinning={false}>
                     <Switch>
                         <Route path="/assets"><AssetsPage /></Route>
+                        <Route path="/feedback"><FeedbackPage /></Route>
                         <Route path="/modals"><ModalsPage /></Route>
                         <Route path="/pages"><PagesPage /></Route>
                         <Route path="/sections"><SectionsPage /></Route>
@@ -112,13 +112,4 @@ const App = (
     </Layout>;
 }
 
-export default connect(null, {
-    fetchAssetTypesIfNeeded,
-    fetchAssetsIfNeeded,
-    fetchCategoriesIfNeeded,
-    fetchModalsIfNeeded,
-    fetchPagesIfNeeded,
-    fetchSectionsIfNeeded,
-    fetchSettingsIfNeeded,
-    fetchStationsIfNeeded,
-})(App);
+export default App;

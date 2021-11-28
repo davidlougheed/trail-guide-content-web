@@ -76,29 +76,36 @@ export const makeGenericNetworkReducer = (fetchTypes, addTypes, updateTypes) => 
             return {...state, isFetching: false, items: action.data, error: ""};
         case fetchTypes.ERROR:
             return {...state, isFetching: false, error: action.message};
-
-        case addTypes.REQUEST:
-            return {...state, isAdding: true};
-        case addTypes.RECEIVE:
-            return {...state, isAdding: false, items: [...state.items, action.data], error: ""};
-        case addTypes.ERROR:
-            return {...state, isAdding: false, error: action.message};
-
-        case updateTypes.REQUEST:
-            return {...state, isUpdating: true};
-        case updateTypes.RECEIVE:
-            return {
-                ...state,
-                isUpdating: false,
-                items: state.items.map(i => i.id === action.data.id ? action.data : i),
-                error: "",
-            };
-        case updateTypes.ERROR:
-            return {...state, isUpdating: false, error: action.message};
-
-        default:
-            return state;
     }
+
+    if (addTypes) {
+        switch (action.type) {
+            case addTypes.REQUEST:
+                return {...state, isAdding: true};
+            case addTypes.RECEIVE:
+                return {...state, isAdding: false, items: [...state.items, action.data], error: ""};
+            case addTypes.ERROR:
+                return {...state, isAdding: false, error: action.message};
+        }
+    }
+
+    if (updateTypes) {
+        switch (action.type) {
+            case updateTypes.REQUEST:
+                return {...state, isUpdating: true};
+            case updateTypes.RECEIVE:
+                return {
+                    ...state,
+                    isUpdating: false,
+                    items: state.items.map(i => i.id === action.data.id ? action.data : i),
+                    error: "",
+                };
+            case updateTypes.ERROR:
+                return {...state, isUpdating: false, error: action.message};
+        }
+    }
+
+    return state;
 };
 
 

@@ -7,6 +7,7 @@ import {combineReducers} from "redux";
 import assetTypes from "./modules/asset_types/reducer";
 import assets from "./modules/assets/reducer";
 import categories from "./modules/categories/reducer";
+import feedback from "./modules/feedback/reducer";
 import modals from "./modules/modals/reducer";
 import pages from "./modules/pages/reducer";
 import sections from "./modules/sections/reducer";
@@ -17,6 +18,7 @@ export default combineReducers({
     assetTypes,
     assets,
     categories,
+    feedback,
     modals,
     pages,
     sections,
