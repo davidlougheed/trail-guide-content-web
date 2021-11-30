@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import {useDispatch} from "react-redux";
 import {useAuth0} from "@auth0/auth0-react";
 
-import {AutoComplete, Button, Layout, Input, Menu, Spin, Typography} from "antd";
+import {Alert, AutoComplete, Button, Layout, Input, Menu, Spin, Typography} from "antd";
 import {
     CloseSquareOutlined,
     DatabaseOutlined,
@@ -15,6 +15,8 @@ import {
 } from "@ant-design/icons";
 
 import {Link, Redirect, Route, Switch, useLocation} from "react-router-dom";
+
+import {AUTH_AUDIENCE} from "../config";
 
 import {fetchAssetTypesIfNeeded} from "../modules/asset_types/actions";
 import {fetchAssetsIfNeeded} from "../modules/assets/actions";
@@ -35,26 +37,41 @@ import StationsPage from "./stations/StationsPage";
 import SettingsPage from "./settings/SettingsPage";
 
 const App = () => {
-    const {loginWithRedirect, isAuthenticated, user} = useAuth0();
+    const {loginWithRedirect, isAuthenticated, user, getAccessTokenSilently} = useAuth0();
 
     const dispatch = useDispatch();
-    useEffect(() => {
+    useEffect(async () => {
         if (!isAuthenticated) return;
-        [
-            fetchAssetTypesIfNeeded,
-            fetchAssetsIfNeeded,
-            fetchCategoriesIfNeeded,
-            fetchFeedbackIfNeeded,
-            fetchModalsIfNeeded,
-            fetchPagesIfNeeded,
-            fetchSectionsIfNeeded,
-            fetchSettingsIfNeeded,
-            fetchStationsIfNeeded,
-        ].map(a => dispatch(a()));
-    }, [isAuthenticated]);
+
+        try {
+            const accessToken = await getAccessTokenSilently({
+                audience: AUTH_AUDIENCE,
+                scope: "read:content",
+            });
+
+            [
+                fetchAssetTypesIfNeeded,
+                fetchAssetsIfNeeded,
+                fetchCategoriesIfNeeded,
+                fetchFeedbackIfNeeded,
+                fetchModalsIfNeeded,
+                fetchPagesIfNeeded,
+                fetchSectionsIfNeeded,
+                fetchSettingsIfNeeded,
+                fetchStationsIfNeeded,
+            ].map(a => dispatch(a({}, {}, accessToken)));
+        } catch (e) {
+            console.error(e.message);
+        }
+    }, [isAuthenticated, getAccessTokenSilently]);
 
     const location = useLocation();
     const defaultSelectedKeys = [location.pathname.split("/")[1] || "stations"];
+
+    const urlParams = Object.fromEntries(location.search.substr(1).split("&").map(p => {
+        const ps = p.split("=");
+        return [ps[0], decodeURIComponent(ps[1])];
+    }));
 
     return <Layout style={{height: "100vh"}}>
         <Layout.Header style={{padding: "0 24px"}}>
@@ -136,6 +153,15 @@ const App = () => {
                         <div>
                             <Button size="large" type="primary" onClick={() => loginWithRedirect()}>Sign In</Button>
                         </div>
+                        {urlParams.hasOwnProperty("error_description") ? (
+                            <div style={{paddingTop: 16}}>
+                                <div style={{maxWidth: 500, padding: "0 16", margin: "0 auto", textAlign: "left"}}>
+                                    <Alert message="Authentication Error"
+                                           description={urlParams["error_description"]}
+                                           type="error" />
+                                </div>
+                            </div>
+                        ) : null}
                     </div>
                 )}
             </Layout.Content>

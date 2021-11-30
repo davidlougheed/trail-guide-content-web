@@ -13,7 +13,7 @@ export const networkActionTypes = name => ({
 });
 
 export const networkAction = (types, url, method="GET", multipart=false) =>
-    (body={}, params={}) => async dispatch => {
+    (body={}, params={}, accessToken="") => async dispatch => {
         await dispatch({params, type: types.REQUEST});
 
         try {
@@ -26,6 +26,9 @@ export const networkAction = (types, url, method="GET", multipart=false) =>
                     } : {
                         headers: {
                             "Content-Type": "application/json",
+                            ...(accessToken === "" ? {} : {
+                                "Authorization": `Bearer ${accessToken}`,
+                            }),
                         },
                         ...(Object.keys(body).length ? {body: JSON.stringify(body)} : {}),
                     }),
@@ -54,9 +57,9 @@ export const networkAction = (types, url, method="GET", multipart=false) =>
         }
     };
 
-export const makeIfNeededAction = (action, reducer) => () => (dispatch, getState) => {
+export const makeIfNeededAction = (action, reducer) => (...args) => (dispatch, getState) => {
     if (getState()[reducer]?.isFetching) return;
-    return dispatch(action());
+    return dispatch(action(...args));
 };
 
 export const makeGenericNetworkReducer = (fetchTypes, addTypes, updateTypes) => (

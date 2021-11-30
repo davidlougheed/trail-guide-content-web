@@ -12,7 +12,7 @@ import {Provider} from "react-redux";
 import {Auth0Provider} from "@auth0/auth0-react";
 import {BrowserRouter} from "react-router-dom";
 
-import {BASE_URL, AUTH_DOMAIN, AUTH_CLIENT_ID} from "./config";
+import {AUTH_AUDIENCE, AUTH_DOMAIN, AUTH_CLIENT_ID} from "./config";
 import rootReducer from "./reducers";
 import App from "./components/App";
 
@@ -23,8 +23,8 @@ document.addEventListener("DOMContentLoaded", () => render(
         <Auth0Provider domain={AUTH_DOMAIN}
                        clientId={AUTH_CLIENT_ID}
                        redirectUri={window.location.origin}
-                       audience={BASE_URL + "/"}
-                       scope="manage:content">
+                       audience={AUTH_AUDIENCE}
+                       scope="read:content manage:content">
             <BrowserRouter>
                 <App />
             </BrowserRouter>
