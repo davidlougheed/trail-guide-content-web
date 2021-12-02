@@ -6,7 +6,7 @@ export const UPDATE_SETTINGS = networkActionTypes("UPDATE_SETTINGS");
 const fetchSettings = networkAction(FETCH_SETTINGS, "/settings");
 export const fetchSettingsIfNeeded = makeIfNeededAction(fetchSettings, "settings");
 
-export const updateSettings = settingsData => (dispatch, getState) => {
+export const updateSettings = (settingsData, accessToken) => (dispatch, getState) => {
     if (getState().isFetching || getState().isUpdating) return;
-    return dispatch(networkAction(UPDATE_SETTINGS, `/settings`, "PUT")(settingsData));
+    return dispatch(networkAction(UPDATE_SETTINGS, `/settings`, "PUT")(settingsData, {}, accessToken));
 }

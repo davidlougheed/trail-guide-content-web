@@ -5,17 +5,19 @@
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useHistory, useParams} from "react-router-dom";
+import {useAuth0} from "@auth0/auth0-react";
 
 import {message, PageHeader} from "antd";
 
 import PageForm from "./PageForm";
 import {updatePage} from "../../modules/pages/actions";
-import {findItemByID} from "../../utils";
+import {ACCESS_TOKEN_MANAGE, findItemByID} from "../../utils";
 
 const PageEditView = () => {
     const dispatch = useDispatch();
     const history = useHistory();
     const {id: pageID} = useParams();
+    const {getAccessTokenSilently} = useAuth0();
 
     const fetchingPages = useSelector(state => state.pages.isFetching);
     const page = useSelector(state => findItemByID(state.pages.items, pageID));
@@ -25,7 +27,8 @@ const PageEditView = () => {
 
     const onFinish = async v => {
         console.log("saving page", v);
-        const result = await dispatch(updatePage(page.id, v));
+        const accessToken = await getAccessTokenSilently(ACCESS_TOKEN_MANAGE);
+        const result = await dispatch(updatePage(page.id, v, accessToken));
         if (!result.error) {
             message.success(`Saved changes to page: ${result.data.title}`);
         }
