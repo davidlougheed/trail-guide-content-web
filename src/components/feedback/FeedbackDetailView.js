@@ -15,7 +15,6 @@ const FeedbackDetailView = () => {
     const history = useHistory();
     const {id: feedbackID} = useParams();
 
-    const fetchingFeedback = useSelector(state => state.feedback.isFetching);
     const feedback = useSelector(state => findItemByID(state.feedback.items, feedbackID));
 
     if (!feedback) return "Loading...";

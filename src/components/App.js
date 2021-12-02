@@ -37,7 +37,13 @@ import StationsPage from "./stations/StationsPage";
 import SettingsPage from "./settings/SettingsPage";
 
 const App = () => {
-    const {loginWithRedirect, isAuthenticated, user, getAccessTokenSilently} = useAuth0();
+    const {
+        loginWithRedirect,
+        isLoading: isLoadingAuth,
+        isAuthenticated,
+        user,
+        getAccessTokenSilently,
+    } = useAuth0();
 
     const dispatch = useDispatch();
     useEffect(async () => {
@@ -89,17 +95,19 @@ const App = () => {
                 </div>
                 <div style={{flex: 1, color: "white", textAlign: "right"}}>
                     {
-                        isAuthenticated ? (
-                            <span>{user.name}</span>
-                        ) : (
-                            <a style={{color: "#CCC"}} onClick={() => loginWithRedirect()}>Sign In</a>
+                        isLoadingAuth ? "" : (
+                            isAuthenticated ? (
+                                <span>{user.name}</span>
+                            ) : (
+                                <a style={{color: "#CCC"}} onClick={() => loginWithRedirect()}>Sign In</a>
+                            )
                         )
                     }
                 </div>
             </div>
         </Layout.Header>
         <Layout>
-            <Layout.Sider collapsedWidth={0} collapsed={!isAuthenticated}>
+            <Layout.Sider collapsedWidth={0} collapsed={!isLoadingAuth && !isAuthenticated}>
                 <Menu theme="dark" defaultSelectedKeys={defaultSelectedKeys}>
                     <Menu.Item key="stations" icon={<EnvironmentOutlined />}>
                         <Link to="/stations">Stations</Link>
@@ -125,7 +133,7 @@ const App = () => {
                 </Menu>
             </Layout.Sider>
             <Layout.Content style={{overflowY: "auto"}}>
-                {isAuthenticated ? (
+                {isLoadingAuth ? "Loading..." : (isAuthenticated ? (
                 <Spin spinning={false}>
                     <Switch>
                         <Route path="/assets"><AssetsPage /></Route>
@@ -163,7 +171,7 @@ const App = () => {
                             </div>
                         ) : null}
                     </div>
-                )}
+                ))}
             </Layout.Content>
         </Layout>
     </Layout>;
