@@ -3,7 +3,7 @@ import {useSelector} from "react-redux";
 import {useHistory} from "react-router-dom";
 
 import {Button, PageHeader, Space, Table} from "antd";
-import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons";
+import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
 
 const StationListView = () => {
     const history = useHistory();
@@ -29,6 +29,8 @@ const StationListView = () => {
             key: "actions",
             render: station => (
                 <Space size="middle">
+                    <Button icon={<EyeOutlined />} disabled={true}
+                            onClick={() => history.push(`/modals/detail/${station.id}`)}>View</Button>
                     <Button icon={<EditOutlined />}
                             onClick={() => history.push(`/stations/edit/${station.id}`)}>Edit</Button>
                     <Button icon={<DeleteOutlined />} danger={true} disabled={true}>Delete</Button>

@@ -3,7 +3,7 @@ import {useSelector} from "react-redux";
 import {useHistory} from "react-router-dom";
 
 import {Button, PageHeader, Space, Table} from "antd";
-import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons";
+import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
 
 const ModalListView = () => {
     const history = useHistory();
@@ -23,9 +23,11 @@ const ModalListView = () => {
         {
             title: "Actions",
             key: "actions",
-            render: page => <Space size="middle">
+            render: modal => <Space size="middle">
+                <Button icon={<EyeOutlined />} disabled={true}
+                        onClick={() => history.push(`/modals/detail/${modal.id}`)}>View</Button>
                 <Button icon={<EditOutlined />}
-                        onClick={() => history.push(`/modals/edit/${page.id}`)}>Edit</Button>
+                        onClick={() => history.push(`/modals/edit/${modal.id}`)}>Edit</Button>
                 <Button icon={<DeleteOutlined />} danger={true} disabled={true}>Delete</Button>
             </Space>,
         },
