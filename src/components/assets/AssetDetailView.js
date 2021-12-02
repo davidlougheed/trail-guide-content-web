@@ -77,7 +77,7 @@ const AssetDetailView = () => {
         onBack={() => history.goBack()}
         title={fetchingAssets
             ? "Loading..."
-            : <span><AssetTypeIcon type={asset?.asset_type} /> {asset?.file_name}</span>}
+            : <span>Asset: <AssetTypeIcon type={asset?.asset_type} /> {asset?.file_name}</span>}
         extra={[
             <Button key="edit" icon={<EditOutlined />} onClick={() => history.push(`/assets/edit/${assetID}`)}>
                 Edit

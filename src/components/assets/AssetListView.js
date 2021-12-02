@@ -3,7 +3,7 @@ import {useSelector} from "react-redux";
 import {Link, useHistory} from "react-router-dom";
 
 import {Button, PageHeader, Space, Table} from "antd";
-import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons";
+import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
 
 const AssetListView = () => {
     const history = useHistory();
@@ -29,10 +29,12 @@ const AssetListView = () => {
         {
             title: "Actions",
             key: "actions",
-            render: page => (
+            render: asset => (
                 <Space size="middle">
+                    <Button icon={<EyeOutlined />}
+                            onClick={() => history.push(`/assets/detail/${asset.id}`)}>View</Button>
                     <Button icon={<EditOutlined />}
-                            onClick={() => history.push(`/assets/edit/${page.id}`)}>Edit</Button>
+                            onClick={() => history.push(`/assets/edit/${asset.id}`)}>Edit</Button>
                     <Button icon={<DeleteOutlined />} danger={true} disabled={true}>Delete</Button>
                 </Space>
             )
