@@ -26,14 +26,22 @@ const HTMLEditor = ({value, onChange, placeholder}) => {
     const [assetOptions, setAssetOptions] = useState([]);
     const [selectedAsset, setSelectedAsset] = useState(null);
     const [showImageViewer, setShowImageViewer] = useState(false);
+    const [showVideoViewer, setShowVideoViewer] = useState(false);
 
     const assets = useSelector(state => state.assets.items);
 
     const assetBytes = assetId => `${BASE_URL}/assets/${assetId}/bytes`;
 
     const imageHandler = async () => {
+        setSelectedAsset(null);
         setAssetOptions(assets.filter(a => a.asset_type === "image"));
         setShowImageViewer(true);
+    };
+
+    const videoHandler = async () => {
+        setSelectedAsset(null);
+        setAssetOptions(assets.filter(a => a.asset_type === "video"));
+        setShowVideoViewer(true);
     };
 
     const modules = {
@@ -47,6 +55,7 @@ const HTMLEditor = ({value, onChange, placeholder}) => {
             ],
             handlers: {
                 image: imageHandler,
+                video: videoHandler,
             },
         },
     };
@@ -57,18 +66,19 @@ const HTMLEditor = ({value, onChange, placeholder}) => {
                visible={showImageViewer}
                onOk={async () => {
                    if (!quillRef.current) return;
-                   const editor = quillRef.current.getEditor();
-                   const range = editor.getSelection(true);
-                   console.log(range);
-                   const e = editor.insertEmbed(range.index, "image", assetBytes(selectedAsset), "user");
-                   console.log(e);
+                   if (selectedAsset) {
+                       const editor = quillRef.current.getEditor();
+                       const range = editor.getSelection(true);
+                       editor.insertEmbed(range.index, "image", assetBytes(selectedAsset), "user");
+                   }
                    setShowImageViewer(false);
                }}
                onCancel={() => setShowImageViewer(false)}>
             <Select placeholder="Image asset"
                     onChange={asset => setSelectedAsset(asset)}
                     value={selectedAsset}
-                    style={{width: "100%"}} size="large">
+                    style={{width: "100%"}}
+                    size="large">
                 {assetOptions.map(asset => (
                     <Select.Option value={asset.id} key={asset.id}>
                         <Image src={assetBytes(asset.id)} height={40} />
@@ -77,6 +87,30 @@ const HTMLEditor = ({value, onChange, placeholder}) => {
                 ))}
             </Select>
         </Modal>
+
+        <Modal title="Insert Video"
+               visible={showVideoViewer}
+               onOk={async () => {
+                   if (!quillRef.current) return;
+                   if (selectedAsset) {
+                       const editor = quillRef.current.getEditor();
+                       const range = editor.getSelection(true);
+                       editor.insertEmbed(range.index, "video", assetBytes(selectedAsset), "user");
+                   }
+                   setShowVideoViewer(false);
+               }}
+               onCancel={() => setShowVideoViewer(false)}>
+            <Select placeholder="Video asset"
+                    onChange={asset => setSelectedAsset(asset)}
+                    value={selectedAsset}
+                    style={{width: "100%"}}
+                    size="large">
+                {assetOptions.map(asset => (
+                    <Select.Option value={asset.id} key={asset.id}>{asset.file_name}</Select.Option>
+                ))}
+            </Select>
+        </Modal>
+
         <ReactQuill theme="snow"
                     ref={quillRef}
                     formats={FORMATS}
