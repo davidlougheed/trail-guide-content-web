@@ -16,19 +16,22 @@ export const networkAction = (types, url, method="GET", multipart=false) =>
     (body={}, params={}, accessToken="") => async dispatch => {
         await dispatch({params, type: types.REQUEST});
 
+        const authHeaders = accessToken === "" ? {} : {
+            "Authorization": `Bearer ${accessToken}`,
+        };
+
         try {
             const r = await fetch(BASE_URL + url,
                 {
                     method,
                     ...(multipart ? {
                         // Don't set content type manually for uploading multipart/form-data
+                        headers: authHeaders,
                         body,
                     } : {
                         headers: {
                             "Content-Type": "application/json",
-                            ...(accessToken === "" ? {} : {
-                                "Authorization": `Bearer ${accessToken}`,
-                            }),
+                            ...authHeaders,
                         },
                         ...(Object.keys(body).length ? {body: JSON.stringify(body)} : {}),
                     }),
