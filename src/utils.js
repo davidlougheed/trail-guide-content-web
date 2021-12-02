@@ -16,6 +16,19 @@ export const ACCESS_TOKEN_MANAGE = {
     scope: "manage:content",
 };
 
+export const fetchOtt = async (accessToken, setOtt) => {
+    const req = await fetch(`${BASE_URL}/ott`, {
+        method: "POST",
+        headers: {"Authorization": `Bearer ${accessToken}`},
+    });
+
+    if (req.ok) {
+        return await req.json();
+    } else {
+        console.error("Failed to get OTT", req);
+    }
+}
+
 export const networkActionTypes = name => ({
     REQUEST: `${name}.REQUEST`,
     RECEIVE: `${name}.RECEIVE`,

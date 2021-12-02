@@ -38,7 +38,7 @@ const PageDetailView = () => {
         </Descriptions>
 
         <Card size="small" title="Content" style={{marginTop: 16}}>
-            <div dangerouslySetInnerHTML={{__html: page.content}} />
+            <div class="page-detail-content" dangerouslySetInnerHTML={{__html: page.content}} />
         </Card>
     </PageHeader>;
 };

@@ -2,15 +2,14 @@
 // Copyright (C) 2021  David Lougheed
 // See NOTICE for more information.
 
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {useSelector} from "react-redux";
 import {useHistory, useParams} from "react-router-dom";
-import {useAuth0} from "@auth0/auth0-react";
 
 import {Button, Card, Descriptions, PageHeader} from "antd";
 import {EditOutlined, FileTextOutlined, PictureOutlined, SoundOutlined, VideoCameraOutlined} from "@ant-design/icons";
 
-import {AUTH_AUDIENCE, BASE_URL} from "../../config";
+import {BASE_URL} from "../../config";
 import {findItemByID} from "../../utils";
 
 const AssetTypeIcon = ({type}) => {
@@ -28,12 +27,12 @@ const AssetTypeIcon = ({type}) => {
     return <span />;
 }
 
-const AssetPreview = ({asset, ott}) => {
-    if (!asset || !ott) return <div />;
+const AssetPreview = ({asset}) => {
+    if (!asset) return <div />;
 
     switch (asset.asset_type) {
         case "image":
-            return <img src={`${BASE_URL}/assets/${asset.id}/bytes?ott=${ott.token}`}
+            return <img src={`${BASE_URL}/assets/${asset.id}/bytes`}
                         style={{maxWidth: 800, width: "100%"}}
                         alt={asset.file_name} />;
     }
@@ -44,33 +43,9 @@ const AssetPreview = ({asset, ott}) => {
 const AssetDetailView = () => {
     const history = useHistory();
     const {id: assetID} = useParams();
-    const {isAuthenticated, getAccessTokenSilently} = useAuth0();
 
     const fetchingAssets = useSelector(state => state.assets.isFetching);
     const asset = useSelector(state => findItemByID(state.assets.items, assetID));
-
-    const [ott, setOtt] = useState();
-
-    useEffect(async () => {
-        if (!isAuthenticated) return;
-
-        const accessToken = await getAccessTokenSilently({
-            audience: AUTH_AUDIENCE,
-            scope: "manage:content",
-        });
-
-        const req = await fetch(`${BASE_URL}/ott`, {
-            method: "POST",
-            headers: {"Authorization": `Bearer ${accessToken}`},
-        });
-
-        if (req.ok) {
-            const data = await req.json();
-            setOtt(data);
-        } else {
-            console.error("Failed to get OTT", req);
-        }
-    }, [isAuthenticated]);
 
     return <PageHeader
         ghost={false}
@@ -94,7 +69,7 @@ const AssetDetailView = () => {
         </Descriptions>
 
         <Card size="small" title="Preview" style={{marginTop: 16}}>
-            <AssetPreview asset={asset} ott={ott} />
+            <AssetPreview asset={asset} />
         </Card>
     </PageHeader>;
 };
