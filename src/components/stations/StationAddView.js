@@ -21,7 +21,7 @@ const StationAddView = () => {
         const result = await dispatch(addStation(v, accessToken));
         if (!result.error) {
             message.success(`Added new station: ${result.data.title}`);
-            history.push(`/stations/edit/${result.data.id}`);
+            history.replace(`/stations/edit/${result.data.id}`);
         }
     };
 

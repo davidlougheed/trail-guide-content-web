@@ -21,7 +21,7 @@ const ModalAddView = () => {
         const result = await dispatch(addModal(v, accessToken));
         if (!result.error) {
             message.success(`Added new modal: ${result.data.title}`);
-            history.push(`/modals/edit/${result.data.id}`);
+            history.replace(`/modals/edit/${result.data.id}`);
         }
     };
 
