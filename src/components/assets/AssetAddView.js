@@ -27,7 +27,7 @@ const AssetAddView = () => {
 
         if (!result.error) {
             message.success(`Added new asset: ${result.data.file_name}`);
-            history.replace(`/assets/edit/${result.data.id}`);
+            history.replace(`/assets/detail/${result.data.id}`);
         }
     };
 
