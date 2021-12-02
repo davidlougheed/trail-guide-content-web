@@ -4,7 +4,17 @@
 
 import {message} from "antd";
 
-import {BASE_URL} from "./config";
+import {AUTH_AUDIENCE, BASE_URL} from "./config";
+
+export const ACCESS_TOKEN_READ = {
+    audience: AUTH_AUDIENCE,
+    scope: "read:content",
+};
+
+export const ACCESS_TOKEN_MANAGE = {
+    audience: AUTH_AUDIENCE,
+    scope: "manage:content",
+};
 
 export const networkActionTypes = name => ({
     REQUEST: `${name}.REQUEST`,
