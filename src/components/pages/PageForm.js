@@ -33,7 +33,7 @@ const PageForm = ({initialValues, ...props}) => {
         </Row>
         <Row gutter={12}>
             <Col span={16}>
-                <Form.Item name="subtitle" label="Subtitle" rules={[{required: true}]}>
+                <Form.Item name="subtitle" label="Subtitle">
                     <Input />
                 </Form.Item>
             </Col>
