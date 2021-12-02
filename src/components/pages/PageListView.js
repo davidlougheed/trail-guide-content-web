@@ -3,7 +3,7 @@ import {useSelector} from "react-redux";
 import {useHistory} from "react-router-dom";
 
 import {Button, PageHeader, Space, Table} from "antd";
-import {CheckOutlined, CloseOutlined, EditOutlined} from "@ant-design/icons";
+import {CheckOutlined, CloseOutlined, EditOutlined, EyeOutlined} from "@ant-design/icons";
 
 const PageListView = () => {
     const history = useHistory();
@@ -26,6 +26,8 @@ const PageListView = () => {
             key: "actions",
             render: page => (
                 <Space size="middle">
+                    <Button icon={<EyeOutlined />}
+                            onClick={() => history.push(`/pages/detail/${page.id}`)}>View</Button>
                     <Button icon={<EditOutlined />}
                             onClick={() => history.push(`/pages/edit/${page.id}`)}>Edit</Button>
                 </Space>

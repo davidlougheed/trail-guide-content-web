@@ -25,10 +25,10 @@ const PageEditView = () => {
     if (fetchingPages) return <div>Loading...</div>;
     if (!page) return <div>Page not found</div>;  // TODO: Nice error
 
-    const onFinish = async v => {
-        console.log("saving page", v);
+    const onFinish = async pageData => {
+        console.log("saving page", pageData);
         const accessToken = await getAccessTokenSilently(ACCESS_TOKEN_MANAGE);
-        const result = await dispatch(updatePage(page.id, v, accessToken));
+        const result = await dispatch(updatePage(page.id, pageData, accessToken));
         if (!result.error) {
             message.success(`Saved changes to page: ${result.data.title}`);
         }
