@@ -15,13 +15,13 @@ import settings from "./modules/settings/reducer";
 import stations from "./modules/stations/reducer";
 
 export default combineReducers({
-    assetTypes,
-    assets,
-    categories,
-    feedback,
-    modals,
-    pages,
-    sections,
-    settings,
-    stations,
+  assetTypes,
+  assets,
+  categories,
+  feedback,
+  modals,
+  pages,
+  sections,
+  settings,
+  stations,
 });

@@ -6,47 +6,47 @@ import {Button, PageHeader, Space, Table} from "antd";
 import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
 
 const ModalListView = () => {
-    const history = useHistory();
+  const history = useHistory();
 
-    const loadingModals = useSelector(state => state.modals.isFetching);
-    const modals = useSelector(state => state.modals.items);
+  const loadingModals = useSelector(state => state.modals.isFetching);
+  const modals = useSelector(state => state.modals.items);
 
-    const columns = [
-        {
-            title: "Title",
-            dataIndex: "title",
-        },
-        {
-            title: "Close Button Text",
-            dataIndex: "close_text",
-        },
-        {
-            title: "Actions",
-            key: "actions",
-            render: modal => <Space size="middle">
-                <Button icon={<EyeOutlined />} disabled={true}
-                        onClick={() => history.push(`/modals/detail/${modal.id}`)}>View</Button>
-                <Button icon={<EditOutlined />}
-                        onClick={() => history.push(`/modals/edit/${modal.id}`)}>Edit</Button>
-                <Button icon={<DeleteOutlined />} danger={true} disabled={true}>Delete</Button>
-            </Space>,
-        },
-    ];
+  const columns = [
+    {
+      title: "Title",
+      dataIndex: "title",
+    },
+    {
+      title: "Close Button Text",
+      dataIndex: "close_text",
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: modal => <Space size="middle">
+        <Button icon={<EyeOutlined/>} disabled={true}
+                onClick={() => history.push(`/modals/detail/${modal.id}`)}>View</Button>
+        <Button icon={<EditOutlined/>}
+                onClick={() => history.push(`/modals/edit/${modal.id}`)}>Edit</Button>
+        <Button icon={<DeleteOutlined/>} danger={true} disabled={true}>Delete</Button>
+      </Space>,
+    },
+  ];
 
-    return <PageHeader
-        ghost={false}
-        title="Modals"
-        subTitle="View and edit app modals"
-        extra={[
-            <Button key="add"
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={() => history.push("/modals/add")}>
-                Add New</Button>,
-        ]}
-    >
-        <Table bordered={true} loading={loadingModals} columns={columns} dataSource={modals} rowKey="id" />
-    </PageHeader>;
+  return <PageHeader
+    ghost={false}
+    title="Modals"
+    subTitle="View and edit app modals"
+    extra={[
+      <Button key="add"
+              type="primary"
+              icon={<PlusOutlined/>}
+              onClick={() => history.push("/modals/add")}>
+        Add New</Button>,
+    ]}
+  >
+    <Table bordered={true} loading={loadingModals} columns={columns} dataSource={modals} rowKey="id"/>
+  </PageHeader>;
 };
 
 export default ModalListView;

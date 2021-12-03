@@ -8,7 +8,7 @@ const fetchPages = networkAction(FETCH_PAGES, "/pages");
 export const fetchPagesIfNeeded = makeIfNeededAction(fetchPages, "pages");
 
 export const updatePage = (pageID, pageData, accessToken) => (dispatch, getState) => {
-    const state = getState();
-    if (state.isFetching || state.isAdding || state.isUpdating) return;
-    return dispatch(networkAction(UPDATE_PAGE, `/pages/${pageID}`, "PUT")(pageData, {}, accessToken));
+  const state = getState();
+  if (state.isFetching || state.isAdding || state.isUpdating) return;
+  return dispatch(networkAction(UPDATE_PAGE, `/pages/${pageID}`, "PUT")(pageData, {}, accessToken));
 }

@@ -14,34 +14,34 @@ import {updatePage} from "../../modules/pages/actions";
 import {ACCESS_TOKEN_MANAGE, findItemByID} from "../../utils";
 
 const PageEditView = () => {
-    const dispatch = useDispatch();
-    const history = useHistory();
-    const {id: pageID} = useParams();
-    const {getAccessTokenSilently} = useAuth0();
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const {id: pageID} = useParams();
+  const {getAccessTokenSilently} = useAuth0();
 
-    const fetchingPages = useSelector(state => state.pages.isFetching);
-    const page = useSelector(state => findItemByID(state.pages.items, pageID));
+  const fetchingPages = useSelector(state => state.pages.isFetching);
+  const page = useSelector(state => findItemByID(state.pages.items, pageID));
 
-    if (fetchingPages) return <div>Loading...</div>;
-    if (!page) return <div>Page not found</div>;  // TODO: Nice error
+  if (fetchingPages) return <div>Loading...</div>;
+  if (!page) return <div>Page not found</div>;  // TODO: Nice error
 
-    const onFinish = async pageData => {
-        console.log("saving page", pageData);
-        const accessToken = await getAccessTokenSilently(ACCESS_TOKEN_MANAGE);
-        const result = await dispatch(updatePage(page.id, pageData, accessToken));
-        if (!result.error) {
-            message.success(`Saved changes to page: ${result.data.title}`);
-        }
-    };
+  const onFinish = async pageData => {
+    console.log("saving page", pageData);
+    const accessToken = await getAccessTokenSilently(ACCESS_TOKEN_MANAGE);
+    const result = await dispatch(updatePage(page.id, pageData, accessToken));
+    if (!result.error) {
+      message.success(`Saved changes to page: ${result.data.title}`);
+    }
+  };
 
-    return <PageHeader
-        onBack={() => history.goBack()}
-        ghost={false}
-        title={`Edit Page: ${page.title}`}
-        subTitle="Press submit to save your changes."
-    >
-        <PageForm initialValues={page} onFinish={onFinish} />
-    </PageHeader>;
+  return <PageHeader
+    onBack={() => history.goBack()}
+    ghost={false}
+    title={`Edit Page: ${page.title}`}
+    subTitle="Press submit to save your changes."
+  >
+    <PageForm initialValues={page} onFinish={onFinish}/>
+  </PageHeader>;
 };
 
 export default PageEditView;

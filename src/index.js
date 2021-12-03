@@ -19,16 +19,16 @@ import App from "./components/App";
 const store = createStore(rootReducer, applyMiddleware(thunkMiddleware));
 
 document.addEventListener("DOMContentLoaded", () => render(
-    <Provider store={store}>
-        <Auth0Provider domain={AUTH_DOMAIN}
-                       clientId={AUTH_CLIENT_ID}
-                       redirectUri={window.location.origin}
-                       audience={AUTH_AUDIENCE}
-                       scope="read:content manage:content">
-            <BrowserRouter>
-                <App />
-            </BrowserRouter>
-        </Auth0Provider>
-    </Provider>,
-    document.getElementById("root")
+  <Provider store={store}>
+    <Auth0Provider domain={AUTH_DOMAIN}
+                   clientId={AUTH_CLIENT_ID}
+                   redirectUri={window.location.origin}
+                   audience={AUTH_AUDIENCE}
+                   scope="read:content manage:content">
+      <BrowserRouter>
+        <App/>
+      </BrowserRouter>
+    </Auth0Provider>
+  </Provider>,
+  document.getElementById("root")
 ));

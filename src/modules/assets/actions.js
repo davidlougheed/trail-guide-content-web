@@ -9,7 +9,7 @@ export const fetchAssetsIfNeeded = makeIfNeededAction(fetchAssets, "assets");
 
 const _addAsset = networkAction(ADD_ASSET, "/assets", "POST", true);
 export const addAsset = (body, accessToken) => (dispatch, getState) => {
-    const state = getState();
-    if (state.isFetching || state.isAdding || state.isUpdating) return;
-    return dispatch(_addAsset(body, {}, accessToken));
+  const state = getState();
+  if (state.isFetching || state.isAdding || state.isUpdating) return;
+  return dispatch(_addAsset(body, {}, accessToken));
 };

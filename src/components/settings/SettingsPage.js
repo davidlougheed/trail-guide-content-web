@@ -13,25 +13,25 @@ import {updateSettings} from "../../modules/settings/actions";
 import {ACCESS_TOKEN_MANAGE} from "../../utils";
 
 const SettingsPage = () => {
-    const dispatch = useDispatch();
-    const fetchingSettings = useSelector(state => state.settings.isFetching);
-    const settings = useSelector(state => state.settings.data);
-    const {getAccessTokenSilently} = useAuth0();
+  const dispatch = useDispatch();
+  const fetchingSettings = useSelector(state => state.settings.isFetching);
+  const settings = useSelector(state => state.settings.data);
+  const {getAccessTokenSilently} = useAuth0();
 
-    if (fetchingSettings) return <div>Loading...</div>;
+  if (fetchingSettings) return <div>Loading...</div>;
 
-    const onFinish = async v => {
-        console.log("saving settings", v);
-        const accessToken = await getAccessTokenSilently(ACCESS_TOKEN_MANAGE);
-        const result = await dispatch(updateSettings(v, accessToken));
-        if (!result.error) {
-            message.success("Saved changes to settings");
-        }
-    };
+  const onFinish = async v => {
+    console.log("saving settings", v);
+    const accessToken = await getAccessTokenSilently(ACCESS_TOKEN_MANAGE);
+    const result = await dispatch(updateSettings(v, accessToken));
+    if (!result.error) {
+      message.success("Saved changes to settings");
+    }
+  };
 
-    return <PageHeader title="Settings" ghost={false}>
-        <SettingsForm initialValues={settings} onFinish={onFinish} />
-    </PageHeader>;
+  return <PageHeader title="Settings" ghost={false}>
+    <SettingsForm initialValues={settings} onFinish={onFinish}/>
+  </PageHeader>;
 };
 
 export default SettingsPage;

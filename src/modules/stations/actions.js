@@ -9,14 +9,14 @@ export const fetchStationsIfNeeded = makeIfNeededAction(fetchStations, "stations
 
 const _addStation = networkAction(ADD_STATION, "/stations", "POST");
 export const addStation = (body, accessToken) => (dispatch, getState) => {
-    const state = getState();
-    if (state.isFetching || state.isAdding || state.isUpdating) return;
-    return dispatch(_addStation(body, {}, accessToken));
+  const state = getState();
+  if (state.isFetching || state.isAdding || state.isUpdating) return;
+  return dispatch(_addStation(body, {}, accessToken));
 };
 
 export const updateStation = (stationID, stationData, accessToken) => (dispatch, getState) => {
-    const state = getState();
-    if (state.isFetching || state.isAdding || state.isUpdating) return;
-    return dispatch(networkAction(UPDATE_STATION, `/stations/${stationID}`, "PUT")(
-        stationData, {}, accessToken));
+  const state = getState();
+  if (state.isFetching || state.isAdding || state.isUpdating) return;
+  return dispatch(networkAction(UPDATE_STATION, `/stations/${stationID}`, "PUT")(
+    stationData, {}, accessToken));
 }

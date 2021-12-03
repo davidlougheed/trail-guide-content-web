@@ -11,28 +11,28 @@ import {addStation} from "../../modules/stations/actions";
 import {ACCESS_TOKEN_MANAGE} from "../../utils";
 
 const StationAddView = () => {
-    const dispatch = useDispatch();
-    const history = useHistory();
-    const {getAccessTokenSilently} = useAuth0();
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const {getAccessTokenSilently} = useAuth0();
 
-    const onFinish = async v => {
-        console.log("adding station", v);
-        const accessToken = await getAccessTokenSilently(ACCESS_TOKEN_MANAGE);
-        const result = await dispatch(addStation(v, accessToken));
-        if (!result.error) {
-            message.success(`Added new station: ${result.data.title}`);
-            history.replace(`/stations/edit/${result.data.id}`);
-        }
-    };
+  const onFinish = async v => {
+    console.log("adding station", v);
+    const accessToken = await getAccessTokenSilently(ACCESS_TOKEN_MANAGE);
+    const result = await dispatch(addStation(v, accessToken));
+    if (!result.error) {
+      message.success(`Added new station: ${result.data.title}`);
+      history.replace(`/stations/edit/${result.data.id}`);
+    }
+  };
 
-    return <PageHeader
-        onBack={() => history.goBack()}
-        ghost={false}
-        title="Add Station"
-        subTitle="Create a new app station within a section"
-    >
-        <StationForm onFinish={onFinish} />
-    </PageHeader>;
+  return <PageHeader
+    onBack={() => history.goBack()}
+    ghost={false}
+    title="Add Station"
+    subTitle="Create a new app station within a section"
+  >
+    <StationForm onFinish={onFinish}/>
+  </PageHeader>;
 };
 
 export default StationAddView;
