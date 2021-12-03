@@ -10,7 +10,7 @@ import {Button, Card, Descriptions, PageHeader} from "antd";
 import {EditOutlined, FileTextOutlined, PictureOutlined, SoundOutlined, VideoCameraOutlined} from "@ant-design/icons";
 
 import {BASE_URL} from "../../config";
-import {findItemByID} from "../../utils";
+import {assetIdToBytesUrl, findItemByID} from "../../utils";
 
 const AssetTypeIcon = ({type}) => {
     switch (type) {
@@ -32,7 +32,7 @@ const AssetPreview = ({asset}) => {
 
     switch (asset.asset_type) {
         case "image":
-            return <img src={`${BASE_URL}/assets/${asset.id}/bytes`}
+            return <img src={assetIdToBytesUrl(asset.id)}
                         style={{maxWidth: 800, width: "100%"}}
                         alt={asset.file_name} />;
     }

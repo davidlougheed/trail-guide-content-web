@@ -27,7 +27,9 @@ export const fetchOtt = async (accessToken, setOtt) => {
     } else {
         console.error("Failed to get OTT", req);
     }
-}
+};
+
+export const assetIdToBytesUrl = assetId => `${BASE_URL}/assets/${assetId}/bytes`;
 
 export const networkActionTypes = name => ({
     REQUEST: `${name}.REQUEST`,
