@@ -35,6 +35,10 @@ const AssetPreview = ({asset}) => {
             return <img src={assetIdToBytesUrl(asset.id)}
                         style={{maxWidth: 800, width: "100%"}}
                         alt={asset.file_name} />;
+        case "video":
+            return <video width={480} height={270} controls={true}>
+                <source src={assetIdToBytesUrl(asset.id)} />
+            </video>;
     }
 
     return <div />;
