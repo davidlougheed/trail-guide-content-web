@@ -33,8 +33,8 @@ const AssetListView = () => {
                 <Space size="middle">
                     <Button icon={<EyeOutlined />}
                             onClick={() => history.push(`/assets/detail/${asset.id}`)}>View</Button>
-                    <Button icon={<EditOutlined />}
-                            onClick={() => history.push(`/assets/edit/${asset.id}`)}>Edit</Button>
+                    {/*<Button icon={<EditOutlined />}*/}
+                    {/*        onClick={() => history.push(`/assets/edit/${asset.id}`)}>Edit</Button>*/}
                     <Button icon={<DeleteOutlined />} danger={true} disabled={true}>Delete</Button>
                 </Space>
             )
