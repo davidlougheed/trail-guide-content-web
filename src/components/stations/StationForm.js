@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useRef} from "react";
 import {useSelector} from "react-redux";
 
 import {Button, Card, Col, Form, Input, Row, Select, Switch} from "antd";
@@ -10,6 +10,12 @@ const contentTypes = [
     {value: "html", label: "Rich Text"},
     {value: "gallery", label: "Gallery"},
     {value: "quiz", label: "Quiz"},
+];
+
+const quizTypes = [
+    {value: "match_values", label: "Match values"},
+    {value: "select_all_that_apply", label: "Select all that apply"},
+    {value: "choose_one", label: "Choose the correct option"},
 ];
 
 const normalizeContents = c => ({...c, title: c.title || ""});
@@ -34,6 +40,9 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
         contents: (oldInitialValues.contents ?? []).map(normalizeContents)
     };
 
+    const contentsRefs = useRef({});
+    const getContentKey = (k, i) => ({[k]: contentsRefs.current[`contents_${i}_${k}`].getEditor().root.innerHTML});
+
     const onFinish_ = values => {
         (onFinish ?? (() => {}))({
             ...values,
@@ -45,7 +54,28 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
                 east: parseInt(values.coordinates_utm.east, 10),
                 north: parseInt(values.coordinates_utm.north, 10),
             },
-            contents: values.contents.map(normalizeContents) ?? [],
+            contents: (values.contents.map(normalizeContents) ?? []).map((c, ci) => {
+                 switch (c.content_type) {
+                     case "html":
+                         return {
+                             ...c,
+                             ...getContentKey("content_before_fold", ci),
+                             ...getContentKey("content_after_fold", ci),
+                         };
+                     case "gallery":
+                         return {
+                             ...c,
+                             ...getContentKey("description", ci),
+                         };
+                     case "quiz":
+                         return {
+                             ...c,
+                             ...getContentKey("quiz_type", ci),
+                             ...getContentKey("question", ci),
+                             ...getContentKey("answer", ci),
+                         };
+                 }
+            }),
             enabled: !!values.enabled,
             rank: parseInt(values.rank),
         });
@@ -130,59 +160,126 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
             {(fields, {add, remove}, {errors}) => (
                 <>
                     {errors}
-                    {fields.map((field) => (
-                        <Card
-                            key={field.key}
-                            size="small"
-                            title="Content Item"
-                            style={{
-                                marginBottom: "12px",
-                                position: "relative"
-                            }}
-                        >
-                            <CloseCircleOutlined
-                                onClick={() => remove(field.name)}
-                                style={{position: "absolute", top: "12px", right: "12px", zIndex: 1}} />
-                            <Form.Item noStyle={true}>
-                                <Row gutter={12}>
-                                    <Col span={8}>
-                                        <Form.Item {...field}
-                                                   key="content_type"
-                                                   label="Content Type"
-                                                   name={[field.name, "content_type"]}
-                                                   fieldKey={[field.fieldKey, "content_type"]}
-                                                   rules={[{required: true}]}>
-                                            <Select placeholder="Content Type" options={contentTypes} />
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={16}>
-                                        <Form.Item {...field}
-                                                   key="title"
-                                                   label="Title"
-                                                   name={[field.name, "title"]}
-                                                   fieldKey={[field.fieldKey, "title"]}
-                                                   rules={[{required: true}]}>
-                                            <Input placeholder="Title" />
-                                        </Form.Item>
-                                    </Col>
-                                </Row>
-                                <Form.Item {...field}
-                                           key="content_before_fold"
-                                           label="Content Before Fold"
-                                           name={[field.name, "content_before_fold"]}
-                                           fieldKey={[field.fieldKey, "content_before_fold"]}>
-                                    <HTMLEditor />
+                    {fields.map((field) => {
+                        return (
+                            <Card
+                                key={field.key}
+                                size="small"
+                                title="Content Item"
+                                style={{
+                                    marginBottom: "12px",
+                                    position: "relative"
+                                }}
+                            >
+                                <CloseCircleOutlined
+                                    onClick={() => remove(field.name)}
+                                    style={{position: "absolute", top: "12px", right: "12px", zIndex: 1}} />
+                                <Form.Item noStyle={true}>
+                                    <Row gutter={12}>
+                                        <Col span={8}>
+                                            <Form.Item {...field}
+                                                       validateTrigger={["onChange", "onBlur"]}
+                                                       key="content_type"
+                                                       label="Content Type"
+                                                       name={[field.name, "content_type"]}
+                                                       fieldKey={[field.fieldKey, "content_type"]}
+                                                       rules={[{required: true}]}>
+                                                <Select placeholder="Content Type" options={contentTypes} />
+                                            </Form.Item>
+                                        </Col>
+                                        <Col span={16}>
+                                            <Form.Item {...field}
+                                                       key="title"
+                                                       label="Title"
+                                                       name={[field.name, "title"]}
+                                                       fieldKey={[field.fieldKey, "title"]}
+                                                       rules={[{required: true}]}>
+                                                <Input placeholder="Title" />
+                                            </Form.Item>
+                                        </Col>
+                                    </Row>
+                                    <Form.Item shouldUpdate={(prevValues, newValues) => {
+                                        const ct1 = prevValues.contents[field.name]?.content_type;
+                                        const ct2 = newValues.contents[field.name]?.content_type;
+                                        return ct1 !== ct2;
+                                    }}>
+                                        {(f) => {
+                                            const ct = f.getFieldValue(["contents", field.name, "content_type"]);
+                                            switch (ct) {
+                                                case "html":
+                                                    return <>
+                                                        <Form.Item
+                                                            key="content_before_fold"
+                                                            label="Content Before Fold"
+                                                            // name={[field.name, "content_before_fold"]}
+                                                            // fieldKey={[field.fieldKey, "content_before_fold"]}
+                                                        >
+                                                            <HTMLEditor innerRef={el => {
+                                                                contentsRefs.current = {
+                                                                    ...contentsRefs.current,
+                                                                    [`contents_${field.name}_content_before_fold`]: el,
+                                                                };
+                                                            }} />
+                                                        </Form.Item>
+                                                        <Form.Item
+                                                            key="content_after_fold"
+                                                            label="Content After Fold"
+                                                            // name={[field.name, "content_after_fold"]}
+                                                            // fieldKey={[field.fieldKey, "content_after_fold"]}
+                                                        >
+                                                            <HTMLEditor innerRef={el => {
+                                                                contentsRefs.current = {
+                                                                    ...contentsRefs.current,
+                                                                    [`contents_${field.name}_content_after_fold`]: el,
+                                                                };
+                                                            }} />
+                                                        </Form.Item>
+                                                    </>;
+
+                                                case "gallery":
+                                                    return <>
+                                                        <Form.Item key="description" label="Description">
+                                                            <HTMLEditor innerRef={el => {
+                                                                contentsRefs.current = {
+                                                                    ...contentsRefs.current,
+                                                                    [`contents_${field.name}_description`]: el,
+                                                                };
+                                                            }} />
+                                                        </Form.Item>
+
+                                                        Gallery TODO
+                                                    </>;
+
+                                                case "quiz":
+                                                    return <>
+                                                        <Form.Item key="quiz_type" label="Quiz Type">
+                                                            <Select options={quizTypes} />
+                                                        </Form.Item>
+                                                        <Form.Item key="question" label="Question">
+                                                            <HTMLEditor innerRef={el => {
+                                                                contentsRefs.current = {
+                                                                    ...contentsRefs.current,
+                                                                    [`contents_${field.name}_question`]: el,
+                                                                };
+                                                            }} />
+                                                        </Form.Item>
+                                                        <Form.Item key="answer" label="Answer">
+                                                            <HTMLEditor innerRef={el => {
+                                                                contentsRefs.current = {
+                                                                    ...contentsRefs.current,
+                                                                    [`contents_${field.name}_answer`]: el,
+                                                                };
+                                                            }} />
+                                                        </Form.Item>
+                                                        Quiz TODO
+                                                    </>;
+                                            }
+                                        }}
+                                    </Form.Item>
                                 </Form.Item>
-                                <Form.Item {...field}
-                                           key="content_after_fold"
-                                           label="Content After Fold"
-                                           name={[field.name, "content_after_fold"]}
-                                           fieldKey={[field.fieldKey, "content_after_fold"]}>
-                                    <HTMLEditor />
-                                </Form.Item>
-                            </Form.Item>
-                        </Card>
-                    ))}
+                            </Card>
+                        )
+                    })}
                     <Form.Item>
                         <Button onClick={() => add()} icon={<PlusOutlined />}>Add Content Item</Button>
                     </Form.Item>

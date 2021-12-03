@@ -6,7 +6,9 @@ import {Image, Modal, Select} from "antd";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
-import {BASE_URL} from "../config";
+import "./VideoBlot";
+
+import {assetIdToBytesUrl} from "../utils";
 
 const FORMATS = [
     "header",
@@ -18,9 +20,10 @@ const FORMATS = [
     "link",
     "image",
     "video",
+    "html5Video",
 ];
 
-const HTMLEditor = ({value, onChange, placeholder}) => {
+const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
     const quillRef = useRef(null);
 
     const [assetOptions, setAssetOptions] = useState([]);
@@ -29,8 +32,6 @@ const HTMLEditor = ({value, onChange, placeholder}) => {
     const [showVideoViewer, setShowVideoViewer] = useState(false);
 
     const assets = useSelector(state => state.assets.items);
-
-    const assetBytes = assetId => `${BASE_URL}/assets/${assetId}/bytes`;
 
     const imageHandler = async () => {
         setSelectedAsset(null);
@@ -60,6 +61,8 @@ const HTMLEditor = ({value, onChange, placeholder}) => {
         },
     };
 
+    if (initialValue === null) return <div />;
+
     // noinspection JSValidateTypes
     return <div>
         <Modal title="Insert Image"
@@ -69,7 +72,7 @@ const HTMLEditor = ({value, onChange, placeholder}) => {
                    if (selectedAsset) {
                        const editor = quillRef.current.getEditor();
                        const range = editor.getSelection(true);
-                       editor.insertEmbed(range.index, "image", assetBytes(selectedAsset), "user");
+                       editor.insertEmbed(range.index, "image", assetIdToBytesUrl(selectedAsset), "user");
                    }
                    setShowImageViewer(false);
                }}
@@ -81,7 +84,7 @@ const HTMLEditor = ({value, onChange, placeholder}) => {
                     size="large">
                 {assetOptions.map(asset => (
                     <Select.Option value={asset.id} key={asset.id}>
-                        <Image src={assetBytes(asset.id)} height={40} />
+                        <Image src={assetIdToBytesUrl(asset.id)} height={40} />
                         <span style={{marginLeft: 8, verticalAlign: "top"}}>{asset.file_name}</span>
                     </Select.Option>
                 ))}
@@ -95,7 +98,10 @@ const HTMLEditor = ({value, onChange, placeholder}) => {
                    if (selectedAsset) {
                        const editor = quillRef.current.getEditor();
                        const range = editor.getSelection(true);
-                       editor.insertEmbed(range.index, "video", assetBytes(selectedAsset), "user");
+                       editor.insertEmbed(range.index, "html5Video",
+                           {
+                               url: assetIdToBytesUrl(selectedAsset),
+                           }, "user");
                    }
                    setShowVideoViewer(false);
                }}
@@ -112,11 +118,16 @@ const HTMLEditor = ({value, onChange, placeholder}) => {
         </Modal>
 
         <ReactQuill theme="snow"
-                    ref={quillRef}
+                    ref={el => {
+                        if (innerRef) {
+                            if (typeof innerRef === "function") innerRef(el)
+                            else innerRef.current = el;
+                        }
+                        quillRef.current = el;
+                    }}
                     formats={FORMATS}
                     modules={modules}
-                    defaultValue=""
-                    value={value ?? ""}
+                    defaultValue={initialValue}
                     onChange={onChange}
                     placeholder={placeholder} />
     </div>;

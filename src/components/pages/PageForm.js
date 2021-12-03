@@ -1,12 +1,13 @@
-import React from "react";
+import React, {useRef} from "react";
 import {useSelector} from "react-redux";
 
 import {Button, Col, Form, Input, Row, Select, Switch} from "antd";
 
 import HTMLEditor from "../HTMLEditor";
 
-const PageForm = ({initialValues, ...props}) => {
+const PageForm = ({initialValues, onFinish, ...props}) => {
     const [form] = Form.useForm();
+    const quillRef = useRef(undefined);
 
     const numPages = useSelector(state => state.pages.items.length);
     const assets = useSelector(state => state.assets.items);
@@ -18,7 +19,11 @@ const PageForm = ({initialValues, ...props}) => {
         ...oldInitialValues,
     };
 
-    return <Form {...props} form={form} layout="vertical" initialValues={newInitialValues}>
+    const _onFinish = data => {
+        onFinish({...data, content: quillRef.current.getEditor().root.innerHTML});
+    };
+
+    return <Form {...props} onFinish={_onFinish} form={form} layout="vertical" initialValues={newInitialValues}>
         <Row gutter={12}>
             <Col span={8}>
                 <Form.Item name="title" label="Title" rules={[{required: true}]}>
@@ -56,8 +61,8 @@ const PageForm = ({initialValues, ...props}) => {
                         label: a.file_name,
                     }))} />
         </Form.Item>
-        <Form.Item name="content" label="Content">
-            <HTMLEditor />
+        <Form.Item label="Content">
+            <HTMLEditor initialValue={newInitialValues.content} innerRef={quillRef} />
         </Form.Item>
         <Form.Item>
             <Button type="primary" htmlType="submit">Submit</Button>
