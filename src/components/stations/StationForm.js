@@ -18,6 +18,7 @@ const quizTypes = [
   {value: "choose_one", label: "Choose the correct option"},
 ];
 
+const contentItemField = i => k => `contents_${i}_${k}`;
 const normalizeContents = c => ({...c, title: c.title || ""});
 
 const StationForm = ({onFinish, initialValues, ...props}) => {
@@ -41,11 +42,10 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
   };
 
   const contentsRefs = useRef({});
-  const getContentKey = (k, i) => ({[k]: contentsRefs.current[`contents_${i}_${k}`].getEditor().root.innerHTML});
+  const getContentKey = (k, i) => ({[k]: contentsRefs.current[contentItemField(i)(k)].getEditor().root.innerHTML});
 
   const onFinish_ = values => {
-    (onFinish ?? (() => {
-    }))({
+    (onFinish ?? (() => {}))({
       ...values,
 
       // Properly type everything
@@ -108,7 +108,7 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
       </Col>
       <Col span={4}>
         <Form.Item name="rank" label="Rank">
-          <Input type="number" min={0}/>
+          <Input type="number" min={0} />
         </Form.Item>
       </Col>
     </Row>
@@ -134,20 +134,23 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
     <Row gutter={12}>
       <Col span={8}>
         <Form.Item name="header_image" label="Header Image">
-          <Select placeholder="Select header image for this station"
-                  allowClear={true}
-                  options={assets.filter(a => a.asset_type === "image").map(a => ({
-                    value: a.id,
-                    label: a.file_name,
-                  }))}/>
+          <Select
+            placeholder="Select header image for this station"
+            allowClear={true}
+            options={
+              assets
+                .filter(a => a.asset_type === "image")
+                .map(a => ({value: a.id, label: a.file_name}))
+            }
+          />
         </Form.Item>
       </Col>
       <Col span={8}>
         <Form.Item name="section" label="Section" rules={[{required: true}]}>
-          <Select placeholder="Select app section for this station" options={sections.map(s => ({
-            value: s.id,
-            label: s.title,
-          }))}/>
+          <Select
+            placeholder="Select app section for this station"
+            options={sections.map(s => ({value: s.id, label: s.title}))}
+          />
         </Form.Item>
       </Col>
       <Col span={8}>
@@ -162,6 +165,7 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
         <>
           {errors}
           {fields.map((field) => {
+            const fi = contentItemField(field.name);
             return (
               <Card
                 key={field.key}
@@ -205,35 +209,18 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
                     return ct1 !== ct2;
                   }}>
                     {(f) => {
-                      const ct = f.getFieldValue(["contents", field.name, "content_type"]);
-                      switch (ct) {
+                      switch (f.getFieldValue(["contents", field.name, "content_type"])) {
                         case "html":
                           return <>
-                            <Form.Item
-                              key="content_before_fold"
-                              label="Content Before Fold"
-                              // name={[field.name, "content_before_fold"]}
-                              // fieldKey={[field.fieldKey, "content_before_fold"]}
-                            >
+                            <Form.Item key="content_before_fold" label="Content Before Fold">
                               <HTMLEditor innerRef={el => {
-                                contentsRefs.current = {
-                                  ...contentsRefs.current,
-                                  [`contents_${field.name}_content_before_fold`]: el,
-                                };
-                              }}/>
+                                contentsRefs.current = {...contentsRefs.current, [fi("content_before_fold")]: el};
+                              }} />
                             </Form.Item>
-                            <Form.Item
-                              key="content_after_fold"
-                              label="Content After Fold"
-                              // name={[field.name, "content_after_fold"]}
-                              // fieldKey={[field.fieldKey, "content_after_fold"]}
-                            >
+                            <Form.Item key="content_after_fold" label="Content After Fold">
                               <HTMLEditor innerRef={el => {
-                                contentsRefs.current = {
-                                  ...contentsRefs.current,
-                                  [`contents_${field.name}_content_after_fold`]: el,
-                                };
-                              }}/>
+                                contentsRefs.current = {...contentsRefs.current, [fi("content_after_fold")]: el};
+                              }} />
                             </Form.Item>
                           </>;
 
@@ -241,10 +228,7 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
                           return <>
                             <Form.Item key="description" label="Description">
                               <HTMLEditor innerRef={el => {
-                                contentsRefs.current = {
-                                  ...contentsRefs.current,
-                                  [`contents_${field.name}_description`]: el,
-                                };
+                                contentsRefs.current = {...contentsRefs.current, [fi("description")]: el};
                               }}/>
                             </Form.Item>
 
@@ -258,18 +242,12 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
                             </Form.Item>
                             <Form.Item key="question" label="Question">
                               <HTMLEditor innerRef={el => {
-                                contentsRefs.current = {
-                                  ...contentsRefs.current,
-                                  [`contents_${field.name}_question`]: el,
-                                };
+                                contentsRefs.current = {...contentsRefs.current, [fi("question")]: el};
                               }}/>
                             </Form.Item>
                             <Form.Item key="answer" label="Answer">
                               <HTMLEditor innerRef={el => {
-                                contentsRefs.current = {
-                                  ...contentsRefs.current,
-                                  [`contents_${field.name}_answer`]: el,
-                                };
+                                contentsRefs.current = {...contentsRefs.current, [fi("answer")]: el};
                               }}/>
                             </Form.Item>
                             Quiz TODO
