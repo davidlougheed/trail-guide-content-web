@@ -29,12 +29,12 @@ const AssetForm = ({initialValues, ...props}) => {
     <Row gutter={12}>
       <Col flex="80px">
         <Form.Item name="enabled" label="Enabled" valuePropName="checked">
-          <Switch/>
+          <Switch />
         </Form.Item>
       </Col>
       <Col flex={1}>
         <Form.Item name="asset_type" label="Asset Type" rules={[{required: true}]}>
-          <Select options={ASSET_TYPES}/>
+          <Select options={ASSET_TYPES} />
         </Form.Item>
       </Col>
       <Col flex={2}>
@@ -47,7 +47,7 @@ const AssetForm = ({initialValues, ...props}) => {
                   showUploadList={{showRemoveIcon: false}}
                   beforeUpload={() => false}
                   style={{width: "100%"}}>
-            <Button icon={<UploadOutlined/>}>Click to Upload</Button>
+            <Button icon={<UploadOutlined />}>Click to Upload</Button>
           </Upload>
         </Form.Item>
       </Col>

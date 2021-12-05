@@ -15,13 +15,13 @@ import {assetIdToBytesUrl, findItemByID} from "../../utils";
 const AssetTypeIcon = ({type}) => {
   switch (type) {
     case "image":
-      return <PictureOutlined/>;
+      return <PictureOutlined />;
     case "audio":
-      return <SoundOutlined/>;
+      return <SoundOutlined />;
     case "video":
-      return <VideoCameraOutlined/>;
+      return <VideoCameraOutlined />;
     case "video_text_track":
-      return <FileTextOutlined/>;
+      return <FileTextOutlined />;
   }
 
   return <span/>;
