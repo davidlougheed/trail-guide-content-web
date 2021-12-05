@@ -4,7 +4,7 @@ import {Button, Form, Input} from "antd"
 
 import HTMLEditor from "../HTMLEditor";
 
-const ModalForm = ({initialValues, onFinish, ...props}) => {
+const ModalForm = ({initialValues, onFinish, loading, ...props}) => {
   const [form] = Form.useForm();
   const quillRef = useRef(undefined);
 
@@ -30,7 +30,7 @@ const ModalForm = ({initialValues, onFinish, ...props}) => {
       <HTMLEditor initialValue={newInitialValues.content} innerRef={quillRef}/>
     </Form.Item>
     <Form.Item>
-      <Button type="primary" htmlType="submit">Submit</Button>
+      <Button type="primary" htmlType="submit" loading={loading}>Submit</Button>
     </Form.Item>
   </Form>;
 };

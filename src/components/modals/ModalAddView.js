@@ -1,6 +1,6 @@
 import React from "react";
 import {useHistory} from "react-router-dom";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useAuth0} from "@auth0/auth0-react";
 
 import {message, PageHeader} from "antd";
@@ -14,6 +14,8 @@ const ModalAddView = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const {getAccessTokenSilently} = useAuth0();
+
+  const addingModal = useSelector(state => state.modals.isAdding);
 
   const onFinish = async v => {
     console.log("adding modal", v);
@@ -31,7 +33,7 @@ const ModalAddView = () => {
     title="Add Modal"
     subTitle="Create a new modal, for use in pages and stations"
   >
-    <ModalForm onFinish={onFinish}/>
+    <ModalForm onFinish={onFinish} loading={addingModal} />
   </PageHeader>;
 };
 

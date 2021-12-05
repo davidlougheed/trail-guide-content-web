@@ -21,7 +21,7 @@ const quizTypes = [
 const contentItemField = i => k => `contents_${i}_${k}`;
 const normalizeContents = c => ({...c, title: c.title || ""});
 
-const StationForm = ({onFinish, initialValues, ...props}) => {
+const StationForm = ({onFinish, initialValues, loading, ...props}) => {
   const [form] = Form.useForm();
 
   const sections = useSelector(state => state.sections.items);
@@ -266,7 +266,7 @@ const StationForm = ({onFinish, initialValues, ...props}) => {
       )}
     </Form.List>
     <Form.Item>
-      <Button type="primary" htmlType="submit">Submit</Button>
+      <Button type="primary" htmlType="submit" loading={loading}>Submit</Button>
     </Form.Item>
   </Form>;
 };

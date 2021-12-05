@@ -15,6 +15,7 @@ import {ACCESS_TOKEN_MANAGE} from "../../utils";
 const SettingsPage = () => {
   const dispatch = useDispatch();
   const fetchingSettings = useSelector(state => state.settings.isFetching);
+  const updatingSettings = useSelector(state => state.settings.isUpdating);
   const settings = useSelector(state => state.settings.data);
   const {getAccessTokenSilently} = useAuth0();
 
@@ -30,7 +31,7 @@ const SettingsPage = () => {
   };
 
   return <PageHeader title="Settings" ghost={false}>
-    <SettingsForm initialValues={settings} onFinish={onFinish}/>
+    <SettingsForm initialValues={settings} onFinish={onFinish} loading={updatingSettings} />
   </PageHeader>;
 };
 

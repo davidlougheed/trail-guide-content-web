@@ -16,6 +16,7 @@ const ModalEditView = () => {
   const {getAccessTokenSilently} = useAuth0();
 
   const fetchingModals = useSelector(state => state.modals.isFetching);
+  const updatingModal = useSelector(state => state.modals.isUpdating);
   const modal = useSelector(state => findItemByID(state.modals.items, modalID));
 
   if (fetchingModals) return <div>Loading...</div>;
@@ -36,7 +37,7 @@ const ModalEditView = () => {
     title={`Edit Modal: ${modal.title}`}
     subTitle="Press submit to save your changes."
   >
-    <ModalForm initialValues={modal} onFinish={onFinish}/>
+    <ModalForm initialValues={modal} onFinish={onFinish} loading={updatingModal} />
   </PageHeader>;
 };
 

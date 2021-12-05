@@ -20,6 +20,7 @@ const PageEditView = () => {
   const {getAccessTokenSilently} = useAuth0();
 
   const fetchingPages = useSelector(state => state.pages.isFetching);
+  const updatingPage = useSelector(state => state.pages.isUpdating);
   const page = useSelector(state => findItemByID(state.pages.items, pageID));
 
   if (fetchingPages) return <div>Loading...</div>;
@@ -40,7 +41,7 @@ const PageEditView = () => {
     title={`Edit Page: ${page.title}`}
     subTitle="Press submit to save your changes."
   >
-    <PageForm initialValues={page} onFinish={onFinish}/>
+    <PageForm initialValues={page} onFinish={onFinish} loading={updatingPage} />
   </PageHeader>;
 };
 

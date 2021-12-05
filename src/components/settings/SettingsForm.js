@@ -2,7 +2,7 @@ import React from "react";
 import {useSelector} from "react-redux";
 import {Button, Form, Select} from "antd";
 
-const SettingsForm = ({onFinish, ...props}) => {
+const SettingsForm = ({onFinish, loading, ...props}) => {
   const modals = useSelector(state => state.modals.items);
   const [form] = Form.useForm();
 
@@ -22,7 +22,7 @@ const SettingsForm = ({onFinish, ...props}) => {
       }))}/>
     </Form.Item>
     <Form.Item>
-      <Button type="primary" htmlType="submit">Save</Button>
+      <Button type="primary" htmlType="submit" loading={loading}>Save</Button>
     </Form.Item>
   </Form>;
 };

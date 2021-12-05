@@ -5,7 +5,7 @@ import {Button, Col, Form, Input, Row, Select, Switch} from "antd";
 
 import HTMLEditor from "../HTMLEditor";
 
-const PageForm = ({initialValues, onFinish, ...props}) => {
+const PageForm = ({initialValues, onFinish, loading, ...props}) => {
   const [form] = Form.useForm();
   const quillRef = useRef(undefined);
 
@@ -65,7 +65,7 @@ const PageForm = ({initialValues, onFinish, ...props}) => {
       <HTMLEditor initialValue={newInitialValues.content} innerRef={quillRef}/>
     </Form.Item>
     <Form.Item>
-      <Button type="primary" htmlType="submit">Submit</Button>
+      <Button type="primary" htmlType="submit" loading={loading}>Submit</Button>
     </Form.Item>
   </Form>;
 };

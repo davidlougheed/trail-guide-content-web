@@ -16,6 +16,7 @@ const StationEditView = () => {
   const {getAccessTokenSilently} = useAuth0();
 
   const fetchingStations = useSelector(state => state.stations.isFetching);
+  const updatingStations = useSelector(state => state.stations.isUpdating);
   const station = useSelector(state => findItemByID(state.stations.items, stationID));
 
   if (fetchingStations) return <div>Loading...</div>;  // TODO: Nice loading
@@ -36,7 +37,7 @@ const StationEditView = () => {
     title={`Edit Station: ${station.title}`}
     subTitle="Press submit to save your changes."
   >
-    <StationForm initialValues={station} onFinish={onFinish}/>
+    <StationForm initialValues={station} onFinish={onFinish} loading={updatingStations} />
   </PageHeader>;
 };
 
