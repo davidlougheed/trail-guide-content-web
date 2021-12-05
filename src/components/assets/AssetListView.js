@@ -22,8 +22,10 @@ const AssetListView = () => {
   const setAssetEnable = async (assetID, enabledValue) => {
     setAssetsLoading({...assetsLoading, [assetID]: true});
     try {
+      const body = new FormData();
+      body.set("enabled", enabledValue ? "1" : "");
       const token = await getAccessTokenSilently(ACCESS_TOKEN_MANAGE);
-      await dispatch(updateAsset(assetID, {enabled: enabledValue}, token));
+      await dispatch(updateAsset(assetID, body, token));
     } finally {
       setAssetsLoading({...assetsLoading, [assetID]: undefined});
     }
