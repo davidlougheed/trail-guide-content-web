@@ -25,6 +25,13 @@ const StationListView = () => {
       dataIndex: "category",
     },
     {
+      title: "Visible",
+      render: station =>
+        (station.visible.from && station.visible.to)
+          ? `${station.visible.from} to ${station.visible.to}`
+          : (station.enabled ? "Yes" : "No"),
+    },
+    {
       title: "Actions",
       key: "actions",
       render: station => (
