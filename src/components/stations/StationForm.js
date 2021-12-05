@@ -269,23 +269,32 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
                         case "html":
                           return <>
                             <Form.Item key="content_before_fold" label="Content Before Fold">
-                              <HTMLEditor innerRef={el => {
-                                contentsRefs.current = {...contentsRefs.current, [fi("content_before_fold")]: el};
-                              }} />
+                              <HTMLEditor
+                                initialValue={newInitialValues.contents[field.name]?.content_before_fold}
+                                innerRef={el => {
+                                  contentsRefs.current = {...contentsRefs.current, [fi("content_before_fold")]: el};
+                                }}
+                              />
                             </Form.Item>
                             <Form.Item key="content_after_fold" label="Content After Fold">
-                              <HTMLEditor innerRef={el => {
-                                contentsRefs.current = {...contentsRefs.current, [fi("content_after_fold")]: el};
-                              }} />
+                              <HTMLEditor
+                                initialValue={newInitialValues.contents[field.name]?.content_after_fold}
+                                innerRef={el => {
+                                  contentsRefs.current = {...contentsRefs.current, [fi("content_after_fold")]: el};
+                                }}
+                              />
                             </Form.Item>
                           </>;
 
                         case "gallery":
                           return <>
                             <Form.Item key="description" label="Description">
-                              <HTMLEditor innerRef={el => {
-                                contentsRefs.current = {...contentsRefs.current, [fi("description")]: el};
-                              }}/>
+                              <HTMLEditor
+                                initialValue={newInitialValues.contents[field.name]?.description}
+                                innerRef={el => {
+                                  contentsRefs.current = {...contentsRefs.current, [fi("description")]: el};
+                                }}
+                              />
                             </Form.Item>
 
                             Gallery TODO
@@ -297,14 +306,20 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
                               <Select options={quizTypes}/>
                             </Form.Item>
                             <Form.Item key="question" label="Question">
-                              <HTMLEditor innerRef={el => {
-                                contentsRefs.current = {...contentsRefs.current, [fi("question")]: el};
-                              }}/>
+                              <HTMLEditor
+                                initialValue={newInitialValues.contents[field.name]?.question}
+                                innerRef={el => {
+                                  contentsRefs.current = {...contentsRefs.current, [fi("question")]: el};
+                                }}
+                              />
                             </Form.Item>
                             <Form.Item key="answer" label="Answer">
-                              <HTMLEditor innerRef={el => {
-                                contentsRefs.current = {...contentsRefs.current, [fi("answer")]: el};
-                              }}/>
+                              <HTMLEditor
+                                initialValue={newInitialValues.contents[field.name]?.answer}
+                                innerRef={el => {
+                                  contentsRefs.current = {...contentsRefs.current, [fi("answer")]: el};
+                                }}
+                              />
                             </Form.Item>
                             Quiz TODO
                           </>;
