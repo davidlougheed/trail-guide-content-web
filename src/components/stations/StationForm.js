@@ -6,6 +6,9 @@ import {CloseCircleOutlined, PlusOutlined} from "@ant-design/icons";
 
 import HTMLEditor from "../HTMLEditor";
 
+// Maximum number of days each month can have.
+const MONTH_DAYS = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
 const contentTypes = [
   {value: "html", label: "Rich Text"},
   {value: "gallery", label: "Gallery"},
@@ -20,6 +23,21 @@ const quizTypes = [
 
 const contentItemField = i => k => `contents_${i}_${k}`;
 const normalizeContents = c => ({...c, title: c.title || ""});
+
+const monthDayValidator = (r, v) => {
+  if (!v) return Promise.resolve();
+
+  if (!/^\d{2}-\d{2}$/.test(v)) {
+    return Promise.reject(r.message);
+  }
+
+  const [month, day] = v.split("-").map(e => parseInt(e, 10));
+  if (month < 1 || month > 12 || day < 1 || day > MONTH_DAYS[month - 1]) {
+    return Promise.reject(r.message);
+  }
+
+  return Promise.resolve();
+};
 
 const StationForm = ({onFinish, initialValues, loading, ...props}) => {
   const [form] = Form.useForm();
@@ -99,6 +117,36 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
       <Col flex={1}>
         <Form.Item name="subtitle" label="Subtitle" rules={[{required: true}]}>
           <Input/>
+        </Form.Item>
+      </Col>
+      <Col flex="140px">
+        <Form.Item name={["visible", "from"]}
+                   label="Visible From"
+                   rules={[
+                     {validator: monthDayValidator, message: "Format is MM-DD"},
+                     ({getFieldValue}) => ({
+                       validator: (_, v) =>
+                         (!v && getFieldValue(["visible", "to"]))
+                           ? Promise.reject(new Error("visible.to requires that visible.from is filled as well"))
+                           : Promise.resolve(),
+                     }),
+                   ]}>
+          <Input placeholder="MM-DD" />
+        </Form.Item>
+      </Col>
+      <Col flex="140px">
+        <Form.Item name={["visible", "to"]}
+                   label="Visible To"
+                   rules={[
+                     {validator: monthDayValidator, message: "Format is MM-DD"},
+                     ({getFieldValue}) => ({
+                       validator: (_, v) =>
+                         (!v && getFieldValue(["visible", "from"]))
+                           ? Promise.reject(new Error("visible.from requires that visible.to is filled as well"))
+                           : Promise.resolve(),
+                     }),
+                   ]}>
+          <Input placeholder="MM-DD" />
         </Form.Item>
       </Col>
       <Col flex="80px">
