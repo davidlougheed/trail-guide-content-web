@@ -13,3 +13,10 @@ export const addAsset = (body, accessToken) => (dispatch, getState) => {
   if (state.isFetching || state.isAdding || state.isUpdating) return;
   return dispatch(_addAsset(body, {}, accessToken));
 };
+
+export const updateAsset = (assetID, assetMetadata, accessToken) => (dispatch, getState) => {
+  const state = getState();
+  if (state.isFetching || state.isAdding || state.isUpdating) return;
+  return dispatch(
+    networkAction(UPDATE_ASSET, `/assets/${assetID}`, "PUT")(assetMetadata, {}, accessToken));
+};

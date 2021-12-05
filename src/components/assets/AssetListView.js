@@ -1,15 +1,33 @@
-import React from "react";
-import {useSelector} from "react-redux";
+import React, {useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
 import {Link, useHistory} from "react-router-dom";
+import {useAuth0} from "@auth0/auth0-react";
 
 import {Button, PageHeader, Space, Table} from "antd";
-import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
+import {CheckSquareOutlined, CloseSquareOutlined, DeleteOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
+
+import {updateAsset} from "../../modules/assets/actions";
+import {ACCESS_TOKEN_MANAGE} from "../../utils";
 
 const AssetListView = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
+  const {getAccessTokenSilently} = useAuth0();
+
+  const [assetsLoading, setAssetsLoading] = useState({});
 
   const loadingAssets = useSelector(state => state.assets.isFetching);
   const assets = useSelector(state => state.assets.items);
+
+  const setAssetEnable = async (assetID, enabledValue) => {
+    setAssetsLoading({...assetsLoading, [assetID]: true});
+    try {
+      const token = await getAccessTokenSilently(ACCESS_TOKEN_MANAGE);
+      await dispatch(updateAsset(assetID, {enabled: enabledValue}, token));
+    } finally {
+      setAssetsLoading({...assetsLoading, [assetID]: undefined});
+    }
+  };
 
   const columns = [
     {
@@ -38,6 +56,15 @@ const AssetListView = () => {
         <Space size="middle">
           <Button icon={<EyeOutlined/>}
                   onClick={() => history.push(`/assets/detail/${asset.id}`)}>View</Button>
+          {asset.enabled ? (
+            <Button loading={assetsLoading[asset.id]}
+                    icon={<CloseSquareOutlined />}
+                    onClick={() => setAssetEnable(asset.id, false)}>Disable</Button>
+          ) : (
+            <Button loading={assetsLoading[asset.id]}
+                    icon={<CheckSquareOutlined />}
+                    onClick={() => setAssetEnable(asset.id, true)}>Enable</Button>
+          )}
           {/*<Button icon={<EditOutlined />}*/}
           {/*        onClick={() => history.push(`/assets/edit/${asset.id}`)}>Edit</Button>*/}
           <Button icon={<DeleteOutlined/>} danger={true} disabled={true}>Delete</Button>
