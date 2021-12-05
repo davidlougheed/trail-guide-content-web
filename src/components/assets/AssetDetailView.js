@@ -33,7 +33,7 @@ const AssetPreview = ({asset}) => {
   switch (asset.asset_type) {
     case "image":
       return <img src={assetIdToBytesUrl(asset.id)}
-                  style={{maxWidth: 800, width: "100%"}}
+                  style={{maxWidth: 500, width: "100%"}}
                   alt={asset.file_name}/>;
     case "video":
       return <video width={480} height={270} controls={true}>
