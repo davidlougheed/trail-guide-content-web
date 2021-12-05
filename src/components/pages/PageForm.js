@@ -20,7 +20,10 @@ const PageForm = ({initialValues, onFinish, loading, ...props}) => {
   };
 
   const _onFinish = data => {
-    onFinish({...data, content: quillRef.current.getEditor().root.innerHTML});
+    onFinish({
+      ...data,
+      content: quillRef.current.getEditor().root.innerHTML,
+    });
   };
 
   return <Form {...props} onFinish={_onFinish} form={form} layout="vertical" initialValues={newInitialValues}>

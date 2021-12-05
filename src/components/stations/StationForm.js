@@ -56,7 +56,11 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
       ...(oldInitialValues.coordinates_utm ?? {}),
     },
     ...oldInitialValues,
-    contents: (oldInitialValues.contents ?? []).map(normalizeContents)
+    visible: {
+      from: oldInitialValues.visible?.from || "",
+      to: oldInitialValues.visible?.to || "",
+    },
+    contents: (oldInitialValues.contents ?? []).map(normalizeContents),
   };
 
   const contentsRefs = useRef({});
@@ -67,6 +71,10 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
       ...values,
 
       // Properly type everything
+      visible: {
+        from: values.visible.from || null,
+        to: values.visible.to || null,
+      },
       header_image: values.header_image ?? null,
       coordinates_utm: {
         ...values.coordinates_utm,
