@@ -20,6 +20,7 @@ const AssetAddView = () => {
 
     const body = new FormData();
     body.set("asset_type", v.asset_type);
+    body.set("enabled", v.enabled ? "1" : "");
     body.set("file", v.file);
 
     const accessToken = await getAccessTokenSilently(ACCESS_TOKEN_MANAGE);
