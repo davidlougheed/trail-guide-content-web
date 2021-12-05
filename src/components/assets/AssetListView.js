@@ -27,6 +27,11 @@ const AssetListView = () => {
       render: fileSize => <span>{(fileSize / 1000).toFixed(0)} KB</span>,
     },
     {
+      title: "Enabled?",
+      dataIndex: "enabled",
+      render: enabled => enabled ? "Yes" : "No",
+    },
+    {
       title: "Actions",
       key: "actions",
       render: asset => (
