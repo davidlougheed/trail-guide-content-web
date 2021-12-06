@@ -28,18 +28,21 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
 
   const [assetOptions, setAssetOptions] = useState([]);
   const [selectedAsset, setSelectedAsset] = useState(null);
+  const [currentRange, setCurrentRange] = useState(null);
   const [showImageViewer, setShowImageViewer] = useState(false);
   const [showVideoViewer, setShowVideoViewer] = useState(false);
 
   const assets = useSelector(state => state.assets.items);
 
   const imageHandler = async () => {
+    setCurrentRange(quillRef.current.getEditor().getSelection(true));
     setSelectedAsset(null);
     setAssetOptions(assets.filter(a => a.asset_type === "image"));
     setShowImageViewer(true);
   };
 
   const videoHandler = async () => {
+    setCurrentRange(quillRef.current.getEditor().getSelection(true));
     setSelectedAsset(null);
     setAssetOptions(assets.filter(a => a.asset_type === "video"));
     setShowVideoViewer(true);
@@ -71,8 +74,7 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
              if (!quillRef.current) return;
              if (selectedAsset) {
                const editor = quillRef.current.getEditor();
-               const range = editor.getSelection(true);
-               editor.insertEmbed(range.index, "image", assetIdToBytesUrl(selectedAsset), "user");
+               editor.insertEmbed(currentRange.index, "image", assetIdToBytesUrl(selectedAsset), "user");
              }
              setShowImageViewer(false);
            }}
@@ -97,8 +99,7 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
              if (!quillRef.current) return;
              if (selectedAsset) {
                const editor = quillRef.current.getEditor();
-               const range = editor.getSelection(true);
-               editor.insertEmbed(range.index, "html5Video",
+               editor.insertEmbed(currentRange.index, "html5Video",
                  {
                    url: assetIdToBytesUrl(selectedAsset),
                  }, "user");
