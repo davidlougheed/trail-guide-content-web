@@ -1,8 +1,8 @@
 import React, {useRef} from "react";
 import {useSelector} from "react-redux";
 
-import {Button, Card, Col, Form, Input, Row, Select, Switch} from "antd";
-import {CloseCircleOutlined, PlusOutlined} from "@ant-design/icons";
+import {Button, Card, Col, Form, Input, Row, Select, Space, Switch} from "antd";
+import {CloseCircleOutlined, MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 
 import HTMLEditor from "../HTMLEditor";
 import SortableGalleryInput from "../SortableGalleryInput";
@@ -350,7 +350,49 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
                                 }}
                               />
                             </Form.Item>
-                            Quiz TODO
+                            <Form.Item label={"Options"}>
+                              <Form.List name={[field.name, "options"]}>
+                                {(optionFields, {add: addOption, remove: removeOption}) => (
+                                  <>
+                                    {optionFields.map(optionField => (
+                                      <Space
+                                        key={optionField.key}
+                                        style={{display: "flex", marginBottom: 8}}
+                                        align="baseline"
+                                      >
+                                        <Form.Item
+                                          {...optionField}
+                                          name={[optionField.name, "label"]}
+                                          fieldKey={[optionField.name, "label"]}
+                                          rules={[{required: true}]}
+                                        >
+                                          <Input placeholder="Label" />
+                                        </Form.Item>
+                                        <Form.Item
+                                          {...optionField}
+                                          name={[optionField.name, "answer"]}
+                                          fieldKey={[optionField.name, "answer"]}
+                                          rules={[{required: true}]}
+                                        >
+                                          <Input placeholder="Answer" />
+                                        </Form.Item>
+                                        <MinusCircleOutlined onClick={() => removeOption(optionField.name)} />
+                                      </Space>
+                                    ))}
+                                    <Form.Item>
+                                      <Button
+                                        type="dashed"
+                                        onClick={() => addOption()}
+                                        block={true}
+                                        icon={<PlusOutlined />}
+                                      >
+                                        Add Option
+                                      </Button>
+                                    </Form.Item>
+                                  </>
+                                )}
+                              </Form.List>
+                            </Form.Item>
                           </>;
                       }
                     }}
