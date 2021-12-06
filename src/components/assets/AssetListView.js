@@ -75,6 +75,10 @@ const AssetListView = () => {
     },
   ];
 
+  const totalEnabledAssetSize = assets
+    .filter(a => a.enabled)
+    .reduce(((acc, asset) => acc + asset.file_size), 0);
+
   return <PageHeader
     ghost={false}
     title="Assets"
@@ -87,7 +91,18 @@ const AssetListView = () => {
         Add New</Button>,
     ]}
   >
-    <Table bordered={true} loading={loadingAssets} columns={columns} dataSource={assets} rowKey="id"/>
+    <Table
+      bordered={true}
+      loading={loadingAssets}
+      columns={columns}
+      dataSource={assets}
+      footer={() =>
+        <span>
+          <span style={{fontWeight: "bold"}}>Total Enabled Asset Size:</span>&nbsp;
+          {loadingAssets ? `–` : `${(totalEnabledAssetSize / 1000).toFixed(0)} KB`}
+        </span>}
+      rowKey="id"
+    />
   </PageHeader>;
 };
 
