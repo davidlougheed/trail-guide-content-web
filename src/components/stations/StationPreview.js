@@ -3,6 +3,7 @@ import React from "react";
 // TODO: De-duplicate with app itself
 
 import {assetIdToBytesUrl} from "../../utils";
+import {Image, Typography} from "antd";
 
 const textShadow = {
   textShadow: "1px 3px 3px rgba(0, 0, 0, 0.8)",
@@ -53,14 +54,23 @@ const styles = {
 };
 
 const RenderedContent = ({content}) => {
-  console.log(content);
   switch (content.content_type) {
     case "html":
-      return <div>
+      return <>
+        {content.title ? <Typography.Title level={4}>{content.title}</Typography.Title> : null}
         <div dangerouslySetInnerHTML={{__html: content.content_before_fold ?? ""}} />
-      </div>;
+      </>;
     case "gallery":
-      return "TODO";
+      return <>
+        {content.title ? <Typography.Title level={4}>{content.title}</Typography.Title> : null}
+        <Image.PreviewGroup>
+          {content.items.map(a => (
+            <div key={a} style={{display: "inline-block", paddingLeft: 8, paddingBottom: 8}}>
+              <Image height={100} src={assetIdToBytesUrl(a)} />
+            </div>
+          ))}
+        </Image.PreviewGroup>
+      </>;
     case "quiz":
       return "TODO";
     default:
