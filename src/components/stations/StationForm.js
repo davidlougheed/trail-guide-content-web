@@ -5,6 +5,7 @@ import {Button, Card, Col, Form, Input, Row, Select, Switch} from "antd";
 import {CloseCircleOutlined, PlusOutlined} from "@ant-design/icons";
 
 import HTMLEditor from "../HTMLEditor";
+import SortableGalleryInput from "../SortableGalleryInput";
 
 // Maximum number of days each month can have.
 const MONTH_DAYS = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -22,7 +23,25 @@ const quizTypes = [
 ];
 
 const contentItemField = i => k => `contents_${i}_${k}`;
-const normalizeContents = c => ({...c, title: c.title || ""});
+const normalizeContents = c => ({
+  ...c,
+  title: c.title || "",
+
+  ...(c.content_type === "html" ? {
+    content_before_fold: c.content_before_fold || "",
+    content_after_fold: c.content_after_fold || "",
+  } : {}),
+
+  ...(c.content_type === "gallery" ? {
+    description: c.description || "",
+    items: c.items || []
+  } : {}),
+
+  ...(c.content_type === "quiz" ? {
+    question: c.question || "",
+    answer: c.answer || "",
+  } : {}),
+});
 
 const monthDayValidator = (r, v) => {
   if (!v) return Promise.resolve();
@@ -178,12 +197,12 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
       </Col>
       <Col span={8}>
         <Form.Item name={["coordinates_utm", "east"]} label="Easting" rules={[{required: true}]}>
-          <Input type="number" addonAfter="E"/>
+          <Input type="number" addonAfter="E" />
         </Form.Item>
       </Col>
       <Col span={8}>
         <Form.Item name={["coordinates_utm", "north"]} label="Northing" rules={[{required: true}]}>
-          <Input type="number" addonAfter="N"/>
+          <Input type="number" addonAfter="N" />
         </Form.Item>
       </Col>
     </Row>
@@ -288,7 +307,10 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
 
                         case "gallery":
                           return <>
-                            <Form.Item key="description" label="Description">
+                            <Form.Item key="description"
+                                       label="Description"
+                                       name={[field.name, "description"]}
+                                       fieldKey={[field.fieldKey, "description"]}>
                               <HTMLEditor
                                 initialValue={newInitialValues.contents[field.name]?.description}
                                 innerRef={el => {
@@ -296,13 +318,20 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
                                 }}
                               />
                             </Form.Item>
-
-                            Gallery TODO
+                            <Form.Item key="items"
+                                       label="Images"
+                                       name={[field.name, "items"]}
+                                       fieldKey={[field.fieldKey, "items"]}>
+                              <SortableGalleryInput />
+                            </Form.Item>
                           </>;
 
                         case "quiz":
                           return <>
-                            <Form.Item key="quiz_type" label="Quiz Type">
+                            <Form.Item key="quiz_type"
+                                       label="Quiz Type"
+                                       name={[field.name, "quiz_type"]}
+                                       fieldKey={[field.fieldKey, "quiz_type"]}>
                               <Select options={quizTypes}/>
                             </Form.Item>
                             <Form.Item key="question" label="Question">
