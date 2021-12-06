@@ -340,7 +340,7 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
                                        label="Quiz Type"
                                        name={[field.name, "quiz_type"]}
                                        fieldKey={[field.fieldKey, "quiz_type"]}>
-                              <Select options={quizTypes} onChange={(e) => {
+                              <Select options={quizTypes} onChange={() => {
                                 const cc = form.getFieldsValue().contents;
                                 form.setFieldsValue({
                                   contents: cc.map((c, i) =>
