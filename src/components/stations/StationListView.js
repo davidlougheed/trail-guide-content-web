@@ -36,8 +36,8 @@ const StationListView = () => {
       key: "actions",
       render: station => (
         <Space size="middle">
-          <Button icon={<EyeOutlined/>} disabled={true}
-                  onClick={() => history.push(`/modals/detail/${station.id}`)}>View</Button>
+          <Button icon={<EyeOutlined/>}
+                  onClick={() => history.push(`/stations/detail/${station.id}`)}>View</Button>
           <Button icon={<EditOutlined/>}
                   onClick={() => history.push(`/stations/edit/${station.id}`)}>Edit</Button>
           <Button icon={<DeleteOutlined/>} danger={true} disabled={true}>Delete</Button>
