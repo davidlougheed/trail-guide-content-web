@@ -12,6 +12,7 @@ const styles = {
   header: {
     backgroundColor: "#0F7470",
     margin: 0,
+    marginBottom: 16,
   },
   headerBackground: {
     display: "flex",
