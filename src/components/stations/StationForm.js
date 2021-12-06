@@ -40,6 +40,14 @@ const normalizeContents = c => ({
   ...(c.content_type === "quiz" ? {
     question: c.question || "",
     answer: c.answer || "",
+    options: (c.options || []).map(o => ({
+      ...o,
+
+      ...(["select_all_that_apply", "choose_one"].includes(c.quiz_type) ? {
+        // "cast" these answers to booleans
+        answer: o.answer === "true",
+      } : {}),
+    })),
   } : {}),
 });
 
@@ -283,7 +291,7 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
                     const ct2 = newValues.contents[field.name]?.content_type;
                     return ct1 !== ct2;
                   }}>
-                    {(f) => {
+                    {f => {
                       switch (f.getFieldValue(["contents", field.name, "content_type"])) {
                         case "html":
                           return <>
@@ -332,7 +340,13 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
                                        label="Quiz Type"
                                        name={[field.name, "quiz_type"]}
                                        fieldKey={[field.fieldKey, "quiz_type"]}>
-                              <Select options={quizTypes}/>
+                              <Select options={quizTypes} onChange={(e) => {
+                                const cc = form.getFieldsValue().contents;
+                                form.setFieldsValue({
+                                  contents: cc.map((c, i) =>
+                                    i === field.name ? {...c, options: []} : c),
+                                });
+                              }} />
                             </Form.Item>
                             <Form.Item key="question" label="Question">
                               <HTMLEditor
@@ -362,6 +376,7 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
                                       >
                                         <Form.Item
                                           {...optionField}
+                                          label="Label"
                                           name={[optionField.name, "label"]}
                                           fieldKey={[optionField.name, "label"]}
                                           rules={[{required: true}]}
@@ -369,12 +384,34 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
                                           <Input placeholder="Label" />
                                         </Form.Item>
                                         <Form.Item
-                                          {...optionField}
-                                          name={[optionField.name, "answer"]}
-                                          fieldKey={[optionField.name, "answer"]}
-                                          rules={[{required: true}]}
+                                          label="Answer"
+                                          shouldUpdate={(prevValues, newValues) => {
+                                            const ct1 = prevValues.contents[field.name]?.quiz_type;
+                                            const ct2 = newValues.contents[field.name]?.quiz_type;
+                                            return ct1 !== ct2;
+                                          }}
                                         >
-                                          <Input placeholder="Answer" />
+                                          {f => {
+                                            switch (f.getFieldValue(["contents", field.name, "quiz_type"])) {
+                                              case "match_values":
+                                                return <Form.Item name={[optionField.name, "answer"]}
+                                                                  fieldKey={[optionField.name, "answer"]}
+                                                                  rules={[{required: true}]}>
+                                                  <Input placeholder="Answer" />
+                                                </Form.Item>;
+                                              default:
+                                                // select_all_that_apply
+                                                // choose_one
+                                                return <Form.Item name={[optionField.name, "answer"]}
+                                                                  fieldKey={[optionField.name, "answer"]}
+                                                                  rules={[{required: true}]}>
+                                                  <Select style={{width: 150}} options={[
+                                                    {value: "true", label: "Correct"},
+                                                    {value: "false", label: "Incorrect"},
+                                                  ]} />
+                                                </Form.Item>;
+                                            }
+                                          }}
                                         </Form.Item>
                                         <MinusCircleOutlined onClick={() => removeOption(optionField.name)} />
                                       </Space>
