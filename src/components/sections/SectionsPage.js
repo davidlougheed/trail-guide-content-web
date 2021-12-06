@@ -27,7 +27,13 @@ const SectionsPage = () => {
     title="Sections"
     subTitle="View station sections"
   >
-    <Table bordered={true} loading={loadingSections} columns={COLUMNS} dataSource={sections}/>
+    <Table
+      bordered={true}
+      loading={loadingSections}
+      columns={COLUMNS}
+      dataSource={sections}
+      rowKey="id"
+    />
   </PageHeader>;
 };
 
