@@ -4,6 +4,7 @@ import React from "react";
 
 import {assetIdToBytesUrl} from "../../utils";
 import {Image, Typography} from "antd";
+import Quiz from "../Quiz";
 
 const textShadow = {
   textShadow: "1px 3px 3px rgba(0, 0, 0, 0.8)",
@@ -72,7 +73,7 @@ const RenderedContent = ({content}) => {
         </Image.PreviewGroup>
       </>;
     case "quiz":
-      return "TODO";
+      return <Quiz {...content} />;
     default:
       return "";
   }
