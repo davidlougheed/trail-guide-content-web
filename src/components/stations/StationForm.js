@@ -124,7 +124,6 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
           case "quiz":
             return {
               ...c,
-              ...getContentKey("quiz_type", ci),
               ...getContentKey("question", ci),
               ...getContentKey("answer", ci),
             };
