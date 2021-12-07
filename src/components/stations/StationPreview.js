@@ -73,7 +73,7 @@ const RenderedContent = ({content}) => {
         </Image.PreviewGroup>
       </>;
     case "quiz":
-      return <Quiz {...content} />;
+      return <Quiz {...content} style={{marginBottom: 8}} />;
     default:
       return "";
   }

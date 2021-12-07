@@ -2,12 +2,12 @@ import React, {useState} from "react";
 
 import {Button, Card, Checkbox, Divider, Space, Typography} from "antd";
 
-const Quiz = ({quiz_type, title, question, answer, options}) => {
+const Quiz = ({quiz_type, title, question, answer, options, ...props}) => {
   const [showAnswer, setShowAnswer] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [correct, setCorrect] = useState(false);
 
-  return <Card title={title}>
+  return <Card title={title} {...props}>
     <Typography.Title level={5}>Question</Typography.Title>
     <div dangerouslySetInnerHTML={{__html: question}} />
 
@@ -22,13 +22,16 @@ const Quiz = ({quiz_type, title, question, answer, options}) => {
         options={options.map((o, i) => ({
           label: o.label,
           value: i,
-          ...(showAnswer && selectedOptions.includes(i) ? {
-            color: o.answer ? "#52c41a" : "#ff4d4f",
-          } : {})
+          style: showAnswer ? (
+            selectedOptions.includes(i)
+              ? {color: o.answer ? "#52c41a" : "#ff4d4f"}
+              : (o.answer ? {color: "#52c41a"} : {})
+          ) : {},
         }))}
         onChange={selected => setSelectedOptions(selected)}
       />
-      <Button type="primary" onClick={() => {
+      <br />
+      <Button type="primary" style={{marginTop: 8}} onClick={() => {
         setCorrect(options.reduce((acc, o, i) => acc && (o.answer === selectedOptions.includes(i)), true));
         setShowAnswer(true);
       }}>Submit</Button>
