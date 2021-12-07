@@ -23,7 +23,7 @@ const quizTypes = [
 ];
 
 const contentItemField = i => k => `contents_${i}_${k}`;
-const normalizeContents = c => ({
+const normalizeContents = fromAPI => c => ({
   ...c,
   title: c.title || "",
 
@@ -45,7 +45,7 @@ const normalizeContents = c => ({
 
       ...(["select_all_that_apply", "choose_one"].includes(c.quiz_type) ? {
         // "cast" these answers to booleans
-        answer: o.answer === "true",
+        answer: fromAPI ? (o.answer ? "true" : "false") : (o.answer === "true"),
       } : {}),
     })),
   } : {}),
@@ -87,7 +87,7 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
       from: oldInitialValues.visible?.from || "",
       to: oldInitialValues.visible?.to || "",
     },
-    contents: (oldInitialValues.contents ?? []).map(normalizeContents),
+    contents: (oldInitialValues.contents ?? []).map(normalizeContents(true)),
   };
 
   const contentsRefs = useRef({});
@@ -108,7 +108,7 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
         east: parseInt(values.coordinates_utm.east, 10),
         north: parseInt(values.coordinates_utm.north, 10),
       },
-      contents: (values.contents.map(normalizeContents) ?? []).map((c, ci) => {
+      contents: (values.contents.map(normalizeContents(false)) ?? []).map((c, ci) => {
         switch (c.content_type) {
           case "html":
             return {
@@ -380,7 +380,7 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
                                           fieldKey={[optionField.name, "label"]}
                                           rules={[{required: true}]}
                                         >
-                                          <Input placeholder="Label" />
+                                          <Input placeholder="Label" style={{width: 240}} />
                                         </Form.Item>
                                         <Form.Item
                                           label="Answer"
