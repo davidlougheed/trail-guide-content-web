@@ -34,7 +34,6 @@ const Quiz = ({quiz_type, title, question, answer, options, ...props}) => {
           }}
           value={selectedOptions[i]}
           onChange={v => {
-            console.log(v)
             setSelectedOptions(selectedOptions.map((v2, i2) => i === i2 ? v : v2))
           }}
         />
