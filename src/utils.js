@@ -90,7 +90,7 @@ export const makeIfNeededAction = (action, reducer) => (...args) => (dispatch, g
   return dispatch(action(...args));
 };
 
-export const makeGenericNetworkReducer = (fetchTypes, addTypes, updateTypes) => (
+export const makeGenericNetworkReducer = (fetchTypes, addTypes, updateTypes, idKey="id") => (
   state = {
     isFetching: false,
     isAdding: false,
@@ -128,7 +128,7 @@ export const makeGenericNetworkReducer = (fetchTypes, addTypes, updateTypes) => 
         return {
           ...state,
           isUpdating: false,
-          items: state.items.map(i => i.id === action.data.id ? action.data : i),
+          items: state.items.map(i => i[idKey] === action.data[idKey] ? action.data : i),
           error: "",
         };
       case updateTypes.ERROR:
@@ -140,4 +140,5 @@ export const makeGenericNetworkReducer = (fetchTypes, addTypes, updateTypes) => 
 };
 
 
-export const findItemByID = (items, id) => items.find(obj => obj.id.toString() === id.toString());
+export const findItemByID = (items, id, idKey="id") =>
+  items.find(obj => obj[idKey].toString() === id.toString());

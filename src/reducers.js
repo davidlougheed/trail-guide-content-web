@@ -10,6 +10,7 @@ import categories from "./modules/categories/reducer";
 import feedback from "./modules/feedback/reducer";
 import modals from "./modules/modals/reducer";
 import pages from "./modules/pages/reducer";
+import releases from "./modules/releases/reducer";
 import sections from "./modules/sections/reducer";
 import settings from "./modules/settings/reducer";
 import stations from "./modules/stations/reducer";
@@ -21,6 +22,7 @@ export default combineReducers({
   feedback,
   modals,
   pages,
+  releases,
   sections,
   settings,
   stations,

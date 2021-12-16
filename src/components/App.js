@@ -4,6 +4,7 @@ import {useAuth0} from "@auth0/auth0-react";
 
 import {Alert, AutoComplete, Button, Layout, Input, Menu, Spin, Typography} from "antd";
 import {
+  AppstoreOutlined,
   CloseSquareOutlined,
   DatabaseOutlined,
   EnvironmentOutlined,
@@ -24,6 +25,7 @@ import {fetchCategoriesIfNeeded} from "../modules/categories/actions";
 import {fetchFeedbackIfNeeded} from "../modules/feedback/actions";
 import {fetchModalsIfNeeded} from "../modules/modals/actions";
 import {fetchPagesIfNeeded} from "../modules/pages/actions";
+import {fetchReleasesIfNeeded} from "../modules/releases/actions";
 import {fetchSectionsIfNeeded} from "../modules/sections/actions";
 import {fetchSettingsIfNeeded} from "../modules/settings/actions";
 import {fetchStationsIfNeeded} from "../modules/stations/actions";
@@ -32,6 +34,7 @@ import AssetsPage from "./assets/AssetsPage";
 import FeedbackPage from "./feedback/FeedbackPage";
 import ModalsPage from "./modals/ModalsPage";
 import PagesPage from "./pages/PagesPage";
+import ReleasePage from "./releases/ReleasePage";
 import SectionsPage from "./sections/SectionsPage";
 import StationsPage from "./stations/StationsPage";
 import SettingsPage from "./settings/SettingsPage";
@@ -62,6 +65,7 @@ const App = () => {
         fetchFeedbackIfNeeded,
         fetchModalsIfNeeded,
         fetchPagesIfNeeded,
+        fetchReleasesIfNeeded,
         fetchSectionsIfNeeded,
         fetchSettingsIfNeeded,
         fetchStationsIfNeeded,
@@ -109,25 +113,28 @@ const App = () => {
     <Layout>
       <Layout.Sider collapsedWidth={0} collapsed={!isLoadingAuth && !isAuthenticated}>
         <Menu theme="dark" defaultSelectedKeys={defaultSelectedKeys}>
-          <Menu.Item key="stations" icon={<EnvironmentOutlined/>}>
+          <Menu.Item key="stations" icon={<EnvironmentOutlined />}>
             <Link to="/stations">Stations</Link>
           </Menu.Item>
-          <Menu.Item key="sections" icon={<DatabaseOutlined/>}>
+          <Menu.Item key="sections" icon={<DatabaseOutlined />}>
             <Link to="/sections">Sections</Link>
           </Menu.Item>
-          <Menu.Item key="pages" icon={<FileOutlined/>}>
+          <Menu.Item key="pages" icon={<FileOutlined />}>
             <Link to="/pages">Pages</Link>
           </Menu.Item>
-          <Menu.Item key="modals" icon={<CloseSquareOutlined/>}>
+          <Menu.Item key="modals" icon={<CloseSquareOutlined />}>
             <Link to="/modals">Modals</Link>
           </Menu.Item>
-          <Menu.Item key="assets" icon={<PictureOutlined/>}>
+          <Menu.Item key="assets" icon={<PictureOutlined />}>
             <Link to="/assets">Assets</Link>
           </Menu.Item>
-          <Menu.Item key="feedback" icon={<SolutionOutlined/>}>
+          <Menu.Item key="releases" icon={<AppstoreOutlined />}>
+            <Link to="/releases">Releases</Link>
+          </Menu.Item>
+          <Menu.Item key="feedback" icon={<SolutionOutlined />}>
             <Link to="/feedback">Feedback</Link>
           </Menu.Item>
-          <Menu.Item key="settings" icon={<SettingOutlined/>}>
+          <Menu.Item key="settings" icon={<SettingOutlined />}>
             <Link to="/settings">Settings</Link>
           </Menu.Item>
         </Menu>
@@ -136,13 +143,14 @@ const App = () => {
         {isLoadingAuth ? "Loading..." : (isAuthenticated ? (
           <Spin spinning={false}>
             <Switch>
-              <Route path="/assets"><AssetsPage/></Route>
-              <Route path="/feedback"><FeedbackPage/></Route>
-              <Route path="/modals"><ModalsPage/></Route>
-              <Route path="/pages"><PagesPage/></Route>
-              <Route path="/sections"><SectionsPage/></Route>
-              <Route path="/settings"><SettingsPage/></Route>
-              <Route path="/stations"><StationsPage/></Route>
+              <Route path="/assets"><AssetsPage /></Route>
+              <Route path="/feedback"><FeedbackPage /></Route>
+              <Route path="/modals"><ModalsPage /></Route>
+              <Route path="/pages"><PagesPage /></Route>
+              <Route path="/releases"><ReleasePage /></Route>
+              <Route path="/sections"><SectionsPage /></Route>
+              <Route path="/settings"><SettingsPage /></Route>
+              <Route path="/stations"><StationsPage /></Route>
               <Redirect to={{pathname: "/stations"}}/>
             </Switch>
           </Spin>
