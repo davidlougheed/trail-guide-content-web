@@ -8,11 +8,14 @@ import {useHistory, useParams} from "react-router-dom";
 
 import {Descriptions, PageHeader} from "antd";
 
-import {findItemByID} from "../../utils";
+import {downloadVersionBundle, findItemByID} from "../../utils";
+import {useAuth0} from "@auth0/auth0-react";
 
 const ReleaseDetailView = () => {
   const history = useHistory();
   const {id: strVersion} = useParams();
+
+  const {isAuthenticated, getAccessTokenSilently} = useAuth0();
 
   const intVersion = parseInt(strVersion, 10);
 
@@ -34,7 +37,9 @@ const ReleaseDetailView = () => {
       <Descriptions.Item label="Published">
         {published_dt ? (new Date(published_dt)).toLocaleDateString() : "–"}</Descriptions.Item>
       <Descriptions.Item label="Release Notes" span={3}>{release_notes ?? ""}</Descriptions.Item>
-      <Descriptions.Item label="Bundle Path">{bundle_path ?? ""}</Descriptions.Item>
+      <Descriptions.Item label="Bundle Path">
+        <a onClick={downloadVersionBundle(version, isAuthenticated, getAccessTokenSilently)}>{bundle_path ?? ""}</a>
+      </Descriptions.Item>
     </Descriptions>
   </PageHeader>;
 };

@@ -16,7 +16,7 @@ export const ACCESS_TOKEN_MANAGE = {
   scope: "manage:content",
 };
 
-export const fetchOtt = async (accessToken, setOtt) => {
+export const fetchOtt = async accessToken => {
   const req = await fetch(`${BASE_URL}/ott`, {
     method: "POST",
     headers: {"Authorization": `Bearer ${accessToken}`},
@@ -27,6 +27,20 @@ export const fetchOtt = async (accessToken, setOtt) => {
   } else {
     console.error("Failed to get OTT", req);
   }
+};
+
+export const downloadVersionBundle = (version, isAuthenticated, getAccessTokenSilently) => async () => {
+  if (!isAuthenticated) return;
+
+  const accessToken = await getAccessTokenSilently({
+    audience: AUTH_AUDIENCE,
+    scope: "read:content",
+  });
+
+  const ott = await fetchOtt(accessToken);
+
+  if (!ott) return;
+  window.location.href = `${BASE_URL}/releases/${version ?? ""}/bundle?ott=${ott.token}`;
 };
 
 export const assetIdToBytesUrl = assetId => `${BASE_URL}/assets/${assetId}/bytes`;

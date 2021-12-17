@@ -1,12 +1,16 @@
 import React from "react";
 import {useSelector} from "react-redux";
 import {useHistory} from "react-router-dom";
+import {useAuth0} from "@auth0/auth0-react";
 
 import {Button, PageHeader, Space, Table} from "antd";
 import {DownloadOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
+import {downloadVersionBundle} from "../../utils";
 
 const ReleaseListView = () => {
   const history = useHistory();
+
+  const {isAuthenticated, getAccessTokenSilently} = useAuth0();
 
   const loadingReleases = useSelector(state => state.releases.isFetching);
   const releases = useSelector(state => state.releases.items);
@@ -39,7 +43,10 @@ const ReleaseListView = () => {
       key: "actions",
       render: release => (
         <Space size="middle">
-          <Button icon={<DownloadOutlined/>} disabled={true} onClick={() => {}}>Download Bundle</Button>
+          <Button
+            icon={<DownloadOutlined/>}
+            onClick={downloadVersionBundle(release.version, isAuthenticated, getAccessTokenSilently)}
+          >Download Bundle</Button>
           <Button icon={<EyeOutlined/>}
                   onClick={() => history.push(`/releases/detail/${release.version}`)}>View</Button>
           {/*<Button icon={<EditOutlined/>}*/}
