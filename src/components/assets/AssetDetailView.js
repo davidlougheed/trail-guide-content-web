@@ -65,11 +65,12 @@ const AssetDetailView = () => {
   >
     <Descriptions bordered={true}>
       <Descriptions.Item label="ID">{asset?.id ?? ""}</Descriptions.Item>
-      <Descriptions.Item label="File Name">{asset?.file_name ?? ""}</Descriptions.Item>
-      <Descriptions.Item label="Type">{asset?.asset_type ?? ""}</Descriptions.Item>
-      <Descriptions.Item label="File Size">
+      <Descriptions.Item label="File Name" span={2}>{asset?.file_name ?? ""}</Descriptions.Item>
+      <Descriptions.Item label="Type" span={1}>{asset?.asset_type ?? ""}</Descriptions.Item>
+      <Descriptions.Item label="File Size" span={1}>
         {((asset?.file_size ?? 0) / 1000).toFixed(0)} KB</Descriptions.Item>
-      <Descriptions.Item label="Enabled">{asset?.enabled ? "Yes" : "No"}</Descriptions.Item>
+      <Descriptions.Item label="Enabled" span={2}>{asset?.enabled ? "Yes" : "No"}</Descriptions.Item>
+      <Descriptions.Item label="SHA1 Checksum" span={3}>{asset?.sha1_checksum ?? ""}</Descriptions.Item>
     </Descriptions>
 
     <Card size="small" title="Preview" style={{marginTop: 16}}>
