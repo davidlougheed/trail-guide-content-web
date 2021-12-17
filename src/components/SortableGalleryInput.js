@@ -24,7 +24,7 @@ import {CSS} from "@dnd-kit/utilities";
 import {assetIdToBytesUrl} from "../utils";
 
 
-const SortableItem = ({id, asset, remove}) => {
+const SortableItem = ({id, asset, caption, remove, onChangeCaption}) => {
   const {
     attributes,
     listeners,
@@ -51,6 +51,7 @@ const SortableItem = ({id, asset, remove}) => {
       <List.Item.Meta
         title={asset.file_name}
         description={`${(asset.file_size / 1000).toFixed(0)} KB`} />
+      <Input value={caption} onChange={e => onChangeCaption(e.target.value)} placeholder="Caption" />
     </List.Item>
   </div>;
 };
@@ -87,11 +88,13 @@ const SortableGalleryInput = ({value, onChange}) => {
         style={{width: 400}}
         value={toAdd}
         onChange={a => setToAdd(a)}
-        options={assets.filter(a => items.indexOf(a.id) === -1).map(a => ({value: a.id, label: a.file_name}))}
+        options={assets
+          .filter(a => items.find(i => i.asset === a.id) === undefined)
+          .map(a => ({value: a.id, label: a.file_name}))}
       />
       <Button onClick={() => {
         if (toAdd !== null) {
-          onChange([...items, toAdd]);
+          onChange([...items, {asset: toAdd, caption: ""}]);
           setToAdd(null);
         }
       }}>Add</Button>
@@ -106,12 +109,17 @@ const SortableGalleryInput = ({value, onChange}) => {
         items={items}
         strategy={verticalListSortingStrategy}
       >
-        {items.map(id =>
+        {items.map(({asset, caption}) =>
           <SortableItem
-            key={id}
-            id={id}
-            asset={assetsByID[id]}
-            remove={id3 => onChange(items.filter(id2 => id2 !== id3))}
+            key={asset}
+            id={asset}
+            asset={assetsByID[asset]}
+            caption={caption}
+            onChangeCaption={newCaption =>
+              onChange(items.map(i => i.asset === asset
+                ? {asset, caption: newCaption}
+                : i))}
+            remove={asset3 => onChange(items.filter(({asset: asset2}) => asset2 !== asset3))}
           />)}
       </SortableContext>
     </DndContext>

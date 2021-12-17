@@ -64,10 +64,12 @@ const RenderedContent = ({content}) => {
     case "gallery":
       return <>
         {content.title ? <Typography.Title level={4}>{content.title}</Typography.Title> : null}
+        <div dangerouslySetInnerHTML={{__html: content.description}} />
         <Image.PreviewGroup>
-          {content.items.map(a => (
-            <div key={a} style={{display: "inline-block", paddingLeft: 8, paddingBottom: 8}}>
-              <Image height={100} src={assetIdToBytesUrl(a)} />
+          {content.items.map(i => (
+            <div key={i.asset} style={{display: "inline-block", paddingRight: 16, paddingBottom: 8}}>
+              <Image height={180} src={assetIdToBytesUrl(i.asset)} alt={i.caption} /> <br />
+              <Typography.Text>{i.caption}</Typography.Text>
             </div>
           ))}
         </Image.PreviewGroup>
