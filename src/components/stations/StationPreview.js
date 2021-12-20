@@ -72,7 +72,7 @@ const RenderedContent = ({content}) => {
     case "gallery":
       return <>
         {content.title ? <Typography.Title level={4}>{content.title}</Typography.Title> : null}
-        <div dangerouslySetInnerHTML={{__html: content.description}} />
+        <div className="html-content" dangerouslySetInnerHTML={{__html: content.description}} />
         <Image.PreviewGroup>
           {content.items.map(i => (
             <div key={i.asset} style={{display: "inline-block", paddingRight: 16, paddingBottom: 8}}>

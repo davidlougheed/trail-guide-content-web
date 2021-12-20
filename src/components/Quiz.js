@@ -88,7 +88,7 @@ const Quiz = ({quiz_type, title, question, answer, options, ...props}) => {
         ? <span style={{color: "#52c41a", fontWeight: "bold"}}>Correct!</span>
         : <span style={{color: "#ff4d4f", fontWeight: "bold"}}>Sorry, not quite right.</span>}
       <Typography.Title level={5} style={{marginTop: 8}}>Answer</Typography.Title>
-      <div dangerouslySetInnerHTML={{__html: answer}} />
+      <div className="html-content" dangerouslySetInnerHTML={{__html: answer}} />
     </> : null}
   </Card>
 };
