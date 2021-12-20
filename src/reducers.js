@@ -8,6 +8,7 @@ import assetTypes from "./modules/asset_types/reducer";
 import assets from "./modules/assets/reducer";
 import categories from "./modules/categories/reducer";
 import feedback from "./modules/feedback/reducer";
+import layers from "./modules/layers/reducer";
 import modals from "./modules/modals/reducer";
 import pages from "./modules/pages/reducer";
 import releases from "./modules/releases/reducer";
@@ -20,6 +21,7 @@ export default combineReducers({
   assets,
   categories,
   feedback,
+  layers,
   modals,
   pages,
   releases,

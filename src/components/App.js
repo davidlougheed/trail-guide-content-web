@@ -9,6 +9,7 @@ import {
   DatabaseOutlined,
   EnvironmentOutlined,
   FileOutlined,
+  GlobalOutlined,
   PictureOutlined,
   SearchOutlined,
   SettingOutlined,
@@ -23,6 +24,7 @@ import {fetchAssetTypesIfNeeded} from "../modules/asset_types/actions";
 import {fetchAssetsIfNeeded} from "../modules/assets/actions";
 import {fetchCategoriesIfNeeded} from "../modules/categories/actions";
 import {fetchFeedbackIfNeeded} from "../modules/feedback/actions";
+import {fetchLayersIfNeeded} from "../modules/layers/actions";
 import {fetchModalsIfNeeded} from "../modules/modals/actions";
 import {fetchPagesIfNeeded} from "../modules/pages/actions";
 import {fetchReleasesIfNeeded} from "../modules/releases/actions";
@@ -32,6 +34,7 @@ import {fetchStationsIfNeeded} from "../modules/stations/actions";
 
 import AssetsPage from "./assets/AssetsPage";
 import FeedbackPage from "./feedback/FeedbackPage";
+import LayerPage from "./layers/LayerPage";
 import ModalsPage from "./modals/ModalsPage";
 import PagesPage from "./pages/PagesPage";
 import ReleasePage from "./releases/ReleasePage";
@@ -63,6 +66,7 @@ const App = () => {
         fetchAssetsIfNeeded,
         fetchCategoriesIfNeeded,
         fetchFeedbackIfNeeded,
+        fetchLayersIfNeeded,
         fetchModalsIfNeeded,
         fetchPagesIfNeeded,
         fetchReleasesIfNeeded,
@@ -128,6 +132,9 @@ const App = () => {
           <Menu.Item key="assets" icon={<PictureOutlined />}>
             <Link to="/assets">Assets</Link>
           </Menu.Item>
+          <Menu.Item key="layers" icon={<GlobalOutlined />}>
+            <Link to="/layers">Layers</Link>
+          </Menu.Item>
           <Menu.Item key="releases" icon={<AppstoreOutlined />}>
             <Link to="/releases">Releases</Link>
           </Menu.Item>
@@ -145,6 +152,7 @@ const App = () => {
             <Switch>
               <Route path="/assets"><AssetsPage /></Route>
               <Route path="/feedback"><FeedbackPage /></Route>
+              <Route path="/layers"><LayerPage /></Route>
               <Route path="/modals"><ModalsPage /></Route>
               <Route path="/pages"><PagesPage /></Route>
               <Route path="/releases"><ReleasePage /></Route>
