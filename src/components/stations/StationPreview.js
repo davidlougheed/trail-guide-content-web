@@ -61,12 +61,12 @@ const RenderedContent = ({content}) => {
     case "html":
       return <>
         {content.title ? <Typography.Title level={4}>{content.title}</Typography.Title> : null}
-        <div dangerouslySetInnerHTML={{__html: content.content_before_fold ?? ""}} />
+        <div className="html-content" dangerouslySetInnerHTML={{__html: content.content_before_fold ?? ""}} />
         {content.content_after_fold
           ? <Button onClick={() => setShowMore(!showMore)} style={{marginBottom: 16}}>
             {showMore ? "HIDE" : "READ MORE"}</Button> : null}
         {showMore
-          ? <div dangerouslySetInnerHTML={{__html: content.content_after_fold ?? ""}} />
+          ? <div className="html-content" dangerouslySetInnerHTML={{__html: content.content_after_fold ?? ""}} />
           : null}
       </>;
     case "gallery":

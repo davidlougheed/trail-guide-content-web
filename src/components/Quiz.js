@@ -15,9 +15,9 @@ const Quiz = ({quiz_type, title, question, answer, options, ...props}) => {
     label: o.answer.toString(),
   })).sort((o1, o2) => o1.label.localeCompare(o2.label));
 
-  return <Card title={title} {...props}>
+  return <Card title={title} {...props} className="quiz">
     <Typography.Title level={5}>Question</Typography.Title>
-    <div dangerouslySetInnerHTML={{__html: question}} />
+    <div className="html-content" dangerouslySetInnerHTML={{__html: question}} />
 
     <Divider />
 
@@ -41,7 +41,6 @@ const Quiz = ({quiz_type, title, question, answer, options, ...props}) => {
         <Divider />
       </div>))}
       <Button type="primary" onClick={() => {
-        console.log(selectedOptions);
         setCorrect(options.reduce((acc, o, i) => acc && o.answer === selectedOptions[i], true));
         setShowAnswer(true);
       }}>Submit</Button>
