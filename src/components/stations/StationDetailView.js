@@ -32,16 +32,16 @@ const StationDetailView = () => {
     ]}
   >
     <Descriptions bordered={true}>
-      <Descriptions.Item label="ID">{station?.id ?? ""}</Descriptions.Item>
-      <Descriptions.Item label="Title">{station?.title ?? ""}</Descriptions.Item>
-      <Descriptions.Item label="Long Title">{station?.long_title ?? ""}</Descriptions.Item>
-      <Descriptions.Item label="Subtitle">{station?.subtitle ?? ""}</Descriptions.Item>
-      <Descriptions.Item label="Visible">
+      <Descriptions.Item label="ID" span={2}>{station?.id ?? ""}</Descriptions.Item>
+      <Descriptions.Item label="Title" span={2}>{station?.title ?? ""}</Descriptions.Item>
+      <Descriptions.Item label="Long Title" span={2}>{station?.long_title ?? ""}</Descriptions.Item>
+      <Descriptions.Item label="Subtitle" span={2}>{station?.subtitle ?? ""}</Descriptions.Item>
+      <Descriptions.Item label="Visible" span={2}>
         {station?.visible?.from ? `${station?.visible?.from} to ${station?.visible?.to}` : enabled}
       </Descriptions.Item>
-      <Descriptions.Item label="Enabled">{station?.enabled ? "Yes" : "No"}</Descriptions.Item>
-      <Descriptions.Item label="Rank">{station?.rank}</Descriptions.Item>
-      <Descriptions.Item label="Coordinates">
+      <Descriptions.Item label="Enabled" span={2}>{station?.enabled ? "Yes" : "No"}</Descriptions.Item>
+      <Descriptions.Item label="Rank" span={2}>{station?.rank}</Descriptions.Item>
+      <Descriptions.Item label="Coordinates" span={2}>
         {station?.coordinates_utm?.zone ?? ""}&nbsp;
         {station?.coordinates_utm?.north ?? ""}N&nbsp;
         {station?.coordinates_utm?.east ?? ""}E
