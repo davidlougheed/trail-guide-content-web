@@ -1,9 +1,9 @@
-import React from "react";
+import React, {useState} from "react";
 
 // TODO: De-duplicate with app itself
 
 import {assetIdToBytesUrl} from "../../utils";
-import {Image, Typography} from "antd";
+import {Button, Image, Typography} from "antd";
 import Quiz from "../Quiz";
 
 const textShadow = {
@@ -55,11 +55,19 @@ const styles = {
 };
 
 const RenderedContent = ({content}) => {
+  const [showMore, setShowMore] = useState(false);
+
   switch (content.content_type) {
     case "html":
       return <>
         {content.title ? <Typography.Title level={4}>{content.title}</Typography.Title> : null}
         <div dangerouslySetInnerHTML={{__html: content.content_before_fold ?? ""}} />
+        {content.content_after_fold
+          ? <Button onClick={() => setShowMore(!showMore)} style={{marginBottom: 16}}>
+            {showMore ? "HIDE" : "READ MORE"}</Button> : null}
+        {showMore
+          ? <div dangerouslySetInnerHTML={{__html: content.content_after_fold ?? ""}} />
+          : null}
       </>;
     case "gallery":
       return <>
