@@ -78,7 +78,7 @@ const Quiz = ({quiz_type, title, question, answer, options, ...props}) => {
             setCorrect(o.answer);
             setShowAnswer(true);
           }}>
-          {o.label}
+          <span dangerouslySetInnerHTML={{__html: o.label}} />
         </Button>
       )}
     </Space>) : null}
