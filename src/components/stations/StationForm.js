@@ -269,7 +269,6 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
                                  key="content_type"
                                  label="Content Type"
                                  name={[field.name, "content_type"]}
-                                 fieldKey={[field.fieldKey, "content_type"]}
                                  rules={[{required: true}]}>
                         <Select placeholder="Content Type" options={contentTypes}/>
                       </Form.Item>
@@ -279,7 +278,6 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
                                  key="title"
                                  label="Title"
                                  name={[field.name, "title"]}
-                                 fieldKey={[field.fieldKey, "title"]}
                                  rules={[{required: true}]}>
                         <Input placeholder="Title"/>
                       </Form.Item>
@@ -316,8 +314,7 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
                           return <>
                             <Form.Item key="description"
                                        label="Description"
-                                       name={[field.name, "description"]}
-                                       fieldKey={[field.fieldKey, "description"]}>
+                                       name={[field.name, "description"]}>
                               <HTMLEditor
                                 initialValue={newInitialValues.contents[field.name]?.description}
                                 innerRef={el => {
@@ -327,8 +324,7 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
                             </Form.Item>
                             <Form.Item key="items"
                                        label="Images"
-                                       name={[field.name, "items"]}
-                                       fieldKey={[field.fieldKey, "items"]}>
+                                       name={[field.name, "items"]}>
                               <SortableGalleryInput />
                             </Form.Item>
                           </>;
@@ -337,8 +333,7 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
                           return <>
                             <Form.Item key="quiz_type"
                                        label="Quiz Type"
-                                       name={[field.name, "quiz_type"]}
-                                       fieldKey={[field.fieldKey, "quiz_type"]}>
+                                       name={[field.name, "quiz_type"]}>
                               <Select options={quizTypes} onChange={() => {
                                 const cc = form.getFieldsValue().contents;
                                 form.setFieldsValue({
@@ -377,7 +372,6 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
                                           {...optionField}
                                           label="Label"
                                           name={[optionField.name, "label"]}
-                                          fieldKey={[optionField.name, "label"]}
                                           rules={[{required: true}]}
                                         >
                                           <Input placeholder="Label" style={{width: 240}} />
@@ -394,7 +388,6 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
                                             switch (f.getFieldValue(["contents", field.name, "quiz_type"])) {
                                               case "match_values":
                                                 return <Form.Item name={[optionField.name, "answer"]}
-                                                                  fieldKey={[optionField.name, "answer"]}
                                                                   rules={[{required: true}]}>
                                                   <Input placeholder="Answer" />
                                                 </Form.Item>;
@@ -402,7 +395,6 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
                                                 // select_all_that_apply
                                                 // choose_one
                                                 return <Form.Item name={[optionField.name, "answer"]}
-                                                                  fieldKey={[optionField.name, "answer"]}
                                                                   rules={[{required: true}]}>
                                                   <Select style={{width: 150}} options={[
                                                     {value: "true", label: "Correct"},
