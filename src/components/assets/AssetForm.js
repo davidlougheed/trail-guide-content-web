@@ -12,6 +12,7 @@ const ASSET_TYPES = [
   {value: "audio", label: "Audio"},
   {value: "video", label: "Video"},
   {value: "video_text_track", label: "Video Text Track"},
+  {value: "pdf", label: "PDF"},
 ];
 
 const AssetForm = ({initialValues, ...props}) => {
