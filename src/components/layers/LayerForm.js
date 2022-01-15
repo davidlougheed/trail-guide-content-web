@@ -14,7 +14,14 @@ const LayerForm = ({initialValues, onFinish, loading, ...props}) => {
     geojson: oldInitialValues.geojson ? JSON.stringify(oldInitialValues.geojson, null, 2) : "",
   };
 
-  return <Form {...props} onFinish={onFinish} form={form} layout="vertical" initialValues={newInitialValues}>
+  const _onFinish = v => {
+    return onFinish({
+      ...v,
+      geojson: JSON.parse(v.geojson),
+    });
+  };
+
+  return <Form {...props} onFinish={_onFinish} form={form} layout="vertical" initialValues={newInitialValues}>
     <Row gutter={12}>
       <Col span={16}>
         <Form.Item name="name" label="Name" rules={[{required: true}]}>
