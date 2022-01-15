@@ -116,7 +116,9 @@ const App = () => {
       </div>
     </Layout.Header>
     <Layout>
-      <Layout.Sider collapsedWidth={0} collapsed={!isLoadingAuth && !isAuthenticated}>
+      <Layout.Sider style={{overflowY: "auto"}}
+                    collapsedWidth={0}
+                    collapsed={!isAuthenticated || (isAuthenticated && isLoadingAuth)}>
         <Menu theme="dark" defaultSelectedKeys={defaultSelectedKeys}>
           <Menu.Item key="stations" icon={<EnvironmentOutlined />}>
             <Link to="/stations">Stations</Link>
