@@ -40,7 +40,7 @@ const PageListView = () => {
     title="Pages"
     subTitle="View and edit app pages"
   >
-    <Table bordered={true} loading={loadingPages} columns={columns} dataSource={pages}/>
+    <Table bordered={true} loading={loadingPages} columns={columns} dataSource={pages} rowKey="id" />
   </PageHeader>;
 };
 
