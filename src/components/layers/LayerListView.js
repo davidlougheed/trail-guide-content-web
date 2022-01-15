@@ -1,15 +1,22 @@
-import React from "react";
+import React, {useState} from "react";
 import {useSelector} from "react-redux";
 import {useHistory} from "react-router-dom";
 
-import {Button, PageHeader, Space, Table} from "antd";
+import {Button, Modal, PageHeader, Space, Table} from "antd";
 import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
+
+import {GeoJSON, MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
+import {transformCoords} from "../../utils";
 
 const LayerListView = () => {
   const history = useHistory();
 
   const loadingLayers = useSelector(state => state.layers.isFetching);
   const layers = useSelector(state => state.layers.items);
+
+  const stations = useSelector(state => state.stations.items);
+
+  const [showPreview, setShowPreview] = useState(false);
 
   const columns = [
     {
@@ -43,6 +50,7 @@ const LayerListView = () => {
     title="Layers"
     subTitle="View and edit map layers"
     extra={[
+      <Button key="preview" icon={<EyeOutlined />} onClick={() => setShowPreview(true)}>Preview Map</Button>,
       <Button key="add"
               type="primary"
               icon={<PlusOutlined/>}
@@ -50,6 +58,29 @@ const LayerListView = () => {
         Add New</Button>,
     ]}
   >
+    <Modal
+      title="Map Preview"
+      visible={showPreview}
+      footer={null}
+      onCancel={() => setShowPreview(false)}
+      width={800}
+    >
+      <MapContainer center={[44.4727488, -76.4295608]} zoom={14} style={{height: 400}}>
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        {layers.filter(layer => layer.enabled).map(layer => <GeoJSON key={layer.id} data={layer.geojson} />)}
+        {stations.filter(station => station.enabled).map(station => {
+          const t = transformCoords(station.coordinates_utm);
+          return <Marker position={[t.latitude, t.longitude]}>
+            <Popup>
+              {station.title}
+            </Popup>
+          </Marker>;
+        })}
+      </MapContainer>
+    </Modal>
     <Table bordered={true} loading={loadingLayers} columns={columns} dataSource={layers} rowKey="id" />
   </PageHeader>;
 };
