@@ -95,10 +95,11 @@ const App = () => {
         </h1>
         <div style={{flex: 2}}>
           <AutoComplete style={{marginTop: "12px", width: "100%", float: "right"}}
-                        disabled={!isAuthenticated}>
+                        disabled={true}>
+            {/* TODO: set disabled to !isAuthenticated once it actually does something */}
             <Input size="large"
-                   placeholder="THIS DOESN'T WORK YET"
-                   prefix={<SearchOutlined/>}/>
+                   placeholder="Coming soon"
+                   prefix={<SearchOutlined />}/>
           </AutoComplete>
         </div>
         <div style={{flex: 1, color: "white", textAlign: "right"}}>
