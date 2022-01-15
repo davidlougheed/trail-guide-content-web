@@ -70,7 +70,13 @@ const LayerListView = () => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {layers.filter(layer => layer.enabled).map(layer => <GeoJSON key={layer.id} data={layer.geojson} />)}
+        {layers.filter(layer => layer.enabled).map(layer =>
+          <GeoJSON
+            key={layer.id}
+            data={layer.geojson}
+            style={feature => feature.style ?? {}}
+          />
+        )}
         {stations.filter(station => station.enabled).map(station => {
           const t = transformCoords(station.coordinates_utm);
           return <Marker position={[t.latitude, t.longitude]}>
