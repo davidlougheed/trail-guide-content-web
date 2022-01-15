@@ -74,7 +74,7 @@ const LayerListView = () => {
           <GeoJSON
             key={layer.id}
             data={layer.geojson}
-            style={feature => feature.style ?? {}}
+            style={feature => ({color: feature.properties.stroke ?? "#000"})}
           />
         )}
         {stations.filter(station => station.enabled).map(station => {
