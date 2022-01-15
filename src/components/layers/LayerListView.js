@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {useSelector} from "react-redux";
-import {useHistory} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 
 import {Button, Modal, PageHeader, Space, Table} from "antd";
 import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
@@ -81,7 +81,7 @@ const LayerListView = () => {
           const t = transformCoords(station.coordinates_utm);
           return <Marker position={[t.latitude, t.longitude]}>
             <Popup>
-              {station.title}
+              <Link to={`/stations/detail/${station.id}`}>{station.title}</Link>
             </Popup>
           </Marker>;
         })}
