@@ -1,6 +1,6 @@
 import React from "react";
 import {useHistory} from "react-router-dom";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useAuth0} from "@auth0/auth0-react";
 
 import {message, PageHeader} from "antd";
@@ -14,6 +14,8 @@ const ReleaseAddView = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const {getAccessTokenSilently} = useAuth0();
+
+  const addingRelease = useSelector(state => state.releases.isAdding);
 
   const onFinish = async v => {
     console.log("adding release", v);
@@ -37,7 +39,7 @@ const ReleaseAddView = () => {
     title="Add Release"
     subTitle="Create a new release (with release notes) to deploy to app stores."
   >
-    <ReleaseForm onFinish={onFinish} />
+    <ReleaseForm onFinish={onFinish} loading={addingRelease} />
   </PageHeader>;
 };
 
