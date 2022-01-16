@@ -4,7 +4,7 @@
 
 import React from "react";
 import {useSelector} from "react-redux";
-import {useHistory, useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 import {Descriptions, PageHeader} from "antd";
 
@@ -12,7 +12,7 @@ import {downloadVersionBundle, findItemByID} from "../../utils";
 import {useAuth0} from "@auth0/auth0-react";
 
 const ReleaseDetailView = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const {id: strVersion} = useParams();
 
   const {isAuthenticated, getAccessTokenSilently} = useAuth0();
@@ -26,7 +26,7 @@ const ReleaseDetailView = () => {
 
   return <PageHeader
     ghost={false}
-    onBack={() => history.goBack()}
+    onBack={() => navigate(-1)}
     title={fetchingReleases
       ? "Loading..."
       : <span>Version {release?.version}</span>}

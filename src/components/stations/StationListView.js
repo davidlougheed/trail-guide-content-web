@@ -1,12 +1,12 @@
 import React from "react";
 import {useSelector} from "react-redux";
-import {useHistory} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 import {Button, PageHeader, Space, Table} from "antd";
 import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
 
 const StationListView = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const loadingStations = useSelector(state => state.stations.isFetching);
   const stations = useSelector(state => state.stations.items);
@@ -37,9 +37,9 @@ const StationListView = () => {
       render: station => (
         <Space size="middle">
           <Button icon={<EyeOutlined/>}
-                  onClick={() => history.push(`/stations/detail/${station.id}`)}>View</Button>
+                  onClick={() => navigate(`../detail/${station.id}`)}>View</Button>
           <Button icon={<EditOutlined/>}
-                  onClick={() => history.push(`/stations/edit/${station.id}`)}>Edit</Button>
+                  onClick={() => navigate(`../edit/${station.id}`)}>Edit</Button>
           <Button icon={<DeleteOutlined/>} danger={true} disabled={true}>Delete</Button>
         </Space>
       ),
@@ -54,7 +54,7 @@ const StationListView = () => {
       <Button key="add"
               type="primary"
               icon={<PlusOutlined/>}
-              onClick={() => history.push("/stations/add")}>
+              onClick={() => navigate("../add")}>
         Add New</Button>,
     ]}
   >

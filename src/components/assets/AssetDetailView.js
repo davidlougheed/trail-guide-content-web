@@ -4,12 +4,11 @@
 
 import React from "react";
 import {useSelector} from "react-redux";
-import {useHistory, useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
-import {Button, Card, Descriptions, PageHeader} from "antd";
-import {EditOutlined, FileTextOutlined, PictureOutlined, SoundOutlined, VideoCameraOutlined} from "@ant-design/icons";
+import {Card, Descriptions, PageHeader} from "antd";
+import {FileTextOutlined, PictureOutlined, SoundOutlined, VideoCameraOutlined} from "@ant-design/icons";
 
-import {BASE_URL} from "../../config";
 import {assetIdToBytesUrl, findItemByID} from "../../utils";
 
 const AssetTypeIcon = ({type}) => {
@@ -45,7 +44,7 @@ const AssetPreview = ({asset}) => {
 };
 
 const AssetDetailView = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const {id: assetID} = useParams();
 
   const fetchingAssets = useSelector(state => state.assets.isFetching);
@@ -53,15 +52,15 @@ const AssetDetailView = () => {
 
   return <PageHeader
     ghost={false}
-    onBack={() => history.goBack()}
+    onBack={() => navigate(-1)}
     title={fetchingAssets
       ? "Loading..."
       : <span>Asset: <AssetTypeIcon type={asset?.asset_type}/> {asset?.file_name}</span>}
-    extra={[
-      <Button key="edit" icon={<EditOutlined/>} onClick={() => history.push(`/assets/edit/${assetID}`)}>
-        Edit
-      </Button>,
-    ]}
+    // extra={[
+    //   <Button key="edit" icon={<EditOutlined/>} onClick={() => navigate(`/assets/edit/${assetID}`)}>
+    //     Edit
+    //   </Button>,
+    // ]}
   >
     <Descriptions bordered={true}>
       <Descriptions.Item label="ID">{asset?.id ?? ""}</Descriptions.Item>

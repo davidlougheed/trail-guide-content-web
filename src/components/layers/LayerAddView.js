@@ -1,5 +1,5 @@
 import React from "react";
-import {useHistory} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {useAuth0} from "@auth0/auth0-react";
 
@@ -12,7 +12,7 @@ import {ACCESS_TOKEN_MANAGE} from "../../utils";
 
 const LayerAddView = () => {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const {getAccessTokenSilently} = useAuth0();
 
   const addingLayer = useSelector(state => state.layers.isAdding);
@@ -23,12 +23,12 @@ const LayerAddView = () => {
     const result = await dispatch(addLayer(v, accessToken));
     if (!result.error) {
       message.success(`Added new layer: ${result.data.name}`);
-      history.replace(`/layers/edit/${result.data.id}`);
+      navigate(`/layers/edit/${result.data.id}`, {replace: true});
     }
   };
 
   return <PageHeader
-    onBack={() => history.goBack()}
+    onBack={() => navigate(-1)}
     ghost={false}
     title="Add Layer"
     subTitle="Create a new layer to show on the map"

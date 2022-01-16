@@ -1,5 +1,5 @@
 import React from "react";
-import {useHistory} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {useAuth0} from "@auth0/auth0-react";
 
@@ -12,7 +12,7 @@ import {ACCESS_TOKEN_MANAGE} from "../../utils";
 
 const ModalAddView = () => {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const {getAccessTokenSilently} = useAuth0();
 
   const addingModal = useSelector(state => state.modals.isAdding);
@@ -23,12 +23,12 @@ const ModalAddView = () => {
     const result = await dispatch(addModal(v, accessToken));
     if (!result.error) {
       message.success(`Added new modal: ${result.data.title}`);
-      history.replace(`/modals/edit/${result.data.id}`);
+      navigate(`/modals/edit/${result.data.id}`, {replace: true});
     }
   };
 
   return <PageHeader
-    onBack={() => history.goBack()}
+    onBack={() => navigate(-1)}
     ghost={false}
     title="Add Modal"
     subTitle="Create a new modal, for use in pages and stations"

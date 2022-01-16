@@ -3,19 +3,19 @@
 // See NOTICE for more information.
 
 import React from "react";
-import {Redirect, Route, Switch} from "react-router-dom";
+import {Navigate, Route, Routes} from "react-router-dom";
 
 import LayerListView from "./LayerListView";
 import LayerAddView from "./LayerAddView";
 import LayerEditView from "./LayerEditView";
 import LayerDetailView from "./LayerDetailView";
 
-const LayerPage = () => <Switch>
-  <Route path="/layers/list"><LayerListView /></Route>
-  <Route path="/layers/add"><LayerAddView /></Route>
-  <Route path="/layers/edit/:id"><LayerEditView /></Route>
-  <Route path="/layers/detail/:id"><LayerDetailView /></Route>
-  <Redirect to="/layers/list"/>
-</Switch>;
+const LayerPage = () => <Routes>
+  <Route path="list" element={<LayerListView />} />
+  <Route path="add" element={<LayerAddView />} />
+  <Route path="edit/:id" element={<LayerEditView />} />
+  <Route path="detail/:id" element={<LayerDetailView />} />
+  <Route path="*" element={<Navigate to="list" replace={true} />} />
+</Routes>;
 
 export default LayerPage;

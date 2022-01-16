@@ -1,6 +1,6 @@
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {useHistory, useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useAuth0} from "@auth0/auth0-react";
 
 import {message, PageHeader} from "antd";
@@ -11,7 +11,7 @@ import {ACCESS_TOKEN_MANAGE, findItemByID} from "../../utils";
 
 const StationEditView = () => {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const {id: stationID} = useParams();
   const {getAccessTokenSilently} = useAuth0();
 
@@ -32,7 +32,7 @@ const StationEditView = () => {
   };
 
   return <PageHeader
-    onBack={() => history.goBack()}
+    onBack={() => navigate(-1)}
     ghost={false}
     title={`Edit Station: ${station.title}`}
     subTitle="Press submit to save your changes."

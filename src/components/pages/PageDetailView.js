@@ -4,7 +4,7 @@
 
 import React from "react";
 import {useSelector} from "react-redux";
-import {useHistory, useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 import {Button, Card, Descriptions, PageHeader, Typography} from "antd";
 import {EditOutlined} from "@ant-design/icons";
@@ -12,7 +12,7 @@ import {EditOutlined} from "@ant-design/icons";
 import {findItemByID} from "../../utils";
 
 const PageDetailView = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const {id: pageID} = useParams();
 
   const fetchingPages = useSelector(state => state.pages.isFetching);
@@ -22,10 +22,10 @@ const PageDetailView = () => {
 
   return <PageHeader
     ghost={false}
-    onBack={() => history.goBack()}
+    onBack={() => navigate(-1)}
     title={fetchingPages ? "Loading..." : <span>Page: {page.title}</span>}
     extra={[
-      <Button key="edit" icon={<EditOutlined/>} onClick={() => history.push(`/pages/edit/${pageID}`)}>
+      <Button key="edit" icon={<EditOutlined/>} onClick={() => navigate(`edit/${pageID}`)}>
         Edit
       </Button>,
     ]}

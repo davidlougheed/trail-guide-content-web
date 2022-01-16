@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {Link, useHistory} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {useAuth0} from "@auth0/auth0-react";
 
 import {Button, PageHeader, Space, Table} from "antd";
@@ -10,7 +10,7 @@ import {updateAsset} from "../../modules/assets/actions";
 import {ACCESS_TOKEN_MANAGE} from "../../utils";
 
 const AssetListView = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const {getAccessTokenSilently} = useAuth0();
 
@@ -35,7 +35,7 @@ const AssetListView = () => {
     {
       title: "File Name",
       dataIndex: "file_name",
-      render: (fileName, asset) => <Link to={`/assets/detail/${asset.id}`}>{fileName}</Link>,
+      render: (fileName, asset) => <Link to={`../detail/${asset.id}`}>{fileName}</Link>,
     },
     {
       title: "Asset Type",
@@ -57,7 +57,7 @@ const AssetListView = () => {
       render: asset => (
         <Space size="middle">
           <Button icon={<EyeOutlined/>}
-                  onClick={() => history.push(`/assets/detail/${asset.id}`)}>View</Button>
+                  onClick={() => navigate(`../detail/${asset.id}`)}>View</Button>
           {asset.enabled ? (
             <Button loading={assetsLoading[asset.id]}
                     icon={<CloseSquareOutlined />}
@@ -68,7 +68,7 @@ const AssetListView = () => {
                     onClick={() => setAssetEnable(asset.id, true)}>Enable</Button>
           )}
           {/*<Button icon={<EditOutlined />}*/}
-          {/*        onClick={() => history.push(`/assets/edit/${asset.id}`)}>Edit</Button>*/}
+          {/*        onClick={() => navigate(`edit/${asset.id}`)}>Edit</Button>*/}
           <Button icon={<DeleteOutlined/>} danger={true} disabled={true}>Delete</Button>
         </Space>
       )
@@ -87,7 +87,7 @@ const AssetListView = () => {
       <Button key="add"
               type="primary"
               icon={<PlusOutlined/>}
-              onClick={() => history.push("/assets/add")}>
+              onClick={() => navigate("../add")}>
         Add New</Button>,
     ]}
   >

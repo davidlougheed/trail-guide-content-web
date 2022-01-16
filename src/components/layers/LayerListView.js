@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {useSelector} from "react-redux";
-import {Link, useHistory} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 import {Button, Modal, PageHeader, Space, Table} from "antd";
 import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
@@ -9,7 +9,7 @@ import {GeoJSON, MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
 import {transformCoords} from "../../utils";
 
 const LayerListView = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const loadingLayers = useSelector(state => state.layers.isFetching);
   const layers = useSelector(state => state.layers.items);
@@ -37,9 +37,9 @@ const LayerListView = () => {
       key: "actions",
       render: modal => <Space size="middle">
         <Button icon={<EyeOutlined/>}
-                onClick={() => history.push(`/layers/detail/${modal.id}`)}>View</Button>
+                onClick={() => navigate(`../detail/${modal.id}`)}>View</Button>
         <Button icon={<EditOutlined/>}
-                onClick={() => history.push(`/layers/edit/${modal.id}`)}>Edit</Button>
+                onClick={() => navigate(`../edit/${modal.id}`)}>Edit</Button>
         <Button icon={<DeleteOutlined/>} danger={true} disabled={true}>Delete</Button>
       </Space>,
     },
@@ -54,7 +54,7 @@ const LayerListView = () => {
       <Button key="add"
               type="primary"
               icon={<PlusOutlined/>}
-              onClick={() => history.push("/layers/add")}>
+              onClick={() => navigate("../add")}>
         Add New</Button>,
     ]}
   >
@@ -74,7 +74,10 @@ const LayerListView = () => {
           <GeoJSON
             key={layer.id}
             data={layer.geojson}
-            style={feature => ({color: feature.properties.stroke ?? "#000"})}
+            style={feature => ({
+              color: feature.properties.stroke ?? feature.properties.color ?? "#000",
+              fill: feature.properties.fill ?? "#999",
+            })}
           />
         )}
         {stations.filter(station => station.enabled).map(station => {

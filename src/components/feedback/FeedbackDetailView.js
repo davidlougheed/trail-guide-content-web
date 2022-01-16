@@ -4,7 +4,7 @@
 
 import React from "react";
 import {useSelector} from "react-redux";
-import {useHistory, useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 import {Button, Card, Descriptions, PageHeader, Typography} from "antd";
 import {EditOutlined} from "@ant-design/icons";
@@ -12,7 +12,7 @@ import {EditOutlined} from "@ant-design/icons";
 import {findItemByID} from "../../utils";
 
 const FeedbackDetailView = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const {id: feedbackID} = useParams();
 
   const feedback = useSelector(state => findItemByID(state.feedback.items, feedbackID));
@@ -23,10 +23,10 @@ const FeedbackDetailView = () => {
 
   return <PageHeader
     ghost={false}
-    onBack={() => history.goBack()}
+    onBack={() => navigate(-1)}
     title={<span>Feedback from {feedbackDate.toLocaleString()}</span>}
     extra={[
-      <Button key="edit" icon={<EditOutlined/>} onClick={() => history.push(`/pages/edit/${feedbackID}`)}>
+      <Button key="edit" icon={<EditOutlined/>} onClick={() => navigate(`edit/${feedbackID}`)}>
         Edit
       </Button>,
     ]}

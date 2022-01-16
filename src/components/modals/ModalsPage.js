@@ -3,20 +3,18 @@
 // See NOTICE for more information.
 
 import React from "react";
-import {Redirect, Route, Switch} from "react-router-dom";
+import {Navigate, Route, Routes} from "react-router-dom";
 
 import ModalListView from "./ModalListView";
 import ModalAddView from "./ModalAddView";
 import ModalEditView from "./ModalEditView";
 
-const ModalsPage = () => <Switch>
-  <Route path="/modals/list"><ModalListView/></Route>
-  <Route path="/modals/add"><ModalAddView/></Route>
-  <Route path="/modals/edit/:id"><ModalEditView/></Route>
-  <Route path="/modals/detail/:id">
-    <div>aaa</div>
-  </Route>
-  <Redirect to="/modals/list"/>
-</Switch>;
+const ModalsPage = () => <Routes>
+  <Route path="list" element={<ModalListView />} />
+  <Route path="add" element={<ModalAddView />} />
+  <Route path="edit/:id" element={<ModalEditView />} />
+  <Route path="detail/:id" element={<div>aaa</div>} />
+  <Route path="*" element={<Navigate to="list" replace={true} />} />
+</Routes>;
 
 export default ModalsPage;

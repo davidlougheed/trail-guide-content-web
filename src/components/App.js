@@ -16,7 +16,7 @@ import {
   SolutionOutlined,
 } from "@ant-design/icons";
 
-import {Link, Redirect, Route, Switch, useLocation} from "react-router-dom";
+import {Link, Navigate, Route, Routes, useLocation} from "react-router-dom";
 
 import {AUTH_AUDIENCE} from "../config";
 
@@ -152,18 +152,18 @@ const App = () => {
       <Layout.Content style={{overflowY: "auto"}}>
         {isLoadingAuth ? "Loading..." : (isAuthenticated ? (
           <Spin spinning={false}>
-            <Switch>
-              <Route path="/assets"><AssetsPage /></Route>
-              <Route path="/feedback"><FeedbackPage /></Route>
-              <Route path="/layers"><LayerPage /></Route>
-              <Route path="/modals"><ModalsPage /></Route>
-              <Route path="/pages"><PagesPage /></Route>
-              <Route path="/releases"><ReleasePage /></Route>
-              <Route path="/sections"><SectionsPage /></Route>
-              <Route path="/settings"><SettingsPage /></Route>
-              <Route path="/stations"><StationsPage /></Route>
-              <Redirect to={{pathname: "/stations"}}/>
-            </Switch>
+            <Routes>
+              <Route path="/assets/*" element={<AssetsPage />} />
+              <Route path="/feedback/*" element={<FeedbackPage />} />
+              <Route path="/layers/*" element={<LayerPage />} />
+              <Route path="/modals/*" element={<ModalsPage />} />
+              <Route path="/pages/*" element={<PagesPage />} />
+              <Route path="/releases/*" element={<ReleasePage />} />
+              <Route path="/sections/*" element={<SectionsPage />} />
+              <Route path="/settings/*" element={<SettingsPage />} />
+              <Route path="/stations/*" element={<StationsPage />} />
+              <Route path="/" element={<Navigate to="/stations" replace={true} />} />
+            </Routes>
           </Spin>
         ) : (
           <div style={{

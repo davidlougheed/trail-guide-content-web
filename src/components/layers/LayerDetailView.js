@@ -4,7 +4,7 @@
 
 import React from "react";
 import {useSelector} from "react-redux";
-import {useHistory, useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 import {Button, Card, Descriptions, PageHeader} from "antd";
 import {EditOutlined} from "@ant-design/icons";
@@ -14,7 +14,7 @@ import ReactJson from "react-json-view";
 import {findItemByID} from "../../utils";
 
 const LayerDetailView = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const {id: layerID} = useParams();
 
   const fetchingLayers = useSelector(state => state.layers.isFetching);
@@ -24,10 +24,10 @@ const LayerDetailView = () => {
 
   return <PageHeader
     ghost={false}
-    onBack={() => history.goBack()}
+    onBack={() => navigate(-1)}
     title={fetchingLayers ? "Loading..." : <span>Layer: {layer.name}</span>}
     extra={[
-      <Button key="edit" icon={<EditOutlined/>} onClick={() => history.push(`/layers/edit/${layerID}`)}>
+      <Button key="edit" icon={<EditOutlined/>} onClick={() => navigate(`/layers/edit/${layerID}`)}>
         Edit
       </Button>,
     ]}

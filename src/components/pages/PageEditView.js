@@ -4,7 +4,7 @@
 
 import React from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {useHistory, useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useAuth0} from "@auth0/auth0-react";
 
 import {message, PageHeader} from "antd";
@@ -15,7 +15,7 @@ import {ACCESS_TOKEN_MANAGE, findItemByID} from "../../utils";
 
 const PageEditView = () => {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const {id: pageID} = useParams();
   const {getAccessTokenSilently} = useAuth0();
 
@@ -36,7 +36,7 @@ const PageEditView = () => {
   };
 
   return <PageHeader
-    onBack={() => history.goBack()}
+    onBack={() => navigate(-1)}
     ghost={false}
     title={`Edit Page: ${page.title}`}
     subTitle="Press submit to save your changes."

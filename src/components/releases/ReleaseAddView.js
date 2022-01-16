@@ -1,5 +1,5 @@
 import React from "react";
-import {useHistory} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {useAuth0} from "@auth0/auth0-react";
 
@@ -12,7 +12,7 @@ import {ACCESS_TOKEN_MANAGE} from "../../utils";
 
 const ReleaseAddView = () => {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const {getAccessTokenSilently} = useAuth0();
 
   const addingRelease = useSelector(state => state.releases.isAdding);
@@ -29,12 +29,12 @@ const ReleaseAddView = () => {
 
     if (!result.error) {
       message.success(`Added new release: ${result.data.version}`);
-      history.replace(`/releases/detail/${result.data.version}`);
+      navigate(`/releases/detail/${result.data.version}`, {replace: true});
     }
   };
 
   return <PageHeader
-    onBack={() => history.goBack()}
+    onBack={() => navigate(-1)}
     ghost={false}
     title="Add Release"
     subTitle="Create a new release (with release notes) to deploy to app stores."

@@ -1,5 +1,5 @@
 import React from "react";
-import {useHistory} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {useAuth0} from "@auth0/auth0-react";
 
@@ -12,7 +12,7 @@ import {ACCESS_TOKEN_MANAGE} from "../../utils";
 
 const StationAddView = () => {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const {getAccessTokenSilently} = useAuth0();
 
   const addingStation = useSelector(state => state.stations.isAdding);
@@ -23,12 +23,12 @@ const StationAddView = () => {
     const result = await dispatch(addStation(v, accessToken));
     if (!result.error) {
       message.success(`Added new station: ${result.data.title}`);
-      history.replace(`/stations/edit/${result.data.id}`);
+      navigate(`/stations/edit/${result.data.id}`, {replace: true});
     }
   };
 
   return <PageHeader
-    onBack={() => history.goBack()}
+    onBack={() => navigate(-1)}
     ghost={false}
     title="Add Station"
     subTitle="Create a new app station within a section"

@@ -1,12 +1,12 @@
 import React from "react";
 import {useSelector} from "react-redux";
-import {useHistory} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 import {Button, PageHeader, Space, Table} from "antd";
 import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
 
 const ModalListView = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const loadingModals = useSelector(state => state.modals.isFetching);
   const modals = useSelector(state => state.modals.items);
@@ -25,9 +25,9 @@ const ModalListView = () => {
       key: "actions",
       render: modal => <Space size="middle">
         <Button icon={<EyeOutlined/>} disabled={true}
-                onClick={() => history.push(`/modals/detail/${modal.id}`)}>View</Button>
+                onClick={() => navigate(`../detail/${modal.id}`)}>View</Button>
         <Button icon={<EditOutlined/>}
-                onClick={() => history.push(`/modals/edit/${modal.id}`)}>Edit</Button>
+                onClick={() => navigate(`../edit/${modal.id}`)}>Edit</Button>
         <Button icon={<DeleteOutlined/>} danger={true} disabled={true}>Delete</Button>
       </Space>,
     },
@@ -41,7 +41,7 @@ const ModalListView = () => {
       <Button key="add"
               type="primary"
               icon={<PlusOutlined/>}
-              onClick={() => history.push("/modals/add")}>
+              onClick={() => navigate("../add")}>
         Add New</Button>,
     ]}
   >

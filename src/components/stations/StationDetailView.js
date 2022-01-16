@@ -4,7 +4,7 @@
 
 import React from "react";
 import {useSelector} from "react-redux";
-import {useHistory, useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 import {Button, Descriptions, Divider, PageHeader} from "antd";
 import {EditOutlined} from "@ant-design/icons";
@@ -13,7 +13,8 @@ import {findItemByID} from "../../utils";
 import StationPreview from "./StationPreview";
 
 const StationDetailView = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
+
   const {id: stationID} = useParams();
 
   const fetchingStations = useSelector(state => state.stations.isFetching);
@@ -23,10 +24,10 @@ const StationDetailView = () => {
 
   return <PageHeader
     ghost={false}
-    onBack={() => history.goBack()}
+    onBack={() => navigate(-1)}
     title={fetchingStations ? "Loading..." : <span>Station: {station?.title}</span>}
     extra={[
-      <Button key="edit" icon={<EditOutlined/>} onClick={() => history.push(`/stations/edit/${stationID}`)}>
+      <Button key="edit" icon={<EditOutlined/>} onClick={() => navigate(`edit/${stationID}`)}>
         Edit
       </Button>,
     ]}

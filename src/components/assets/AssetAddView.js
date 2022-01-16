@@ -1,5 +1,5 @@
 import React from "react";
-import {useHistory} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import {useAuth0} from "@auth0/auth0-react";
 
@@ -12,7 +12,7 @@ import {ACCESS_TOKEN_MANAGE} from "../../utils";
 
 const AssetAddView = () => {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const {getAccessTokenSilently} = useAuth0();
 
   const onFinish = async v => {
@@ -28,12 +28,12 @@ const AssetAddView = () => {
 
     if (!result.error) {
       message.success(`Added new asset: ${result.data.file_name}`);
-      history.replace(`/assets/detail/${result.data.id}`);
+      navigate(`/assets/detail/${result.data.id}`, {replace: true});
     }
   };
 
   return <PageHeader
-    onBack={() => history.goBack()}
+    onBack={() => navigate(-1)}
     ghost={false}
     title="Add Asset"
     subTitle="Create a new asset (image, video, or audio) for use in a station or page."

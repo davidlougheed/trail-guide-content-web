@@ -1,6 +1,6 @@
 import React from "react";
 import {useSelector} from "react-redux";
-import {useHistory} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {useAuth0} from "@auth0/auth0-react";
 
 import {Button, PageHeader, Space, Table} from "antd";
@@ -8,7 +8,7 @@ import {DownloadOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
 import {downloadVersionBundle} from "../../utils";
 
 const ReleaseListView = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const {isAuthenticated, getAccessTokenSilently} = useAuth0();
 
@@ -48,9 +48,9 @@ const ReleaseListView = () => {
             onClick={downloadVersionBundle(release.version, isAuthenticated, getAccessTokenSilently)}
           >Download Bundle</Button>
           <Button icon={<EyeOutlined/>}
-                  onClick={() => history.push(`/releases/detail/${release.version}`)}>View</Button>
+                  onClick={() => navigate(`../detail/${release.version}`)}>View</Button>
           {/*<Button icon={<EditOutlined/>}*/}
-          {/*        onClick={() => history.push(`/releases/edit/${release.version}`)}>Edit</Button>*/}
+          {/*        onClick={() => navigate(`edit/${release.version}`)}>Edit</Button>*/}
         </Space>
       )
     },
@@ -64,7 +64,7 @@ const ReleaseListView = () => {
       <Button key="add"
               type="primary"
               icon={<PlusOutlined/>}
-              onClick={() => history.push("/releases/add")}>
+              onClick={() => navigate("../add")}>
         Add Release
       </Button>
     ]}

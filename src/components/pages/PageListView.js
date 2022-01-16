@@ -1,12 +1,12 @@
 import React from "react";
 import {useSelector} from "react-redux";
-import {useHistory} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 import {Button, PageHeader, Space, Table} from "antd";
 import {CheckOutlined, CloseOutlined, EditOutlined, EyeOutlined} from "@ant-design/icons";
 
 const PageListView = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const loadingPages = useSelector(state => state.pages.isFetching);
   const pages = useSelector(state => state.pages.items);
@@ -27,9 +27,9 @@ const PageListView = () => {
       render: page => (
         <Space size="middle">
           <Button icon={<EyeOutlined/>}
-                  onClick={() => history.push(`/pages/detail/${page.id}`)}>View</Button>
+                  onClick={() => navigate(`../detail/${page.id}`)}>View</Button>
           <Button icon={<EditOutlined/>}
-                  onClick={() => history.push(`/pages/edit/${page.id}`)}>Edit</Button>
+                  onClick={() => navigate(`../edit/${page.id}`)}>Edit</Button>
         </Space>
       )
     },
