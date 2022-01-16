@@ -1,12 +1,11 @@
 import React, {useState} from "react";
 import {useSelector} from "react-redux";
-import {Link, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 import {Button, Modal, PageHeader, Space, Table} from "antd";
 import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
 
-import {GeoJSON, MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
-import {transformCoords} from "../../utils";
+import MapPreview from "./MapPreview";
 
 const LayerListView = () => {
   const navigate = useNavigate();
@@ -65,30 +64,7 @@ const LayerListView = () => {
       onCancel={() => setShowPreview(false)}
       width={800}
     >
-      <MapContainer center={[44.4727488, -76.4295608]} zoom={14} style={{height: 400}}>
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        {layers.filter(layer => layer.enabled).map(layer =>
-          <GeoJSON
-            key={layer.id}
-            data={layer.geojson}
-            style={feature => ({
-              color: feature.properties.stroke ?? feature.properties.color ?? "#000",
-              fill: feature.properties.fill ?? "#999",
-            })}
-          />
-        )}
-        {stations.filter(station => station.enabled).map(station => {
-          const t = transformCoords(station.coordinates_utm);
-          return <Marker position={[t.latitude, t.longitude]}>
-            <Popup>
-              <Link to={`/stations/detail/${station.id}`}>{station.title}</Link>
-            </Popup>
-          </Marker>;
-        })}
-      </MapContainer>
+      <MapPreview layers={layers} stations={stations} />
     </Modal>
     <Table bordered={true} loading={loadingLayers} columns={columns} dataSource={layers} rowKey="id" />
   </PageHeader>;
