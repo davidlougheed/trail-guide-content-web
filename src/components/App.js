@@ -30,6 +30,7 @@ import {fetchPagesIfNeeded} from "../modules/pages/actions";
 import {fetchReleasesIfNeeded} from "../modules/releases/actions";
 import {fetchSectionsIfNeeded} from "../modules/sections/actions";
 import {fetchSettingsIfNeeded} from "../modules/settings/actions";
+import {fetchServerConfigIfNeeded} from "../modules/server_config/actions";
 import {fetchStationsIfNeeded} from "../modules/stations/actions";
 
 import AssetsPage from "./assets/AssetsPage";
@@ -56,6 +57,8 @@ const App = () => {
     if (!isAuthenticated) return;
 
     try {
+      await dispatch(fetchServerConfigIfNeeded());
+
       const accessToken = await getAccessTokenSilently({
         audience: AUTH_AUDIENCE,
         scope: "read:content",

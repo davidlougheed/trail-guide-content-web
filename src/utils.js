@@ -105,7 +105,12 @@ export const makeIfNeededAction = (action, reducer) => (...args) => (dispatch, g
   return dispatch(action(...args));
 };
 
-export const makeGenericNetworkReducer = (fetchTypes, addTypes, updateTypes, idKey="id") => (
+export const makeGenericNetworkReducer = (
+  fetchTypes,
+  addTypes=undefined,
+  updateTypes=undefined,
+  idKey="id",
+) => (
   state = {
     isFetching: false,
     isAdding: false,
