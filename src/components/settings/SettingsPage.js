@@ -6,18 +6,23 @@ import React from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useAuth0} from "@auth0/auth0-react";
 
-import {message, PageHeader} from "antd";
+import {Button, Form, Input, message, Modal, PageHeader, Typography} from "antd";
 
 import SettingsForm from "./SettingsForm";
 import {updateSettings} from "../../modules/settings/actions";
 import {ACCESS_TOKEN_MANAGE} from "../../utils";
+
+import * as c from "../../config";
 
 const SettingsPage = () => {
   const dispatch = useDispatch();
   const fetchingSettings = useSelector(state => state.settings.isFetching);
   const updatingSettings = useSelector(state => state.settings.isUpdating);
   const settings = useSelector(state => state.settings.data);
+  const serverConfig = useSelector(state => state.serverConfig.data);
   const {getAccessTokenSilently} = useAuth0();
+
+  const [showConfig, setShowConfig] = useState(false);
 
   if (fetchingSettings) return <div>Loading...</div>;
 
@@ -30,9 +35,27 @@ const SettingsPage = () => {
     }
   };
 
-  return <PageHeader title="Settings" ghost={false}>
-    <SettingsForm initialValues={settings} onFinish={onFinish} loading={updatingSettings} />
-  </PageHeader>;
+  return <>
+    <Modal visible={showConfig} onCancel={() => setShowConfig(false)} footer={null}>
+      <Typography.Title level={3}>Front End</Typography.Title>
+      <Form>
+        {Object.entries(c).map(([ck, cv]) => <Form.Item label={ck} key={ck}>
+          <Input value={cv} />
+        </Form.Item>)}
+      </Form>
+      <Typography.Title level={3}>Back End</Typography.Title>
+      <Form>
+        {Object.entries(serverConfig ?? {}).map(([ck, cv]) => <Form.Item label={ck} key={ck}>
+          <Input value={cv.toString()} />
+        </Form.Item>)}
+      </Form>
+    </Modal>
+    <PageHeader title="Settings" ghost={false} extra={[
+      <Button onClick={() => setShowConfig(true)}>View Instance Configuration</Button>
+    ]}>
+      <SettingsForm initialValues={settings} onFinish={onFinish} loading={updatingSettings} />
+    </PageHeader>
+  </>;
 };
 
 export default SettingsPage;
