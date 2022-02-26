@@ -70,7 +70,11 @@ const StationListView = () => {
         Add New</Button>,
     ]}
   >
-    <Modal visible={!!qrStation} onCancel={() => setQrStation(null)} footer={null}>
+    <Modal title={qrStation?.title}
+           style={{top: 36}}
+           visible={!!qrStation}
+           onCancel={() => setQrStation(null)}
+           footer={null}>
       {qrStation ? <StationQR station={qrStation} /> : null}
     </Modal>
     <Table bordered={true}
