@@ -2,15 +2,17 @@
 // Copyright (C) 2021-2022  David Lougheed
 // See NOTICE for more information.
 
-import React from "react";
+import React, {useState} from "react";
 import {useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 
-import {Button, Descriptions, Divider, PageHeader} from "antd";
-import {EditOutlined} from "@ant-design/icons";
+import {Button, Descriptions, Divider, Modal, PageHeader} from "antd";
+import {EditOutlined, QrcodeOutlined} from "@ant-design/icons";
 
 import {findItemByID} from "../../utils";
 import StationPreview from "./StationPreview";
+import {BASE_URL} from "../../config";
+import StationQR from "./StationQR";
 
 const StationDetailView = () => {
   const navigate = useNavigate();
@@ -20,6 +22,8 @@ const StationDetailView = () => {
   const fetchingStations = useSelector(state => state.stations.isFetching);
   const station = useSelector(state => findItemByID(state.stations.items, stationID));
 
+  const [qrModalVisible, setQrModalVisible] = useState(false);
+
   const enabled = station?.enabled ? "Yes" : "No";
 
   return <PageHeader
@@ -27,11 +31,15 @@ const StationDetailView = () => {
     onBack={() => navigate(-1)}
     title={fetchingStations ? "Loading..." : <span>Station: {station?.title}</span>}
     extra={[
+      <Button key="qr" icon={<QrcodeOutlined />} onClick={() => setQrModalVisible(true)}>QR Code</Button>,
       <Button key="edit" icon={<EditOutlined/>} onClick={() => navigate(`edit/${stationID}`)}>
         Edit
       </Button>,
     ]}
   >
+    <Modal visible={qrModalVisible} onCancel={() => setQrModalVisible(false)} footer={null}>
+      {station ? <StationQR station={station} /> : null}
+    </Modal>
     <Descriptions bordered={true}>
       <Descriptions.Item label="ID" span={2}>{station?.id ?? ""}</Descriptions.Item>
       <Descriptions.Item label="Title" span={2}>{station?.title ?? ""}</Descriptions.Item>

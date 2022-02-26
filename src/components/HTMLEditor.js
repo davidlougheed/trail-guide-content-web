@@ -36,10 +36,6 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
   // null | "audio" | "image" | "video"
   const [showViewer, setShowViewer] = useState(null);
 
-  // const [showAudioViewer, setShowAudioViewer] = useState(false);
-  // const [showImageViewer, setShowImageViewer] = useState(false);
-  // const [showVideoViewer, setShowVideoViewer] = useState(false);
-
   const assets = useSelector(state => state.assets.items);
 
   const assetHandler = type => () => {

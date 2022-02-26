@@ -1,9 +1,10 @@
-import React from "react";
+import React, {useState} from "react";
 import {useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 
-import {Button, PageHeader, Space, Table} from "antd";
+import {Button, Modal, PageHeader, Space, Table} from "antd";
 import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
+import StationQR from "./StationQR";
 
 const StationListView = () => {
   const navigate = useNavigate();
@@ -12,6 +13,8 @@ const StationListView = () => {
   const stations = useSelector(state => state.stations.items);
   const sections = useSelector(state => state.sections.items);
   const categories = useSelector(state => state.categories.items);
+
+  const [qrStation, setQrStation] = useState(null);
 
 
   const columns = [
@@ -42,7 +45,9 @@ const StationListView = () => {
       title: "Actions",
       key: "actions",
       render: station => (
-        <Space size="middle">
+        <Space size="small">
+          <Button icon={<EyeOutlined/>}
+                  onClick={() => setQrStation(station)}>QR</Button>
           <Button icon={<EyeOutlined/>}
                   onClick={() => navigate(`../detail/${station.id}`)}>View</Button>
           <Button icon={<EditOutlined/>}
@@ -65,6 +70,9 @@ const StationListView = () => {
         Add New</Button>,
     ]}
   >
+    <Modal visible={!!qrStation} onCancel={() => setQrStation(null)} footer={null}>
+      {qrStation ? <StationQR station={qrStation} /> : null}
+    </Modal>
     <Table bordered={true}
            loading={loadingStations}
            columns={columns}
