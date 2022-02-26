@@ -18,6 +18,7 @@ const AssetListView = () => {
 
   const loadingAssets = useSelector(state => state.assets.isFetching);
   const assets = useSelector(state => state.assets.items);
+  const assetTypes = useSelector(state => state.assetTypes.items);
 
   const setAssetEnable = async (assetID, enabledValue) => {
     setAssetsLoading({...assetsLoading, [assetID]: true});
@@ -38,13 +39,15 @@ const AssetListView = () => {
       render: (fileName, asset) => <Link to={`../detail/${asset.id}`}>{fileName}</Link>,
     },
     {
-      title: "Asset Type",
+      title: "Type",
       dataIndex: "asset_type",
+      filters: assetTypes.map(t => ({text: t, value: t})),
+      onFilter: (value, record) => record.asset_type === value,
     },
     {
       title: "Size",
       dataIndex: "file_size",
-      render: fileSize => <span>{(fileSize / 1000).toFixed(0)} KB</span>,
+      render: fileSize => <span>{(fileSize / 1000).toFixed(0)}&nbsp;KB</span>,
     },
     {
       title: "Enabled?",
@@ -55,7 +58,7 @@ const AssetListView = () => {
       title: "Actions",
       key: "actions",
       render: asset => (
-        <Space size="middle">
+        <Space size="small">
           <Button icon={<EyeOutlined/>}
                   onClick={() => navigate(`../detail/${asset.id}`)}>View</Button>
           {asset.enabled ? (
