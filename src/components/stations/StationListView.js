@@ -10,6 +10,9 @@ const StationListView = () => {
 
   const loadingStations = useSelector(state => state.stations.isFetching);
   const stations = useSelector(state => state.stations.items);
+  const sections = useSelector(state => state.sections.items);
+  const categories = useSelector(state => state.categories.items);
+
 
   const columns = [
     {
@@ -19,10 +22,14 @@ const StationListView = () => {
     {
       title: "Section",
       dataIndex: "section",
+      filters: sections.map(s => ({text: s.id, value: s.id})),
+      onFilter: (value, record) => record.section === value,
     },
     {
       title: "Category",
       dataIndex: "category",
+      filters: categories.map(c => ({text: c, value: c})),
+      onFilter: (value, record) => record.category === value,
     },
     {
       title: "Visible",
