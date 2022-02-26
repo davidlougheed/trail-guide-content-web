@@ -16,7 +16,9 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-
+import {
+  restrictToVerticalAxis,
+} from "@dnd-kit/modifiers";
 import {
   arrayMove,
   SortableContext,
@@ -25,6 +27,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import {CSS} from "@dnd-kit/utilities";
+
 import {assetIdToBytesUrl} from "../utils";
 
 
@@ -35,26 +38,29 @@ const SortableItem = ({id, asset, caption, remove, onChangeCaption}) => {
     setNodeRef,
     transform,
     transition,
-  } = useSortable({id});
+  } = useSortable({
+    // animateLayoutChanges: () => true,
+    id,
+  });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Translate.toString(transform),
     transition,
   };
 
   return <div ref={setNodeRef} style={style}>
     <List.Item extra={
       <img height={100}
-           alt={asset.file_name}
-           src={assetIdToBytesUrl(asset.id)}
+           alt={asset?.file_name ?? ""}
+           src={assetIdToBytesUrl(asset?.id)}
       />
     } actions={[<a key="remove-item" onClick={() => remove(id)}>Remove</a>]}>
       <div {...attributes} {...listeners} style={{marginBottom: 8, cursor: "pointer"}}>
         <DragOutlined /> <span style={{color: "#CCC"}}>Drag to Rearrange</span>
       </div>
       <List.Item.Meta
-        title={asset.file_name}
-        description={`${(asset.file_size / 1000).toFixed(0)} KB`} />
+        title={asset?.file_name ?? ""}
+        description={`${((asset?.file_size ?? 0) / 1000).toFixed(0)} KB`} />
       <Input value={caption} onChange={e => onChangeCaption(e.target.value)} placeholder="Caption" />
     </List.Item>
   </div>;
@@ -78,10 +84,11 @@ const SortableGalleryInput = ({value, onChange}) => {
 
   const handleDragEnd = ({active, over}) => {
     if (active.id === over.id) return;
+
     onChange(arrayMove(
       items,
-      items.indexOf(active.id),
-      items.indexOf(over.id),
+      items.findIndex(i => i.asset === active.id),
+      items.findIndex(i => i.asset === over.id),
     ));
   };
 
@@ -107,10 +114,11 @@ const SortableGalleryInput = ({value, onChange}) => {
     <DndContext
       sensors={sensors}
       collisionDetection={closestCenter}
+      modifiers={[restrictToVerticalAxis]}
       onDragEnd={handleDragEnd}
     >
       <SortableContext
-        items={items}
+        items={items.map(item => item.asset)}
         strategy={verticalListSortingStrategy}
       >
         {items.map(({asset, caption}) =>
