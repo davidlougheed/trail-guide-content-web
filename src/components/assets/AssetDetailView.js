@@ -30,6 +30,10 @@ const AssetPreview = ({asset}) => {
   if (!asset) return <div/>;
 
   switch (asset.asset_type) {
+    case "audio":
+      return <audio controls={true}>
+        <source src={assetIdToBytesUrl(asset.id)} />
+      </audio>;
     case "image":
       return <img src={assetIdToBytesUrl(asset.id)}
                   style={{maxWidth: 500, width: "100%"}}
