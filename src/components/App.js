@@ -1,3 +1,7 @@
+// A web interface to manage a trail guide mobile app's content and data.
+// Copyright (C) 2021-2022  David Lougheed
+// See NOTICE for more information.
+
 import React, {useEffect} from "react";
 import {useDispatch} from "react-redux";
 import {useAuth0} from "@auth0/auth0-react";
