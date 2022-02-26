@@ -23,10 +23,11 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@auth0/auth0-react": "^1.9.0",
-    "@dnd-kit/core": "^4.0.3",
-    "@dnd-kit/sortable": "^5.1.0",
-    "@dnd-kit/utilities": "^3.0.2",
-    "antd": "^4.18.3",
+    "@dnd-kit/core": "^5.0.1",
+    "@dnd-kit/modifiers": "^5.0.0",
+    "@dnd-kit/sortable": "^6.0.0",
+    "@dnd-kit/utilities": "^3.1.0",
+    "antd": "^4.18.8",
     "babel-plugin-lodash": "^3.3.4",
     "leaflet": "^1.7.1",
     "lodash": "^4.17.21",
@@ -42,19 +43,19 @@
     "redux-thunk": "^2.4.1"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.16.8",
+    "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
     "babel-loader": "^8.2.3",
     "babel-plugin-import": "^1.13.3",
     "babel-polyfill": "^6.26.0",
-    "copy-webpack-plugin": "^10.2.0",
-    "css-loader": "^6.5.1",
-    "dotenv-webpack": "^7.0.3",
+    "copy-webpack-plugin": "^10.2.4",
+    "css-loader": "^6.6.0",
+    "dotenv-webpack": "^7.1.0",
     "html-webpack-plugin": "^5.5.0",
     "style-loader": "^3.3.1",
     "url-loader": "^4.1.1",
-    "webpack": "^5.66.0",
-    "webpack-cli": "^4.9.1",
-    "webpack-dev-server": "^4.7.3"
+    "webpack": "^5.69.1",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.7.4"
   }
 }
