@@ -51,7 +51,7 @@ const SettingsPage = () => {
       </Form>
     </Modal>
     <PageHeader title="Settings" ghost={false} extra={[
-      <Button onClick={() => setShowConfig(true)}>View Instance Configuration</Button>
+      <Button key="config" onClick={() => setShowConfig(true)}>View Instance Configuration</Button>
     ]}>
       <SettingsForm initialValues={settings} onFinish={onFinish} loading={updatingSettings} />
     </PageHeader>
