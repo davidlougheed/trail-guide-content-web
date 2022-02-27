@@ -110,12 +110,13 @@ export const makeGenericNetworkReducer = (
   addTypes=undefined,
   updateTypes=undefined,
   idKey="id",
+  isArrayData=true,
 ) => (
   state = {
     isFetching: false,
     isAdding: false,
     isUpdating: false,
-    items: [],
+    ...(isArrayData ? {items: []} : {data: null}),
     error: "",
   },
   action,
@@ -124,7 +125,15 @@ export const makeGenericNetworkReducer = (
     case fetchTypes.REQUEST:
       return {...state, isFetching: true};
     case fetchTypes.RECEIVE:
-      return {...state, isFetching: false, items: action.data, error: ""};
+      return {
+        ...state,
+        isFetching: false,
+        ...(isArrayData
+          ? {items: action.data}
+          : {data: action.data}
+        ),
+        error: "",
+      };
     case fetchTypes.ERROR:
       return {...state, isFetching: false, error: action.message};
   }
@@ -134,7 +143,15 @@ export const makeGenericNetworkReducer = (
       case addTypes.REQUEST:
         return {...state, isAdding: true};
       case addTypes.RECEIVE:
-        return {...state, isAdding: false, items: [...state.items, action.data], error: ""};
+        return {
+          ...state,
+          isAdding: false,
+          ...(isArrayData
+            ? {items: [...state.items, action.data]}
+            : {data: action.data}
+          ),
+          error: "",
+        };
       case addTypes.ERROR:
         return {...state, isAdding: false, error: action.message};
     }
@@ -148,7 +165,10 @@ export const makeGenericNetworkReducer = (
         return {
           ...state,
           isUpdating: false,
-          items: state.items.map(i => i[idKey] === action.data[idKey] ? action.data : i),
+          ...(isArrayData
+            ? {items: state.items.map(i => i[idKey] === action.data[idKey] ? action.data : i)}
+            : {data: action.data}
+          ),
           error: "",
         };
       case updateTypes.ERROR:
