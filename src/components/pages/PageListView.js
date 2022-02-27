@@ -25,7 +25,7 @@ const PageListView = () => {
       title: "Actions",
       key: "actions",
       render: page => (
-        <Space size="middle">
+        <Space size="small">
           <Button icon={<EyeOutlined/>}
                   onClick={() => navigate(`../detail/${page.id}`)}>View</Button>
           <Button icon={<EditOutlined/>}

@@ -34,7 +34,7 @@ const LayerListView = () => {
     {
       title: "Actions",
       key: "actions",
-      render: modal => <Space size="middle">
+      render: modal => <Space size="small">
         <Button icon={<EyeOutlined/>}
                 onClick={() => navigate(`../detail/${modal.id}`)}>View</Button>
         <Button icon={<EditOutlined/>}

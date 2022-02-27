@@ -42,7 +42,7 @@ const ReleaseListView = () => {
       title: "Actions",
       key: "actions",
       render: release => (
-        <Space size="middle">
+        <Space size="small">
           <Button
             icon={<DownloadOutlined/>}
             onClick={downloadVersionBundle(release.version, isAuthenticated, getAccessTokenSilently)}
