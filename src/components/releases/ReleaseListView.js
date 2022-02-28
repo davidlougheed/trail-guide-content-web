@@ -23,10 +23,10 @@ const ReleaseListView = () => {
     {
       title: "Release Notes",
       dataIndex: "release_notes",
-      render: releaseNotes => {
-        if (releaseNotes.length < 100) return releaseNotes;
-        else return releaseNotes.substr(0, 97) + "...";
-      },
+      render: releaseNotes =>
+        releaseNotes.length < 100
+          ? releaseNotes
+          : `${releaseNotes.slice(0, 98)}...`,
     },
     {
       title: "Submitted",
