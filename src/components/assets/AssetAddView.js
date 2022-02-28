@@ -15,6 +15,10 @@ const AssetAddView = () => {
   const navigate = useNavigate();
   const {getAccessTokenSilently} = useAuth0();
 
+  /**
+   * @param {{asset_type: string, enabled: boolean, file: string}} v
+   * @return {Promise<void>}
+   */
   const onFinish = async v => {
     console.log("adding asset", v);
 
@@ -24,6 +28,10 @@ const AssetAddView = () => {
     body.set("file", v.file);
 
     const accessToken = await getAccessTokenSilently(ACCESS_TOKEN_MANAGE);
+
+    /**
+     * @type {{data: {file_name: string}, error: string}}
+     */
     const result = await dispatch(addAsset(body, accessToken));
 
     if (!result.error) {

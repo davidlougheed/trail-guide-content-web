@@ -38,6 +38,9 @@ export const downloadVersionBundle = (version, isAuthenticated, getAccessTokenSi
     scope: "read:content",
   });
 
+  /**
+   * @type {{token: string}|undefined}
+   */
   const ott = await fetchOtt(accessToken);
 
   if (!ott) return;
