@@ -3,7 +3,7 @@
 // See NOTICE for more information.
 
 import React, {useEffect} from "react";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useAuth0} from "@auth0/auth0-react";
 
 import {Alert, AutoComplete, Button, Layout, Input, Menu, Spin, Typography} from "antd";
@@ -22,8 +22,6 @@ import {
 
 import {Link, Navigate, Route, Routes, useLocation} from "react-router-dom";
 
-import {AUTH_AUDIENCE} from "../config";
-
 import {fetchAssetTypesIfNeeded} from "../modules/asset_types/actions";
 import {fetchAssetsIfNeeded} from "../modules/assets/actions";
 import {fetchCategoriesIfNeeded} from "../modules/categories/actions";
@@ -36,6 +34,8 @@ import {fetchSectionsIfNeeded} from "../modules/sections/actions";
 import {fetchSettingsIfNeeded} from "../modules/settings/actions";
 import {fetchServerConfigIfNeeded} from "../modules/server_config/actions";
 import {fetchStationsIfNeeded} from "../modules/stations/actions";
+
+import {ACCESS_TOKEN_READ} from "../utils";
 
 import AssetsPage from "./assets/AssetsPage";
 import FeedbackPage from "./feedback/FeedbackPage";
@@ -63,10 +63,7 @@ const App = () => {
     try {
       await dispatch(fetchServerConfigIfNeeded());
 
-      const accessToken = await getAccessTokenSilently({
-        audience: AUTH_AUDIENCE,
-        scope: "read:content",
-      });
+      const accessToken = await getAccessTokenSilently(ACCESS_TOKEN_READ);
 
       [
         fetchAssetTypesIfNeeded,
@@ -89,16 +86,22 @@ const App = () => {
   const location = useLocation();
   const defaultSelectedKeys = [location.pathname.split("/")[1] || "stations"];
 
-  const urlParams = Object.fromEntries(location.search.substr(1).split("&").map(p => {
+  const urlParams = Object.fromEntries(location.search.slice(1).split("&").map(p => {
     const ps = p.split("=");
     return [ps[0], decodeURIComponent(ps[1])];
   }));
+
+  const loadingConfig = useSelector(state => state.serverConfig.isFetching);
+  const serverConfig = useSelector(state => state.serverConfig.data);
+
+  const siteTitle = (loadingConfig || serverConfig === null) ? "" : (serverConfig?.APP_NAME || "Trail Guide");
+  document.title = siteTitle || "Trail Guide";
 
   return <Layout style={{height: "100vh"}}>
     <Layout.Header style={{padding: "0 24px"}}>
       <div style={{display: "flex"}}>
         <h1 style={{minWidth: "220px", padding: 0, color: "#DFDFDF", flex: 1}}>
-          Trail Guide Content
+          {siteTitle}
         </h1>
         <div style={{flex: 2}}>
           <AutoComplete style={{marginTop: "12px", width: "100%", float: "right"}}
