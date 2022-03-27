@@ -31,8 +31,8 @@ const FeedbackDetailView = () => {
       </Button>,
     ]}
   >
-    <Typography.Title level={2}>{feedback.long_title}</Typography.Title>
-    <Descriptions bordered={true}>
+    <Typography.Title level={2}>Feedback from {feedback.from.name}</Typography.Title>
+    <Descriptions bordered={true} size="small">
       <Descriptions.Item label="From Name">{feedback.from.name}</Descriptions.Item>
       <Descriptions.Item label="Menu Icon">{feedback.from.email}</Descriptions.Item>
       <Descriptions.Item label="Time Submitted">{feedbackDate.toLocaleString()}</Descriptions.Item>

@@ -31,7 +31,7 @@ const ReleaseDetailView = () => {
       ? "Loading..."
       : <span>Version {release?.version}</span>}
   >
-    <Descriptions bordered={true}>
+    <Descriptions bordered={true} size="small">
       <Descriptions.Item label="Version">{version ?? ""}</Descriptions.Item>
       <Descriptions.Item label="Submitted">{(new Date(submitted_dt)).toLocaleDateString()}</Descriptions.Item>
       <Descriptions.Item label="Published">

@@ -36,7 +36,7 @@ const LayerDetailView = () => {
       </Button>,
     ]}
   >
-    <Descriptions bordered={true}>
+    <Descriptions bordered={true} size="small">
       <Descriptions.Item label="Name">{layer.name}</Descriptions.Item>
       <Descriptions.Item label="Enabled">{layer?.enabled ? "Yes" : "No"}</Descriptions.Item>
       <Descriptions.Item label="Rank">{layer?.rank ?? "—"}</Descriptions.Item>

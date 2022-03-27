@@ -66,7 +66,7 @@ const AssetDetailView = () => {
     //   </Button>,
     // ]}
   >
-    <Descriptions bordered={true}>
+    <Descriptions bordered={true} size="small">
       <Descriptions.Item label="ID">{asset?.id ?? ""}</Descriptions.Item>
       <Descriptions.Item label="File Name" span={2}>{asset?.file_name ?? ""}</Descriptions.Item>
       <Descriptions.Item label="Type" span={1}>{asset?.asset_type ?? ""}</Descriptions.Item>

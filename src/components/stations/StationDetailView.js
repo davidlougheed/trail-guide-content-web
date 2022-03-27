@@ -40,7 +40,7 @@ const StationDetailView = () => {
     <Modal visible={qrModalVisible} onCancel={() => setQrModalVisible(false)} footer={null}>
       {station ? <StationQR station={station} /> : null}
     </Modal>
-    <Descriptions bordered={true}>
+    <Descriptions bordered={true} size="small">
       <Descriptions.Item label="ID" span={2}>{station?.id ?? ""}</Descriptions.Item>
       <Descriptions.Item label="Title" span={2}>{station?.title ?? ""}</Descriptions.Item>
       <Descriptions.Item label="Long Title" span={2}>{station?.long_title ?? ""}</Descriptions.Item>

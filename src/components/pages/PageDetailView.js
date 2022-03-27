@@ -31,7 +31,7 @@ const PageDetailView = () => {
     ]}
   >
     <Typography.Title level={2}>{page.long_title}</Typography.Title>
-    <Descriptions bordered={true}>
+    <Descriptions bordered={true} size="small">
       <Descriptions.Item label="Subtitle">{page.subtitle}</Descriptions.Item>
       <Descriptions.Item label="Menu Icon">{page.icon}</Descriptions.Item>
       <Descriptions.Item label="Enabled">{page?.enabled ? "Yes" : "No"}</Descriptions.Item>
