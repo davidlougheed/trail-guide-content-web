@@ -11,7 +11,7 @@ import {EditOutlined, QrcodeOutlined} from "@ant-design/icons";
 
 import {findItemByID} from "../../utils";
 import StationPreview from "./StationPreview";
-import {BASE_URL} from "../../config";
+import {API_BASE_URL} from "../../config";
 import StationQR from "./StationQR";
 
 const StationDetailView = () => {

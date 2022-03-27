@@ -5,7 +5,7 @@
 import {message} from "antd";
 import proj4 from "proj4";
 
-import {AUTH_AUDIENCE, BASE_URL} from "./config";
+import {AUTH_AUDIENCE, API_BASE_URL} from "./config";
 
 export const ACCESS_TOKEN_READ = {
   audience: AUTH_AUDIENCE,
@@ -18,7 +18,7 @@ export const ACCESS_TOKEN_MANAGE = {
 };
 
 export const fetchOtt = async accessToken => {
-  const req = await fetch(`${BASE_URL}/ott`, {
+  const req = await fetch(`${API_BASE_URL}/ott`, {
     method: "POST",
     headers: {"Authorization": `Bearer ${accessToken}`},
   });
@@ -44,10 +44,10 @@ export const downloadVersionBundle = (version, isAuthenticated, getAccessTokenSi
   const ott = await fetchOtt(accessToken);
 
   if (!ott) return;
-  window.location.href = `${BASE_URL}/releases/${version ?? ""}/bundle?ott=${ott.token}`;
+  window.location.href = `${API_BASE_URL}/releases/${version ?? ""}/bundle?ott=${ott.token}`;
 };
 
-export const assetIdToBytesUrl = assetId => `${BASE_URL}/assets/${assetId}/bytes`;
+export const assetIdToBytesUrl = assetId => `${API_BASE_URL}/assets/${assetId}/bytes`;
 
 export const networkActionTypes = name => ({
   REQUEST: `${name}.REQUEST`,
@@ -64,7 +64,7 @@ export const networkAction = (types, url, method = "GET", multipart = false) =>
     };
 
     try {
-      const r = await fetch(BASE_URL + url,
+      const r = await fetch(API_BASE_URL + url,
         {
           method,
           ...(multipart ? {
