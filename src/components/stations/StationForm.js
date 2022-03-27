@@ -277,8 +277,7 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
                       <Form.Item {...field}
                                  key="title"
                                  label="Title"
-                                 name={[field.name, "title"]}
-                                 rules={[{required: true}]}>
+                                 name={[field.name, "title"]}>
                         <Input placeholder="Title"/>
                       </Form.Item>
                     </Col>
