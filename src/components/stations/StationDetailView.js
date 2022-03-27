@@ -57,6 +57,12 @@ const StationDetailView = () => {
       </Descriptions.Item>
     </Descriptions>
 
+    <Descriptions bordered={true} size="small" style={{marginTop: 16}}>
+      <Descriptions.Item label="Revision" span={1}>{station?.revision?.number ?? ""}</Descriptions.Item>
+      <Descriptions.Item label="Update" span={1}>{station?.revision?.message ?? ""}</Descriptions.Item>
+      <Descriptions.Item label="Last Updated" span={1}>{station?.revision?.timestamp ?? ""}</Descriptions.Item>
+    </Descriptions>
+
     <Divider />
 
     <StationPreview {...(station ?? {})} />

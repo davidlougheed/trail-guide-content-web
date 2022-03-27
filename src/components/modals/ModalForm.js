@@ -1,6 +1,6 @@
 import React, {useRef} from "react";
 
-import {Button, Form, Input} from "antd"
+import {Button, Divider, Form, Input} from "antd"
 
 import HTMLEditor from "../HTMLEditor";
 
@@ -13,6 +13,10 @@ const ModalForm = ({initialValues, onFinish, loading, ...props}) => {
   const newInitialValues = {
     close_text: "Close",
     ...oldInitialValues,
+    revision: {
+      working_copy: oldInitialValues.revision?.number ?? null,
+      message: "",  // Clear revision message for possible filling out & re-submission
+    },
   };
 
   const _onFinish = data => {
@@ -28,6 +32,10 @@ const ModalForm = ({initialValues, onFinish, loading, ...props}) => {
     </Form.Item>
     <Form.Item label="Content">
       <HTMLEditor initialValue={newInitialValues.content} innerRef={quillRef}/>
+    </Form.Item>
+    <Divider />
+    <Form.Item name={["revision", "message"]} label="Revision Message">
+      <Input />
     </Form.Item>
     <Form.Item>
       <Button type="primary" htmlType="submit" loading={loading}>Submit</Button>

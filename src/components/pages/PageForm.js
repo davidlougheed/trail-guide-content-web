@@ -1,7 +1,7 @@
 import React, {useRef} from "react";
 import {useSelector} from "react-redux";
 
-import {Button, Col, Form, Input, Row, Select, Switch} from "antd";
+import {Button, Col, Divider, Form, Input, Row, Select, Switch} from "antd";
 
 import HTMLEditor from "../HTMLEditor";
 
@@ -17,6 +17,10 @@ const PageForm = ({initialValues, onFinish, loading, ...props}) => {
   const newInitialValues = {
     rank: numPages,  // Add page to the end of the list in the app by default
     ...oldInitialValues,
+    revision: {
+      working_copy: oldInitialValues.revision?.number ?? null,
+      message: "",  // Clear revision message for possible filling out & re-submission
+    },
   };
 
   const _onFinish = data => {
@@ -66,6 +70,10 @@ const PageForm = ({initialValues, onFinish, loading, ...props}) => {
     </Form.Item>
     <Form.Item label="Content">
       <HTMLEditor initialValue={newInitialValues.content} innerRef={quillRef}/>
+    </Form.Item>
+    <Divider />
+    <Form.Item name={["revision", "message"]} label="Revision Message">
+      <Input />
     </Form.Item>
     <Form.Item>
       <Button type="primary" htmlType="submit" loading={loading}>Submit</Button>

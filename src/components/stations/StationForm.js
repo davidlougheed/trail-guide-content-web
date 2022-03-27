@@ -1,7 +1,7 @@
 import React, {useRef} from "react";
 import {useSelector} from "react-redux";
 
-import {Button, Card, Col, Form, Input, Row, Select, Space, Switch} from "antd";
+import {Button, Card, Col, Divider, Form, Input, Row, Select, Space, Switch} from "antd";
 import {CloseCircleOutlined, MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 
 import HTMLEditor from "../HTMLEditor";
@@ -83,6 +83,10 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
       ...(oldInitialValues.coordinates_utm ?? {}),
     },
     ...oldInitialValues,
+    revision: {
+      working_copy: oldInitialValues.revision?.number ?? null,
+      message: "",  // Clear revision message for possible filling out & re-submission
+    },
     visible: {
       from: oldInitialValues.visible?.from || "",
       to: oldInitialValues.visible?.to || "",
@@ -434,6 +438,10 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
         </>
       )}
     </Form.List>
+    <Divider />
+    <Form.Item name={["revision", "message"]} label="Revision Message">
+      <Input />
+    </Form.Item>
     <Form.Item>
       <Button type="primary" htmlType="submit" loading={loading}>Submit</Button>
     </Form.Item>

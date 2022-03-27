@@ -25,7 +25,7 @@ const PageDetailView = () => {
     onBack={() => navigate(-1)}
     title={fetchingPages ? "Loading..." : <span>Page: {page.title}</span>}
     extra={[
-      <Button key="edit" icon={<EditOutlined/>} onClick={() => navigate(`edit/${pageID}`)}>
+      <Button key="edit" icon={<EditOutlined/>} onClick={() => navigate(`/pages/edit/${pageID}`)}>
         Edit
       </Button>,
     ]}
@@ -35,6 +35,12 @@ const PageDetailView = () => {
       <Descriptions.Item label="Subtitle">{page.subtitle}</Descriptions.Item>
       <Descriptions.Item label="Menu Icon">{page.icon}</Descriptions.Item>
       <Descriptions.Item label="Enabled">{page?.enabled ? "Yes" : "No"}</Descriptions.Item>
+    </Descriptions>
+
+    <Descriptions bordered={true} size="small" style={{marginTop: 16}}>
+      <Descriptions.Item label="Revision" span={1}>{page?.revision?.number ?? ""}</Descriptions.Item>
+      <Descriptions.Item label="Update" span={1}>{page?.revision?.message ?? ""}</Descriptions.Item>
+      <Descriptions.Item label="Last Updated" span={1}>{page?.revision?.timestamp ?? ""}</Descriptions.Item>
     </Descriptions>
 
     <Card size="small" title="Content" style={{marginTop: 16}}>

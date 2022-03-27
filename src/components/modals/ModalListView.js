@@ -24,7 +24,7 @@ const ModalListView = () => {
       title: "Actions",
       key: "actions",
       render: modal => <Space size="middle">
-        <Button icon={<EyeOutlined/>} disabled={true}
+        <Button icon={<EyeOutlined/>}
                 onClick={() => navigate(`../detail/${modal.id}`)}>View</Button>
         <Button icon={<EditOutlined/>}
                 onClick={() => navigate(`../edit/${modal.id}`)}>Edit</Button>

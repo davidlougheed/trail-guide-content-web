@@ -8,12 +8,13 @@ import {Navigate, Route, Routes} from "react-router-dom";
 import ModalListView from "./ModalListView";
 import ModalAddView from "./ModalAddView";
 import ModalEditView from "./ModalEditView";
+import ModalDetailView from "./ModalDetailView";
 
 const ModalsPage = () => <Routes>
   <Route path="list" element={<ModalListView />} />
   <Route path="add" element={<ModalAddView />} />
   <Route path="edit/:id" element={<ModalEditView />} />
-  <Route path="detail/:id" element={<div>aaa</div>} />
+  <Route path="detail/:id" element={<ModalDetailView />} />
   <Route path="*" element={<Navigate to="list" replace={true} />} />
 </Routes>;
 
