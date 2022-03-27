@@ -3,7 +3,7 @@ import {useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 
 import {Button, Modal, PageHeader, Space, Table} from "antd";
-import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
+import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined, QrcodeOutlined} from "@ant-design/icons";
 import StationQR from "./StationQR";
 
 const StationListView = () => {
@@ -15,7 +15,6 @@ const StationListView = () => {
   const categories = useSelector(state => state.categories.items);
 
   const [qrStation, setQrStation] = useState(null);
-
 
   const columns = [
     {
@@ -46,13 +45,13 @@ const StationListView = () => {
       key: "actions",
       render: station => (
         <Space size="small">
-          <Button icon={<EyeOutlined/>}
+          <Button icon={<QrcodeOutlined />}
                   onClick={() => setQrStation(station)}>QR</Button>
-          <Button icon={<EyeOutlined/>}
+          <Button icon={<EyeOutlined />}
                   onClick={() => navigate(`../detail/${station.id}`)}>View</Button>
-          <Button icon={<EditOutlined/>}
+          <Button icon={<EditOutlined />}
                   onClick={() => navigate(`../edit/${station.id}`)}>Edit</Button>
-          <Button icon={<DeleteOutlined/>} danger={true} disabled={true}>Delete</Button>
+          <Button icon={<DeleteOutlined />} danger={true} disabled={true}>Delete</Button>
         </Space>
       ),
     },
