@@ -33,7 +33,7 @@ const StationAddView = () => {
     title="Add Station"
     subTitle="Create a new app station within a section"
   >
-    <StationForm onFinish={onFinish} loading={addingStation} />
+    <StationForm onFinish={onFinish} loading={addingStation} localDataKey="tgcw:station:add" />
   </PageHeader>;
 };
 

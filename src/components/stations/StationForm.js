@@ -1,5 +1,7 @@
-import React, {useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useSelector} from "react-redux";
+
+import {throttle} from "lodash";
 
 import {Button, Card, Col, Divider, Form, Input, Row, Select, Space, Switch} from "antd";
 import {CloseCircleOutlined, MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
@@ -23,7 +25,7 @@ const quizTypes = [
 ];
 
 const contentItemField = i => k => `contents_${i}_${k}`;
-const normalizeContents = fromAPI => c => ({
+const normalizeContents = fromAPI => c => c ? ({
   ...c,
   title: c.title || "",
 
@@ -49,6 +51,9 @@ const normalizeContents = fromAPI => c => ({
       } : {}),
     })),
   } : {}),
+}) : ({
+  content_type: null,
+  title: "",
 });
 
 const monthDayValidator = (r, v) => {
@@ -66,7 +71,15 @@ const monthDayValidator = (r, v) => {
   return Promise.resolve();
 };
 
-const StationForm = ({onFinish, initialValues, loading, ...props}) => {
+const getLocalStorageValues = k => {
+  if (!k) {
+    return {};
+  }
+  const ls = localStorage.getItem(k);
+  return ls ? JSON.parse(ls) : {};
+};
+
+const StationForm = ({onFinish, initialValues, loading, localDataKey, ...props}) => {
   const [form] = Form.useForm();
 
   const sections = useSelector(state => state.sections.items);
@@ -74,7 +87,11 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
   const categories = useSelector(state => state.categories.items);
   const assets = useSelector(state => state.assets.items);
 
-  const oldInitialValues = initialValues ?? {};
+  const [savedData, setSavedData] = useState(getLocalStorageValues(localDataKey));
+  const [lastSavedTime, setLastSavedTime] = useState(null);
+
+  const oldInitialValues = initialValues ? {...initialValues, ...savedData} : {...savedData};
+
   console.log("initial values", oldInitialValues);
   const newInitialValues = {
     rank: numStations,  // Add station to the end of the list in the app by default
@@ -83,6 +100,7 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
       ...(oldInitialValues.coordinates_utm ?? {}),
     },
     ...oldInitialValues,
+    enabled: !!oldInitialValues.enabled,
     revision: {
       working_copy: oldInitialValues.revision?.number ?? null,
       message: "",  // Clear revision message for possible filling out & re-submission
@@ -94,51 +112,104 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
     contents: (oldInitialValues.contents ?? []).map(normalizeContents(true)),
   };
 
+  useEffect(() => {
+    if (!form) return;
+    form.setFieldsValue(newInitialValues);
+  }, [form])
+
   const contentsRefs = useRef({});
-  const getContentKey = (k, i) => ({[k]: contentsRefs.current[contentItemField(i)(k)].getEditor().root.innerHTML});
+  const getContentKey = (k, i) => ({
+    [k]: contentsRefs?.current[contentItemField(i)(k)]?.getEditor()?.root?.innerHTML ?? ""
+  });
 
-  const onFinish_ = values => {
-    (onFinish ?? (() => {}))({
-      ...values,
+  const processValues = values => ({
+    ...values,
 
-      // Properly type everything
-      visible: {
-        from: values.visible.from || null,
-        to: values.visible.to || null,
-      },
-      header_image: values.header_image ?? null,
-      coordinates_utm: {
-        ...values.coordinates_utm,
-        east: parseInt(values.coordinates_utm.east, 10),
-        north: parseInt(values.coordinates_utm.north, 10),
-      },
-      contents: (values.contents.map(normalizeContents(false)) ?? []).map((c, ci) => {
-        switch (c.content_type) {
-          case "html":
-            return {
-              ...c,
-              ...getContentKey("content_before_fold", ci),
-              ...getContentKey("content_after_fold", ci),
-            };
-          case "gallery":
-            return {
-              ...c,
-              ...getContentKey("description", ci),
-            };
-          case "quiz":
-            return {
-              ...c,
-              ...getContentKey("question", ci),
-              ...getContentKey("answer", ci),
-            };
-        }
-      }),
-      enabled: !!values.enabled,
-      rank: parseInt(values.rank),
-    });
+    title: values.title ?? "",
+    long_title: values.long_title ?? "",
+    subtitle: values.subtitle ?? "",
+
+    // Properly type everything
+    visible: {
+      from: values.visible.from || null,
+      to: values.visible.to || null,
+    },
+    header_image: values.header_image ?? null,
+    coordinates_utm: {
+      ...values.coordinates_utm,
+      east: values.coordinates_utm.east ? parseInt(values.coordinates_utm.east, 10) : undefined,
+      north: values.coordinates_utm.north ? parseInt(values.coordinates_utm.north, 10) : undefined,
+    },
+    contents: (values.contents.map(normalizeContents(false)) ?? []).map((c, ci) => {
+      switch (c.content_type) {
+        case "html":
+          return {
+            ...c,
+            ...getContentKey("content_before_fold", ci),
+            ...getContentKey("content_after_fold", ci),
+          };
+        case "gallery":
+          return {
+            ...c,
+            ...getContentKey("description", ci),
+          };
+        case "quiz":
+          return {
+            ...c,
+            ...getContentKey("question", ci),
+            ...getContentKey("answer", ci),
+          };
+      }
+    }),
+    enabled: !!values.enabled,
+    rank: parseInt(values.rank),
+  });
+
+  const onFinish_ = values => (onFinish ?? (() => {}))(processValues(values));
+
+  const saveChangesLocally = throttle((providedValues=undefined) => {
+    if (!localDataKey) return;
+
+    const values = processValues(providedValues ?? form.getFieldsValue(true));
+
+    console.log("saving locally", values);
+
+    localStorage.setItem(localDataKey, JSON.stringify(values));
+
+    const date = new Date(Date.now());
+    setLastSavedTime(`${date.toLocaleDateString()}, ${date.getHours()}:${date.getMinutes()}`);
+  }, 1000);
+
+  useEffect(() => {
+    if (!form || !localDataKey) return;
+    // noinspection JSCheckFunctionSignatures
+    const interval = setInterval(saveChangesLocally, 15000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [form, localDataKey]);
+
+  // noinspection JSValidateTypes
+  const onValuesChange = (_, allValues) => saveChangesLocally(allValues);
+
+  const resetChanges = () => {
+    setSavedData({});
+    if (localDataKey) {
+      localStorage.removeItem(localDataKey);
+    }
   };
 
-  return <Form form={form} layout="vertical" initialValues={newInitialValues} onFinish={onFinish_} {...props}>
+  useEffect(() => {
+    // Reset fields to initial value if savedData changes
+    form.resetFields();
+  }, [savedData])
+
+  return <Form form={form}
+               layout="vertical"
+               initialValues={newInitialValues}
+               onValuesChange={onValuesChange}
+               onFinish={onFinish_}
+               {...props}>
     <Row gutter={12}>
       <Col span={8}>
         <Form.Item name="title" label="Title" rules={[{required: true}]}>
@@ -433,7 +504,11 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
             )
           })}
           <Form.Item>
-            <Button onClick={() => add()} icon={<PlusOutlined/>}>Add Content Item</Button>
+            <Button onClick={() => {
+              add();
+              // noinspection JSValidateTypes
+              saveChangesLocally();
+            }} icon={<PlusOutlined/>}>Add Content Item</Button>
           </Form.Item>
         </>
       )}
@@ -443,7 +518,13 @@ const StationForm = ({onFinish, initialValues, loading, ...props}) => {
       <Input />
     </Form.Item>
     <Form.Item>
-      <Button type="primary" htmlType="submit" loading={loading}>Submit</Button>
+      <Space>
+        <Button type="primary" htmlType="submit" loading={loading}>Submit</Button>
+        <Button onClick={resetChanges}>Reset Changes</Button>
+        {(localDataKey && lastSavedTime) ? (
+          <span style={{color: "#AAA", fontStyle: "italic"}}>Changes last saved locally at {lastSavedTime}.</span>
+        ) : null}
+      </Space>
     </Form.Item>
   </Form>;
 };
