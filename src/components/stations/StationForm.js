@@ -204,6 +204,12 @@ const StationForm = ({onFinish, initialValues, loading, localDataKey, ...props})
     form.resetFields();
   }, [savedData])
 
+  const contentFieldChanged = (field, contentField) => (prevValues, newValues) => {
+    const ct1 = prevValues.contents[field.name]?.[contentField];
+    const ct2 = newValues.contents[field.name]?.[contentField];
+    return ct1 !== ct2;
+  };
+
   return <Form form={form}
                layout="vertical"
                initialValues={newInitialValues}
@@ -213,7 +219,7 @@ const StationForm = ({onFinish, initialValues, loading, localDataKey, ...props})
     <Row gutter={12}>
       <Col span={8}>
         <Form.Item name="title" label="Title" rules={[{required: true}]}>
-          <Input/>
+          <Input />
         </Form.Item>
       </Col>
       <Col span={16}>
@@ -306,14 +312,14 @@ const StationForm = ({onFinish, initialValues, loading, localDataKey, ...props})
         <Form.Item name="section" label="Section" rules={[{required: true}]}>
           <Select
             placeholder="Select app section for this station"
-            options={sections.map(s => ({value: s.id, label: s.title}))}
+            options={sections.map(({id, title}) => ({value: id, label: title}))}
           />
         </Form.Item>
       </Col>
       <Col span={8}>
         <Form.Item name="category" label="Category" rules={[{required: true}]}>
           <Select placeholder="Select category for this station"
-                  options={categories.map(c => ({value: c}))}/>
+                  options={categories.map(value => ({value}))}/>
         </Form.Item>
       </Col>
     </Row>
@@ -357,11 +363,8 @@ const StationForm = ({onFinish, initialValues, loading, localDataKey, ...props})
                       </Form.Item>
                     </Col>
                   </Row>
-                  <Form.Item shouldUpdate={(prevValues, newValues) => {
-                    const ct1 = prevValues.contents[field.name]?.content_type;
-                    const ct2 = newValues.contents[field.name]?.content_type;
-                    return ct1 !== ct2;
-                  }}>
+                  <Form.Item shouldUpdate={contentFieldChanged(field, "content_type")}
+                             style={{marginBottom: 0}}>
                     {f => {
                       switch (f.getFieldValue(["contents", field.name, "content_type"])) {
                         case "html":
@@ -374,7 +377,7 @@ const StationForm = ({onFinish, initialValues, loading, localDataKey, ...props})
                                 }}
                               />
                             </Form.Item>
-                            <Form.Item key="content_after_fold" label="Content After Fold">
+                            <Form.Item key="content_after_fold" label="Content After Fold" style={{marginBottom: 0}}>
                               <HTMLEditor
                                 initialValue={newInitialValues.contents[field.name]?.content_after_fold}
                                 innerRef={el => {
@@ -409,9 +412,8 @@ const StationForm = ({onFinish, initialValues, loading, localDataKey, ...props})
                                        label="Quiz Type"
                                        name={[field.name, "quiz_type"]}>
                               <Select options={quizTypes} onChange={() => {
-                                const cc = form.getFieldsValue().contents;
                                 form.setFieldsValue({
-                                  contents: cc.map((c, i) =>
+                                  contents: form.getFieldsValue().contents.map((c, i) =>
                                     i === field.name ? {...c, options: []} : c),
                                 });
                               }} />
@@ -452,11 +454,7 @@ const StationForm = ({onFinish, initialValues, loading, localDataKey, ...props})
                                         </Form.Item>
                                         <Form.Item
                                           label="Answer"
-                                          shouldUpdate={(prevValues, newValues) => {
-                                            const ct1 = prevValues.contents[field.name]?.quiz_type;
-                                            const ct2 = newValues.contents[field.name]?.quiz_type;
-                                            return ct1 !== ct2;
-                                          }}
+                                          shouldUpdate={contentFieldChanged(field, "quiz_type")}
                                         >
                                           {f => {
                                             switch (f.getFieldValue(["contents", field.name, "quiz_type"])) {
