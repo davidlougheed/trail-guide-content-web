@@ -23,7 +23,7 @@ const LayerAddView = () => {
     const result = await dispatch(addLayer(v, accessToken));
     if (!result.error) {
       message.success(`Added new layer: ${result.data.name}`);
-      navigate(`/layers/edit/${result.data.id}`, {replace: true});
+      navigate(`/layers/detail/${result.data.id}`, {replace: true});
     }
   };
 
