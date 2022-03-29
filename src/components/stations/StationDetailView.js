@@ -31,7 +31,7 @@ const StationDetailView = () => {
     title={fetchingStations ? "Loading..." : <span>Station: {station?.title}</span>}
     extra={[
       <Button key="qr" icon={<QrcodeOutlined />} onClick={() => setQrModalVisible(true)}>QR Code</Button>,
-      <Button key="edit" icon={<EditOutlined/>} onClick={() => navigate(`edit/${stationID}`)}>
+      <Button key="edit" icon={<EditOutlined/>} onClick={() => navigate(`/stations/edit/${stationID}`)}>
         Edit
       </Button>,
     ]}
