@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script type="text/javascript" src="/config/config.js"></script>
-    <style type="text/css">
+    <style>
         .ql-snow .ql-editor img, .page-detail-content img {
             display: block;
             max-height: 350px;
@@ -24,6 +24,22 @@
 
         .quiz .html-content img {
             max-height: 400px;
+        }
+
+        tgcs-audio {
+            display: inline-block;
+        }
+        tgcs-audio:not([controls]) {
+            cursor: pointer;
+        }
+        tgcs-audio:not([controls])::before {
+            content: attr(data-link-text);
+            text-decoration: underline;
+            color: #1890ff;
+        }
+        tgcs-audio:not([controls])::after {
+            content: "\01F50A";
+            margin-left: 0.5em;
         }
     </style>
 

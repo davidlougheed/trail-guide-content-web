@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 // TODO: De-duplicate with app itself
 
@@ -91,6 +91,16 @@ const RenderedContent = ({content}) => {
 
 const StationPreview = ({long_title, subtitle, coordinates_utm, header_image, contents}) => {
   const {zone, north, east} = coordinates_utm ?? {};
+
+  useEffect(() => {
+    document.querySelectorAll("tgcs-audio").forEach(el => {
+      el.addEventListener("click", () => {
+        const audio = el.querySelector("audio");
+        if (audio.paused) { audio.play().catch(console.error); }
+        else { audio.load(); }
+      });
+    });
+  }, [contents]);
 
   return <div className="station-preview">
     <div style={styles.header}>
