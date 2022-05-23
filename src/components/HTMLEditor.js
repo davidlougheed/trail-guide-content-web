@@ -1,7 +1,7 @@
 import React, {useRef, useState} from "react";
 import {useSelector} from "react-redux";
 
-import {Button, Checkbox, Image, Input, Modal, Select, Space} from "antd";
+import {Button, Checkbox, Divider, Image, Input, Modal, Select, Space} from "antd";
 
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -10,7 +10,13 @@ import "./AudioBlot";
 import "./VideoBlot";
 
 import {assetIdToBytesUrl} from "../utils";
-import {PictureOutlined, SoundOutlined, VideoCameraOutlined} from "@ant-design/icons";
+import {
+  CloseSquareOutlined, 
+  PictureOutlined, 
+  SoundOutlined, 
+  VideoCameraOutlined
+} from "@ant-design/icons";
+import {APP_BASE_URL} from "../config";
 
 const FORMATS = [
   "header",
@@ -25,6 +31,43 @@ const FORMATS = [
   "tgcsAudio",
   "html5Video",
 ];
+
+// cool name :)
+const ModalModal = ({modalOptions, linkText, onOk, onCancel, visible}) => {
+  // const [linkText, setLinkText] = useState(initialLinkText);
+  const [selectedModal, setSelectedModal] = useState(null);
+  
+  // useEffect(() => {
+  //   setLinkText(initialLinkText);
+  // }, [initialLinkText]);
+  
+  const onOk_ = () => {
+    onOk({
+      // linkText,
+      url: `${APP_BASE_URL}/modals/${selectedModal}`
+    });
+  };
+  
+  // noinspection JSValidateTypes
+  return <Modal title="Insert Modal Link" onOk={onOk_} onCancel={onCancel} visible={visible}>
+    <Space direction="vertical" style={{width: "100%"}}>
+      <div>
+        <strong>Link text:</strong> {linkText}
+        {/*<Input placeholder="Link text" value={linkText} onChange={e => setLinkText(e.target.value)} />*/}
+      </div>
+      <div>
+        <Select placeholder="Modal" 
+                onChange={modalId => setSelectedModal(modalId)} 
+                value={selectedModal}
+                style={{width: "100%"}} 
+                size="large">
+          {modalOptions.map(modal => 
+            <Select.Option value={modal.id} key={modal.id}>{modal.title}</Select.Option>)}
+        </Select>
+      </div>
+    </Space>
+  </Modal>;
+};
 
 const AudioModal = ({assetOptions, onOk, onCancel, visible}) => {
   const [displayAsLink, setDisplayAsLink] = useState(false);
@@ -45,26 +88,26 @@ const AudioModal = ({assetOptions, onOk, onCancel, visible}) => {
   return (
     <Modal title="Insert Audio" onOk={onOk_} onCancel={onCancel} visible={visible}>
       <Space direction="vertical" style={{width: "100%"}}>
-      <div>
-        <Checkbox checked={displayAsLink} onChange={e => setDisplayAsLink(e.target.checked)}>
-          Display as link</Checkbox>
-      </div>
-      <div>
-        <Input placeholder="Link text"
-               disabled={!displayAsLink}
-               value={displayAsLink ? linkText : ""}
-               onChange={e => setLinkText(e.target.value)} />
-      </div>
-      <div>
-        <Select placeholder="Audio asset"
-                onChange={asset => setSelectedAsset(asset)}
-                value={selectedAsset}
-                style={{width: "100%"}}
-                size="large">
-          {assetOptions.map(asset => <Select.Option value={asset.id} key={asset.id}>
-            {asset.file_name}</Select.Option>)}
-        </Select>
-      </div>
+        <div>
+          <Checkbox checked={displayAsLink} onChange={e => setDisplayAsLink(e.target.checked)}>
+            Display as link</Checkbox>
+        </div>
+        <div>
+          <Input placeholder="Link text"
+                 disabled={!displayAsLink}
+                 value={displayAsLink ? linkText : ""}
+                 onChange={e => setLinkText(e.target.value)} />
+        </div>
+        <div>
+          <Select placeholder="Audio asset"
+                  onChange={asset => setSelectedAsset(asset)}
+                  value={selectedAsset}
+                  style={{width: "100%"}}
+                  size="large">
+            {assetOptions.map(asset => <Select.Option value={asset.id} key={asset.id}>
+              {asset.file_name}</Select.Option>)}
+          </Select>
+        </div>
       </Space>
     </Modal>
   );
@@ -126,16 +169,30 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
 
   const [assetOptions, setAssetOptions] = useState([]);
   const [currentRange, setCurrentRange] = useState(null);
+  const [currentSelection, setCurrentSelection] = useState("");
 
-  // null | "audio" | "image" | "video"
+  // null | "modal" | "audio" | "image" | "video"
   const [showViewer, setShowViewer] = useState(null);
 
   const assets = useSelector(state => state.assets.items);
+  const modals = useSelector(state => state.modals.items);
 
   const assetHandler = type => () => {
     setCurrentRange(quillRef.current.getEditor().getSelection(true));
     setAssetOptions(assets.filter(a => a.asset_type === type));
     setShowViewer(type);
+  };
+  
+  const modalHandler = () => {
+    const sel = quillRef.current.getEditor().getSelection(true);
+    if (!sel || !sel.length) {
+      // TODO: Toast
+      alert("No text selected.");
+      return;
+    }
+    setCurrentRange(sel);
+    setCurrentSelection(quillRef.current.getEditor().getText(sel.index, sel.length));
+    setShowViewer("modal");
   };
 
   /** @type {(function(): void)} */
@@ -159,35 +216,48 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
 
   if (initialValue === null) return <div/>;
 
-  const modelInsertClose = () => setShowViewer(null);
+  const modalInsertClose = () => setShowViewer(null);
   const modalInsertOk = type => data => {
     if (!quillRef.current) return;
     if (!data) return;
-    quillRef.current.getEditor().insertEmbed(currentRange.index, type, data, "user");
-    setShowViewer(null);
+    if (type === "link") {
+      // quillRef.current.getEditor().deleteText(currentRange.index, currentRange.length);
+      // quillRef.current.getEditor().formatText(currentRange.index, data.linkText, type, data.url, "user");
+      quillRef.current.getEditor().formatText(currentRange.index, currentRange.length, type, data.url, "user");
+    } else {
+      quillRef.current.getEditor().insertEmbed(currentRange.index, type, data, "user");
+    }
+    modalInsertClose();
   };
 
   // noinspection JSValidateTypes
   return <div>
+    <ModalModal modalOptions={modals}
+                linkText={currentSelection}
+                visible={showViewer === "modal"} 
+                onOk={modalInsertOk("link")} onCancel={modalInsertClose} />
+    
     <AudioModal assetOptions={assetOptions}
                 visible={showViewer === "audio"}
                 onOk={modalInsertOk("tgcsAudio")}
-                onCancel={modelInsertClose} />
+                onCancel={modalInsertClose} />
 
     <ImageModal assetOptions={assetOptions}
                 visible={showViewer === "image"}
                 onOk={modalInsertOk("image")}
-                onCancel={modelInsertClose} />
+                onCancel={modalInsertClose} />
 
     <VideoModal assetOptions={assetOptions}
                 visible={showViewer === "video"}
                 onOk={modalInsertOk("html5Video")}
-                onCancel={modelInsertClose} />
+                onCancel={modalInsertClose} />
 
     <div style={{position: "relative"}}>
       <div style={{position: "absolute", top: 5, right: 16}}>
         {/* I'm too lazy to work with Quill's annoying toolbar API */}
         <Space direction="horizontal">
+          <Button onClick={modalHandler} icon={<CloseSquareOutlined />}>Modal</Button>
+          <Divider type="vertical" style={{margin: "0 6px"}} />
           <Button onClick={audioHandler} icon={<SoundOutlined />}>Audio</Button>
           <Button onClick={imageHandler} icon={<PictureOutlined />}>Image</Button>
           <Button onClick={videoHandler} icon={<VideoCameraOutlined />}>Video</Button>
