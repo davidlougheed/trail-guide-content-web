@@ -5,7 +5,7 @@
 import React, {useState} from "react";
 import {useSelector} from "react-redux";
 
-import {Button, Input, List, Select} from "antd";
+import {Button, Divider, Input, List, Select} from "antd";
 import {DragOutlined} from "@ant-design/icons";
 
 import {
@@ -94,6 +94,7 @@ const SortableGalleryInput = ({value, onChange}) => {
 
   // noinspection JSValidateTypes
   return <List itemLayout="vertical" bordered={true} footer={<div>
+    <Divider style={{marginTop: 0}} />
     <Input.Group compact={true}>
       <Select
         style={{width: 400}}
