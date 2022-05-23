@@ -1,7 +1,7 @@
-import React, {useRef, useState} from "react";
+import React, {useCallback, useRef, useState} from "react";
 import {useSelector} from "react-redux";
 
-import {Button, Checkbox, Divider, Image, Input, Modal, Select, Space} from "antd";
+import {Button, Checkbox, Divider, Image, Input, Modal, Select, Space, Tooltip} from "antd";
 
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -11,7 +11,8 @@ import "./VideoBlot";
 
 import {assetIdToBytesUrl} from "../utils";
 import {
-  CloseSquareOutlined, 
+  CloseSquareOutlined,
+  FileOutlined,
   PictureOutlined, 
   SoundOutlined, 
   VideoCameraOutlined
@@ -32,37 +33,29 @@ const FORMATS = [
   "html5Video",
 ];
 
-// cool name :)
-const ModalModal = ({modalOptions, linkText, onOk, onCancel, visible}) => {
-  // const [linkText, setLinkText] = useState(initialLinkText);
-  const [selectedModal, setSelectedModal] = useState(null);
-  
-  // useEffect(() => {
-  //   setLinkText(initialLinkText);
-  // }, [initialLinkText]);
-  
-  const onOk_ = () => {
-    onOk({
-      // linkText,
-      url: `${APP_BASE_URL}/modals/${selectedModal}`
-    });
-  };
+const LinkModal = ({options, objectName, objectPathItem, linkText, onOk, onCancel, visible}) => {
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const onOk_ = useCallback(
+    () => {
+      if (!selectedItem) return;
+      onOk(`${APP_BASE_URL}/${objectPathItem}/${selectedItem}`);
+      setSelectedItem(null);
+    },
+    [objectPathItem, selectedItem]);
   
   // noinspection JSValidateTypes
-  return <Modal title="Insert Modal Link" onOk={onOk_} onCancel={onCancel} visible={visible}>
+  return <Modal title={`Insert ${objectName} Link`} onOk={onOk_} onCancel={onCancel} visible={visible}>
     <Space direction="vertical" style={{width: "100%"}}>
+      <div><strong>Link text:</strong> {linkText}</div>
       <div>
-        <strong>Link text:</strong> {linkText}
-        {/*<Input placeholder="Link text" value={linkText} onChange={e => setLinkText(e.target.value)} />*/}
-      </div>
-      <div>
-        <Select placeholder="Modal" 
-                onChange={modalId => setSelectedModal(modalId)} 
-                value={selectedModal}
+        <Select placeholder={objectName}
+                onChange={itemId => setSelectedItem(itemId)}
+                value={selectedItem}
                 style={{width: "100%"}} 
                 size="large">
-          {modalOptions.map(modal => 
-            <Select.Option value={modal.id} key={modal.id}>{modal.title}</Select.Option>)}
+          {options.map(item => 
+            <Select.Option value={item.id} key={item.id}>{item.title}</Select.Option>)}
         </Select>
       </div>
     </Space>
@@ -176,6 +169,7 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
 
   const assets = useSelector(state => state.assets.items);
   const modals = useSelector(state => state.modals.items);
+  const pages = useSelector(state => state.pages.items);
 
   const assetHandler = type => () => {
     setCurrentRange(quillRef.current.getEditor().getSelection(true));
@@ -183,17 +177,23 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
     setShowViewer(type);
   };
   
-  const modalHandler = () => {
+  const linkHandler = type => () => {
     const sel = quillRef.current.getEditor().getSelection(true);
     if (!sel || !sel.length) {
       // TODO: Toast
       alert("No text selected.");
       return;
     }
+
     setCurrentRange(sel);
     setCurrentSelection(quillRef.current.getEditor().getText(sel.index, sel.length));
-    setShowViewer("modal");
+    setShowViewer(type);
   };
+
+  /** @type {(function(): void)} */
+  const modalHandler = linkHandler("modal");
+  /** @type {(function(): void)} */
+  const pageHandler = linkHandler("page");
 
   /** @type {(function(): void)} */
   const audioHandler = assetHandler("audio");
@@ -221,9 +221,7 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
     if (!quillRef.current) return;
     if (!data) return;
     if (type === "link") {
-      // quillRef.current.getEditor().deleteText(currentRange.index, currentRange.length);
-      // quillRef.current.getEditor().formatText(currentRange.index, data.linkText, type, data.url, "user");
-      quillRef.current.getEditor().formatText(currentRange.index, currentRange.length, type, data.url, "user");
+      quillRef.current.getEditor().formatText(currentRange.index, currentRange.length, type, data, "user");
     } else {
       quillRef.current.getEditor().insertEmbed(currentRange.index, type, data, "user");
     }
@@ -232,10 +230,21 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
 
   // noinspection JSValidateTypes
   return <div>
-    <ModalModal modalOptions={modals}
-                linkText={currentSelection}
-                visible={showViewer === "modal"} 
-                onOk={modalInsertOk("link")} onCancel={modalInsertClose} />
+    <LinkModal objectName="Modal"
+               objectPathItem="modals"
+               options={modals}
+               linkText={currentSelection}
+               visible={showViewer === "modal"}
+               onOk={modalInsertOk("link")}
+               onCancel={modalInsertClose} />
+
+    <LinkModal objectName="Page"
+               objectPathItem="pages"
+               options={pages}
+               linkText={currentSelection}
+               visible={showViewer === "page"}
+               onOk={modalInsertOk("link")}
+               onCancel={modalInsertClose} />
     
     <AudioModal assetOptions={assetOptions}
                 visible={showViewer === "audio"}
@@ -257,10 +266,17 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
         {/* I'm too lazy to work with Quill's annoying toolbar API */}
         <Space direction="horizontal">
           <Button onClick={modalHandler} icon={<CloseSquareOutlined />}>Modal</Button>
+          <Button onClick={pageHandler} icon={<FileOutlined />}>Page</Button>
           <Divider type="vertical" style={{margin: "0 6px"}} />
-          <Button onClick={audioHandler} icon={<SoundOutlined />}>Audio</Button>
-          <Button onClick={imageHandler} icon={<PictureOutlined />}>Image</Button>
-          <Button onClick={videoHandler} icon={<VideoCameraOutlined />}>Video</Button>
+          <Tooltip title="Audio">
+            <Button onClick={audioHandler} icon={<SoundOutlined />} />
+          </Tooltip>
+          <Tooltip title="Image">
+              <Button onClick={imageHandler} icon={<PictureOutlined />} />
+          </Tooltip>
+          <Tooltip title="Video">
+            <Button onClick={videoHandler} icon={<VideoCameraOutlined />} />
+          </Tooltip>
         </Space>
       </div>
       <ReactQuill theme="snow"
