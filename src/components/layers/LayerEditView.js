@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useCallback} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 import {useAuth0} from "@auth0/auth0-react";
@@ -19,25 +19,26 @@ const LayerEditView = () => {
   const updatingLayer = useSelector(state => state.layers.isUpdating);
   const layer = useSelector(state => findItemByID(state.layers.items, layerID));
 
-  if (fetchingLayers) return <div>Loading...</div>;
-  if (!layer) return <div>Layer not found</div>;  // TODO: Nice error
-
-  const onFinish = async v => {
+  const onFinish = useCallback(async v => {
     console.log("saving layer", v);
     const accessToken = await getAccessTokenSilently(ACCESS_TOKEN_MANAGE);
     const result = await dispatch(updateLayer(layer.id, v, accessToken));
     if (!result.error) {
       message.success(`Saved changes to layer: ${result.data.name}`);
     }
-  };
+  }, [getAccessTokenSilently, dispatch]);
+
+  const onBack = useCallback(() => navigate(-1), [navigate]);
+
+  if (fetchingLayers) return <div>Loading...</div>;
 
   return <PageHeader
-    onBack={() => navigate(-1)}
+    onBack={onBack}
     ghost={false}
-    title={`Edit Layer: ${layer.name}`}
-    subTitle="Press submit to save your changes."
+    title={layer ? `Edit Layer: ${layer.name}` : "Layer not found"}
+    subTitle={layer ? "Press submit to save your changes." : ""}
   >
-    <LayerForm initialValues={layer} onFinish={onFinish} loading={updatingLayer} />
+    {layer && <LayerForm initialValues={layer} onFinish={onFinish} loading={updatingLayer} />}
   </PageHeader>;
 };
 

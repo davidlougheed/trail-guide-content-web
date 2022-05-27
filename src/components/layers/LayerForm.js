@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useCallback} from "react";
 
 import {Button, Col, Form, Input, InputNumber, Row, Switch} from "antd"
 
@@ -14,12 +14,10 @@ const LayerForm = ({initialValues, onFinish, loading, ...props}) => {
     geojson: oldInitialValues.geojson ? JSON.stringify(oldInitialValues.geojson, null, 2) : "",
   };
 
-  const _onFinish = v => {
-    return onFinish({
-      ...v,
-      geojson: JSON.parse(v.geojson),
-    });
-  };
+  const _onFinish = useCallback(v => onFinish({
+    ...v,
+    geojson: JSON.parse(v.geojson),
+  }), [onFinish]);
 
   return <Form {...props} onFinish={_onFinish} form={form} layout="vertical" initialValues={newInitialValues}>
     <Row gutter={12}>

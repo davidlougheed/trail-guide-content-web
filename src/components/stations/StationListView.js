@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 
@@ -16,7 +16,7 @@ const StationListView = () => {
 
   const [qrStation, setQrStation] = useState(null);
 
-  const columns = [
+  const columns = useMemo(() => [
     {
       title: "Title",
       dataIndex: "title",
@@ -55,7 +55,9 @@ const StationListView = () => {
         </Space>
       ),
     },
-  ];
+  ], [navigate]);
+
+  const onAdd = useCallback(() => navigate("../add"), [navigate]);
 
   return <PageHeader
     ghost={false}
@@ -65,7 +67,7 @@ const StationListView = () => {
       <Button key="add"
               type="primary"
               icon={<PlusOutlined/>}
-              onClick={() => navigate("../add")}>
+              onClick={onAdd}>
         Add New</Button>,
     ]}
   >

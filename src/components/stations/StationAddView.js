@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useCallback} from "react";
 import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {useAuth0} from "@auth0/auth0-react";
@@ -17,15 +17,15 @@ const StationAddView = () => {
 
   const addingStation = useSelector(state => state.stations.isAdding);
 
-  const onFinish = async v => {
+  const onFinish = useCallback(async v => {
     console.log("adding station", v);
     const accessToken = await getAccessTokenSilently(ACCESS_TOKEN_MANAGE);
     const result = await dispatch(addStation(v, accessToken));
     if (!result.error) {
       message.success(`Added new station: ${result.data.title}`);
-      navigate(`/stations/edit/${result.data.id}`, {replace: true});
+      navigate(`/stations/detail/${result.data.id}`, {replace: true});
     }
-  };
+  }, [getAccessTokenSilently, dispatch, navigate]);
 
   return <PageHeader
     onBack={() => navigate(-1)}

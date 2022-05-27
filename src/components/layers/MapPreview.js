@@ -5,6 +5,7 @@ import {Link} from "react-router-dom";
 import {transformCoords} from "../../utils";
 
 const MapPreview = ({layers, stations}) => {
+  // noinspection JSValidateTypes
   return <MapContainer center={[44.4727488, -76.4295608]} zoom={14} style={{height: 400}}>
     <TileLayer
       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

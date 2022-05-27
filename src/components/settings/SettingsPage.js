@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2022  David Lougheed
 // See NOTICE for more information.
 
-import React, {useState} from "react";
+import React, {useCallback, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useAuth0} from "@auth0/auth0-react";
 
@@ -22,21 +22,24 @@ const SettingsPage = () => {
   const serverConfig = useSelector(state => state.serverConfig.data);
   const {getAccessTokenSilently} = useAuth0();
 
-  const [showConfig, setShowConfig] = useState(false);
+  const [configShown, setConfigShown] = useState(false);
 
-  if (fetchingSettings) return <div>Loading...</div>;
-
-  const onFinish = async v => {
+  const onFinish = useCallback(async v => {
     console.log("saving settings", v);
     const accessToken = await getAccessTokenSilently(ACCESS_TOKEN_MANAGE);
     const result = await dispatch(updateSettings(v, accessToken));
     if (!result.error) {
       message.success("Saved changes to settings");
     }
-  };
+  }, [getAccessTokenSilently, dispatch]);
+
+  const showConfig = useCallback(() => setConfigShown(true), []);
+  const hideConfig = useCallback(() => setConfigShown(false), []);
+
+  if (fetchingSettings) return <div>Loading...</div>;
 
   return <>
-    <Modal visible={showConfig} onCancel={() => setShowConfig(false)} footer={null}>
+    <Modal visible={configShown} onCancel={hideConfig} footer={null}>
       <Typography.Title level={3}>Front End</Typography.Title>
       <Form>
         {Object.entries(c).map(([ck, cv]) => <Form.Item label={ck} key={ck}>
@@ -51,7 +54,7 @@ const SettingsPage = () => {
       </Form>
     </Modal>
     <PageHeader title="Settings" ghost={false} extra={[
-      <Button key="config" onClick={() => setShowConfig(true)}>View Instance Configuration</Button>
+      <Button key="config" onClick={showConfig}>View Instance Configuration</Button>
     ]}>
       <SettingsForm initialValues={settings} onFinish={onFinish} loading={updatingSettings} />
     </PageHeader>

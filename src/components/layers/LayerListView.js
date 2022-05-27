@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 
@@ -15,9 +15,9 @@ const LayerListView = () => {
 
   const stations = useSelector(state => state.stations.items);
 
-  const [showPreview, setShowPreview] = useState(false);
+  const [previewShown, setPreviewShown] = useState(false);
 
-  const columns = [
+  const columns = useMemo(() => [
     {
       title: "Name",
       dataIndex: "name",
@@ -42,26 +42,30 @@ const LayerListView = () => {
         <Button icon={<DeleteOutlined/>} danger={true} disabled={true}>Delete</Button>
       </Space>,
     },
-  ];
+  ], [navigate]);
+
+  const showPreview = useCallback(() => setPreviewShown(true), []);
+  const hidePreview = useCallback(() => setPreviewShown(false), []);
+  const onAdd = useCallback(() => navigate("../add"), [navigate]);
 
   return <PageHeader
     ghost={false}
     title="Layers"
     subTitle="View and edit map layers"
     extra={[
-      <Button key="preview" icon={<EyeOutlined />} onClick={() => setShowPreview(true)}>Preview Map</Button>,
+      <Button key="preview" icon={<EyeOutlined />} onClick={showPreview}>Preview Map</Button>,
       <Button key="add"
               type="primary"
               icon={<PlusOutlined/>}
-              onClick={() => navigate("../add")}>
+              onClick={onAdd}>
         Add New</Button>,
     ]}
   >
     <Modal
       title="Map Preview"
-      visible={showPreview}
+      visible={previewShown}
       footer={null}
-      onCancel={() => setShowPreview(false)}
+      onCancel={hidePreview}
       width={800}
     >
       <MapPreview layers={layers} stations={stations} />

@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2022  David Lougheed
 // See NOTICE for more information.
 
-import React from "react";
+import React, {useCallback} from "react";
 import {useSelector} from "react-redux";
 import {Button, Form, Select} from "antd";
 
@@ -10,10 +10,9 @@ const SettingsForm = ({onFinish, loading, ...props}) => {
   const modals = useSelector(state => state.modals.items);
   const [form] = Form.useForm();
 
-  const _onFinish = values => (onFinish ?? (() => {
-  }))({
+  const _onFinish = useCallback(values => (onFinish ?? (() => {}))({
     terms_modal: values.terms_modal ?? null,
-  });
+  }), []);
 
   return <Form {...props} form={form} layout="vertical" onFinish={_onFinish}>
     <Form.Item name="terms_modal"

@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2022  David Lougheed
 // See NOTICE for more information.
 
-import React, {useState} from "react";
+import React, {useCallback, useState} from "react";
 import {useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 
@@ -23,20 +23,25 @@ const StationDetailView = () => {
 
   const [qrModalVisible, setQrModalVisible] = useState(false);
 
+  const onBack = useCallback(() => navigate(-1), [navigate]);
+  const showQrModal = useCallback(() => setQrModalVisible(true), []);
+  const hideQrModal = useCallback(() => setQrModalVisible(false), []);
+  const editStation = useCallback(() => navigate(`/stations/edit/${stationID}`), [navigate, stationID]);
+
   const enabled = station?.enabled ? "Yes" : "No";
 
   return <PageHeader
     ghost={false}
-    onBack={() => navigate(-1)}
-    title={fetchingStations ? "Loading..." : <span>Station: {station?.title}</span>}
+    onBack={onBack}
+    title={fetchingStations ? "Loading..." : (station ? <span>Station: {station.title}</span> : "Station not found")}
     extra={[
-      <Button key="qr" icon={<QrcodeOutlined />} onClick={() => setQrModalVisible(true)}>QR Code</Button>,
-      <Button key="edit" icon={<EditOutlined/>} onClick={() => navigate(`/stations/edit/${stationID}`)}>
+      <Button key="qr" icon={<QrcodeOutlined />} onClick={showQrModal}>QR Code</Button>,
+      <Button key="edit" icon={<EditOutlined/>} onClick={editStation}>
         Edit
       </Button>,
     ]}
   >
-    <Modal visible={qrModalVisible} onCancel={() => setQrModalVisible(false)} footer={null}>
+    <Modal visible={qrModalVisible} onCancel={hideQrModal} footer={null}>
       {station ? <StationQR station={station} /> : null}
     </Modal>
     <Descriptions bordered={true} size="small">

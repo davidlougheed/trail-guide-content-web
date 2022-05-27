@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2022  David Lougheed
 // See NOTICE for more information.
 
-import React, {useState} from "react";
+import React, {useCallback, useState} from "react";
 import {useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 
@@ -18,22 +18,25 @@ const LayerDetailView = () => {
   const navigate = useNavigate();
   const {id: layerID} = useParams();
 
-  const [showPreview, setShowPreview] = useState(false);
+  const [previewShown, setPreviewShown] = useState(false);
 
   const fetchingLayers = useSelector(state => state.layers.isFetching);
   const layer = useSelector(state => findItemByID(state.layers.items, layerID));
 
   if (!layer) return "Loading...";
 
+  const onBack = useCallback(() => navigate(-1), [navigate]);
+  const showPreview = useCallback(() => setPreviewShown(true), []);
+  const hidePreview = useCallback(() => setPreviewShown(false), []);
+  const editLayer = useCallback(() => navigate(`/layers/edit/${layerID}`), [navigate, layerID]);
+
   return <PageHeader
     ghost={false}
-    onBack={() => navigate(-1)}
+    onBack={onBack}
     title={fetchingLayers ? "Loading..." : <span>Layer: {layer.name}</span>}
     extra={[
-      <Button key="preview" icon={<EyeOutlined />} onClick={() => setShowPreview(true)}>Preview Layer</Button>,
-      <Button key="edit" icon={<EditOutlined/>} onClick={() => navigate(`/layers/edit/${layerID}`)}>
-        Edit
-      </Button>,
+      <Button key="preview" icon={<EyeOutlined />} onClick={showPreview}>Preview Layer</Button>,
+      <Button key="edit" icon={<EditOutlined/>} onClick={editLayer}>Edit</Button>,
     ]}
   >
     <Descriptions bordered={true} size="small">
@@ -48,9 +51,9 @@ const LayerDetailView = () => {
 
     <Modal
       title="Layer Preview"
-      visible={showPreview}
+      visible={previewShown}
       footer={null}
-      onCancel={() => setShowPreview(false)}
+      onCancel={hidePreview}
       width={800}
     >
       <MapPreview layers={[layer]} />

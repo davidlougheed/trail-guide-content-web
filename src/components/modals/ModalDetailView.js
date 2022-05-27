@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2022  David Lougheed
 // See NOTICE for more information.
 
-import React from "react";
+import React, {useCallback} from "react";
 import {useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 
@@ -18,14 +18,17 @@ const ModalDetailView = () => {
   const fetchingModals = useSelector(state => state.modals.isFetching);
   const modal = useSelector(state => findItemByID(state.modals.items, modalID));
 
+  const onBack = useCallback(() => navigate(-1), [navigate]);
+  const editModal = useCallback(() => navigate(`/modals/edit/${modalID}`), [navigate, modalID]);
+
   if (!modal) return "Loading...";
 
   return <PageHeader
     ghost={false}
-    onBack={() => navigate(-1)}
+    onBack={onBack}
     title={fetchingModals ? "Loading..." : <span>Modal: {modal.title}</span>}
     extra={[
-      <Button key="edit" icon={<EditOutlined/>} onClick={() => navigate(`/modals/edit/${modalID}`)}>
+      <Button key="edit" icon={<EditOutlined/>} onClick={editModal}>
         Edit
       </Button>,
     ]}

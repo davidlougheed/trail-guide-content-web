@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 
@@ -15,7 +15,7 @@ const PageListView = () => {
 
   const [qrPage, setQrPage] = useState(null);
 
-  const columns = [
+  const columns = useMemo(() => [
     {
       title: "Title",
       dataIndex: "title",
@@ -39,7 +39,9 @@ const PageListView = () => {
         </Space>
       )
     },
-  ];
+  ], [navigate]);
+
+  const modalCancel = useCallback(() => setQrPage(null), []);
 
   return <PageHeader
     ghost={false}
@@ -49,7 +51,7 @@ const PageListView = () => {
     <Modal title={qrPage?.title}
            style={{top: 36}}
            visible={!!qrPage}
-           onCancel={() => setQrPage(null)}
+           onCancel={modalCancel}
            footer={null}>
       {qrPage ? <PageQR page={qrPage} /> : null}
     </Modal>

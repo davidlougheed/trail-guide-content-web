@@ -1,4 +1,4 @@
-import React, {useRef} from "react";
+import React, {useCallback, useRef} from "react";
 
 import {Button, Divider, Form, Input} from "antd"
 
@@ -19,9 +19,9 @@ const ModalForm = ({initialValues, onFinish, loading, ...props}) => {
     },
   };
 
-  const _onFinish = data => {
+  const _onFinish = useCallback(data => {
     onFinish({...data, content: quillRef.current.getEditor().root.innerHTML});
-  };
+  }, [onFinish, quillRef]);
 
   return <Form {...props} onFinish={_onFinish} form={form} layout="vertical" initialValues={newInitialValues}>
     <Form.Item name="title" label="Title" rules={[{required: true}]}>

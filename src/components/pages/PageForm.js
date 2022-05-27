@@ -1,4 +1,4 @@
-import React, {useRef} from "react";
+import React, {useCallback, useRef} from "react";
 import {useSelector} from "react-redux";
 
 import {Button, Col, Divider, Form, Input, Row, Select, Switch} from "antd";
@@ -23,12 +23,12 @@ const PageForm = ({initialValues, onFinish, loading, ...props}) => {
     },
   };
 
-  const _onFinish = data => {
+  const _onFinish = useCallback(data => {
     onFinish({
       ...data,
       content: quillRef.current.getEditor().root.innerHTML,
     });
-  };
+  }, [onFinish, quillRef]);
 
   return <Form {...props} onFinish={_onFinish} form={form} layout="vertical" initialValues={newInitialValues}>
     <Row gutter={12}>

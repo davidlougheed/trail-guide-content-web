@@ -1,7 +1,7 @@
 import React from "react";
 import {useSelector} from "react-redux";
 
-import {Button, Col, Form, Input, Row, Select, Switch} from "antd";
+import {Button, Col, Form, Input, Row, Switch} from "antd";
 
 const ReleaseForm = ({initialValues, onFinish, loading, ...props}) => {
   const [form] = Form.useForm();

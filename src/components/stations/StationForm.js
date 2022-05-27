@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {useSelector} from "react-redux";
 
 import {throttle} from "lodash";
@@ -118,11 +118,11 @@ const StationForm = ({onFinish, initialValues, loading, localDataKey, ...props})
   }, [form])
 
   const contentsRefs = useRef({});
-  const getContentKey = (k, i) => ({
+  const getContentKey = useCallback((k, i) => ({
     [k]: contentsRefs?.current[contentItemField(i)(k)]?.getEditor()?.root?.innerHTML ?? ""
-  });
+  }), [contentsRefs]);
 
-  const processValues = values => ({
+  const processValues = useCallback(values => ({
     ...values,
 
     title: values.title ?? "",
@@ -163,12 +163,15 @@ const StationForm = ({onFinish, initialValues, loading, localDataKey, ...props})
     }),
     enabled: !!values.enabled,
     rank: parseInt(values.rank),
-  });
+  }), [getContentKey]);
 
-  const onFinish_ = values => (onFinish ?? (() => {}))(processValues(values));
+  const onFinish_ = useCallback(
+    values => (onFinish ?? (() => {}))(processValues(values)),
+    [onFinish, processValues]);
 
-  const saveChangesLocally = throttle((providedValues=undefined) => {
-    if (!localDataKey) return;
+  // noinspection JSCheckFunctionSignatures
+  const saveChangesLocally = useCallback(throttle((providedValues=undefined) => {
+    if (!form || !localDataKey) return;
 
     const values = processValues(providedValues ?? form.getFieldsValue(true));
 
@@ -178,26 +181,27 @@ const StationForm = ({onFinish, initialValues, loading, localDataKey, ...props})
 
     const date = new Date(Date.now());
     setLastSavedTime(`${date.toLocaleDateString()}, ${date.getHours()}:${date.getMinutes()}`);
-  }, 1000);
+  }, 1000), [form, localDataKey]);
 
   useEffect(() => {
-    if (!form || !localDataKey) return;
     // noinspection JSCheckFunctionSignatures
     const interval = setInterval(saveChangesLocally, 15000);
     return () => {
       clearInterval(interval);
     };
-  }, [form, localDataKey]);
+  }, [saveChangesLocally]);
 
-  // noinspection JSValidateTypes
-  const onValuesChange = (_, allValues) => saveChangesLocally(allValues);
+  // noinspection JSValidateTypes,JSCheckFunctionSignatures
+  const onValuesChange = useCallback(
+    (_, allValues) => saveChangesLocally(allValues),
+    [saveChangesLocally]);
 
-  const resetChanges = () => {
+  const resetChanges = useCallback(() => {
     setSavedData({});
     if (localDataKey) {
       localStorage.removeItem(localDataKey);
     }
-  };
+  }, [localDataKey]);
 
   useEffect(() => {
     // Reset fields to initial value if savedData changes

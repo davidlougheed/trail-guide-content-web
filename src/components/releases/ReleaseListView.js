@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useCallback, useMemo} from "react";
 import {useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import {useAuth0} from "@auth0/auth0-react";
@@ -15,7 +15,7 @@ const ReleaseListView = () => {
   const loadingReleases = useSelector(state => state.releases.isFetching);
   const releases = useSelector(state => state.releases.items);
 
-  const columns = [
+  const columns = useMemo(() => [
     {
       title: "Version",
       dataIndex: "version",
@@ -54,7 +54,9 @@ const ReleaseListView = () => {
         </Space>
       )
     },
-  ];
+  ], [isAuthenticated, getAccessTokenSilently, navigate]);
+
+  const onAdd = useCallback(() => navigate("../add"), [navigate]);
 
   return <PageHeader
     ghost={false}
@@ -64,7 +66,7 @@ const ReleaseListView = () => {
       <Button key="add"
               type="primary"
               icon={<PlusOutlined/>}
-              onClick={() => navigate("../add")}>
+              onClick={onAdd}>
         Add Release
       </Button>
     ]}

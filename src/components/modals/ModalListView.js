@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useCallback, useMemo} from "react";
 import {useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 
@@ -11,7 +11,7 @@ const ModalListView = () => {
   const loadingModals = useSelector(state => state.modals.isFetching);
   const modals = useSelector(state => state.modals.items);
 
-  const columns = [
+  const columns = useMemo(() => [
     {
       title: "Title",
       dataIndex: "title",
@@ -31,7 +31,9 @@ const ModalListView = () => {
         <Button icon={<DeleteOutlined/>} danger={true} disabled={true}>Delete</Button>
       </Space>,
     },
-  ];
+  ], [navigate]);
+
+  const onAdd = useCallback(() => navigate("./add"), [navigate]);
 
   return <PageHeader
     ghost={false}
@@ -41,7 +43,7 @@ const ModalListView = () => {
       <Button key="add"
               type="primary"
               icon={<PlusOutlined/>}
-              onClick={() => navigate("../add")}>
+              onClick={onAdd}>
         Add New</Button>,
     ]}
   >

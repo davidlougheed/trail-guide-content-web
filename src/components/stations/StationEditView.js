@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useCallback} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 import {useAuth0} from "@auth0/auth0-react";
@@ -19,25 +19,26 @@ const StationEditView = () => {
   const updatingStations = useSelector(state => state.stations.isUpdating);
   const station = useSelector(state => findItemByID(state.stations.items, stationID));
 
-  if (fetchingStations) return <div>Loading...</div>;  // TODO: Nice loading
-  if (!station) return <div>Station not found</div>;  // TODO: Nice error
-
-  const onFinish = async v => {
+  const onFinish = useCallback(async v => {
     console.log("saving station", v);
     const accessToken = await getAccessTokenSilently(ACCESS_TOKEN_MANAGE);
     const result = await dispatch(updateStation(station.id, v, accessToken));
     if (!result.error) {
       message.success(`Saved changes to station: ${result.data.title}`);
     }
-  };
+  }, [getAccessTokenSilently, dispatch]);
+
+  const onBack = useCallback(() => navigate(-1), [navigate]);
+
+  if (fetchingStations) return <div>Loading...</div>;  // TODO: Nice loading
 
   return <PageHeader
-    onBack={() => navigate(-1)}
+    onBack={onBack}
     ghost={false}
-    title={`Edit Station: ${station.title}`}
-    subTitle="Press submit to save your changes."
+    title={station ? `Edit Station: ${station.title}` : "Station not found"}
+    subTitle={station ? "Press submit to save your changes." : ""}
   >
-    <StationForm initialValues={station} onFinish={onFinish} loading={updatingStations} />
+    {station && <StationForm initialValues={station} onFinish={onFinish} loading={updatingStations} />}
   </PageHeader>;
 };
 

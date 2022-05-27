@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2022  David Lougheed
 // See NOTICE for more information.
 
-import React from "react";
+import React, {useCallback} from "react";
 import {useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 
@@ -24,9 +24,11 @@ const ReleaseDetailView = () => {
 
   const {version, release_notes, bundle_path, submitted_dt, published_dt} = release ?? {};
 
+  const onBack = useCallback(() => navigate(-1), [navigate]);
+
   return <PageHeader
     ghost={false}
-    onBack={() => navigate(-1)}
+    onBack={onBack}
     title={fetchingReleases
       ? "Loading..."
       : <span>Version {release?.version}</span>}
