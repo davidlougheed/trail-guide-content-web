@@ -6,6 +6,7 @@ import {transformCoords} from "../../utils";
 
 const MapPreview = ({layers, stations}) => {
   // noinspection JSValidateTypes
+  // TODO: Configurable centre, boundaries
   return <MapContainer center={[44.4727488, -76.4295608]} zoom={14} style={{height: 400}}>
     <TileLayer
       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -22,7 +23,7 @@ const MapPreview = ({layers, stations}) => {
     )}
     {(stations ?? []).filter(station => station.enabled).map(station => {
       const t = transformCoords(station.coordinates_utm);
-      return <Marker position={[t.latitude, t.longitude]}>
+      return <Marker position={[t.latitude, t.longitude]} key={station.id}>
         <Popup>
           <Link to={`/stations/detail/${station.id}`}>{station.title}</Link>
         </Popup>
