@@ -30,7 +30,7 @@ const PageEditView = () => {
     if (!result.error) {
       message.success(`Saved changes to page: ${result.data.title}`);
     }
-  }, [getAccessTokenSilently, dispatch]);
+  }, [getAccessTokenSilently, dispatch, page]);
 
   const onBack = useCallback(() => navigate(-1), [navigate]);
 

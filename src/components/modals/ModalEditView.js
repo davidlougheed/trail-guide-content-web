@@ -26,7 +26,7 @@ const ModalEditView = () => {
     if (!result.error) {
       message.success(`Saved changes to modal: ${result.data.title}`);
     }
-  }, [getAccessTokenSilently, dispatch]);
+  }, [getAccessTokenSilently, dispatch, modal]);
 
   const onBack = useCallback(() => navigate(-1), [navigate]);
 

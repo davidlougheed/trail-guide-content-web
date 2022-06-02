@@ -26,7 +26,7 @@ const LayerEditView = () => {
     if (!result.error) {
       message.success(`Saved changes to layer: ${result.data.name}`);
     }
-  }, [getAccessTokenSilently, dispatch]);
+  }, [getAccessTokenSilently, dispatch, layer]);
 
   const onBack = useCallback(() => navigate(-1), [navigate]);
 

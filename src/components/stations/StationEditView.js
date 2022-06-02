@@ -26,7 +26,7 @@ const StationEditView = () => {
     if (!result.error) {
       message.success(`Saved changes to station: ${result.data.title}`);
     }
-  }, [getAccessTokenSilently, dispatch]);
+  }, [getAccessTokenSilently, dispatch, station]);
 
   const onBack = useCallback(() => navigate(-1), [navigate]);
 
