@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useCallback} from "react";
 import {useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import {useAuth0} from "@auth0/auth0-react";
@@ -9,7 +9,6 @@ import AssetForm from "./AssetForm";
 
 import {addAsset} from "../../modules/assets/actions";
 import {ACCESS_TOKEN_MANAGE} from "../../utils";
-import {useCallback} from "@types/react";
 
 const AssetAddView = () => {
   const dispatch = useDispatch();
