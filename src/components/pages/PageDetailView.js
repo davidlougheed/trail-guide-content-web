@@ -11,6 +11,7 @@ import {EditOutlined, QrcodeOutlined} from "@ant-design/icons";
 
 import {findItemByID} from "../../utils";
 import PageQR from "./PageQR";
+import HTMLContent from "../HTMLContent";
 
 const PageDetailView = () => {
   const navigate = useNavigate();
@@ -26,15 +27,13 @@ const PageDetailView = () => {
   const hideQrModal = useCallback(() => setQrModalVisible(false), []);
   const editPage = useCallback(() => navigate(`/pages/edit/${pageID}`), [navigate, pageID]);
 
-  if (!page) return "Loading...";
-
   return <PageHeader
     ghost={false}
     onBack={onBack}
-    title={fetchingPages ? "Loading..." : <span>Page: {page.title}</span>}
+    title={fetchingPages ? "Loading..." : (page ? <span>Page: {page.title}</span> : <span>Page not found</span>)}
     extra={[
-      <Button key="qr" icon={<QrcodeOutlined />} onClick={showQrModal}>QR Code</Button>,
-      <Button key="edit" icon={<EditOutlined/>} onClick={editPage}>
+      <Button key="qr" icon={<QrcodeOutlined />} onClick={showQrModal} disabled={!page}>QR Code</Button>,
+      <Button key="edit" icon={<EditOutlined/>} onClick={editPage} disabled={!page}>
         Edit
       </Button>,
     ]}
@@ -43,22 +42,24 @@ const PageDetailView = () => {
       {page ? <PageQR page={page} /> : null}
     </Modal>
 
-    <Typography.Title level={2}>{page.long_title}</Typography.Title>
-    <Descriptions bordered={true} size="small">
-      <Descriptions.Item label="Subtitle">{page.subtitle}</Descriptions.Item>
-      <Descriptions.Item label="Menu Icon">{page.icon}</Descriptions.Item>
-      <Descriptions.Item label="Enabled">{page?.enabled ? "Yes" : "No"}</Descriptions.Item>
-    </Descriptions>
+    {page && <>
+      <Typography.Title level={2}>{page.long_title}</Typography.Title>
+      <Descriptions bordered={true} size="small">
+        <Descriptions.Item label="Subtitle">{page.subtitle}</Descriptions.Item>
+        <Descriptions.Item label="Menu Icon">{page.icon}</Descriptions.Item>
+        <Descriptions.Item label="Enabled">{page.enabled ? "Yes" : "No"}</Descriptions.Item>
+      </Descriptions>
 
-    <Descriptions bordered={true} size="small" style={{marginTop: 16}}>
-      <Descriptions.Item label="Revision" span={1}>{page?.revision?.number ?? ""}</Descriptions.Item>
-      <Descriptions.Item label="Update" span={1}>{page?.revision?.message ?? ""}</Descriptions.Item>
-      <Descriptions.Item label="Last Updated" span={1}>{page?.revision?.timestamp ?? ""}</Descriptions.Item>
-    </Descriptions>
+      <Descriptions bordered={true} size="small" style={{marginTop: 16}}>
+        <Descriptions.Item label="Revision" span={1}>{page.revision.number}</Descriptions.Item>
+        <Descriptions.Item label="Update" span={1}>{page.revision.message}</Descriptions.Item>
+        <Descriptions.Item label="Last Updated" span={1}>{page?.revision.timestamp}</Descriptions.Item>
+      </Descriptions>
 
-    <Card size="small" title="Content" style={{marginTop: 16}}>
-      <div className="page-detail-content" dangerouslySetInnerHTML={{__html: page.content}}/>
-    </Card>
+      <Card size="small" title="Content" style={{marginTop: 16}}>
+        <HTMLContent id="page-detail-content" htmlContent={page.content} />
+      </Card>
+    </>}
   </PageHeader>;
 };
 

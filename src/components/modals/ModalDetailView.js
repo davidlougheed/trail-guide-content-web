@@ -10,6 +10,7 @@ import {Button, Card, Descriptions, PageHeader, Typography} from "antd";
 import {EditOutlined} from "@ant-design/icons";
 
 import {findItemByID} from "../../utils";
+import HTMLContent from "../HTMLContent";
 
 const ModalDetailView = () => {
   const navigate = useNavigate();
@@ -45,7 +46,7 @@ const ModalDetailView = () => {
     </Descriptions>
 
     <Card size="small" title="Content" style={{marginTop: 16}}>
-      <div className="modal-detail-content" dangerouslySetInnerHTML={{__html: modal.content}} />
+      <HTMLContent id="modal-detail-content" htmlContent={modal?.content} />
       <Button>{modal?.close_text}</Button>
     </Card>
   </PageHeader>;

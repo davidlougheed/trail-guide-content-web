@@ -5,6 +5,7 @@ import React, {useEffect, useState} from "react";
 import {assetIdToBytesUrl} from "../../utils";
 import {Button, Image, Typography} from "antd";
 import Quiz from "../Quiz";
+import HTMLContent from "../HTMLContent";
 
 const textShadow = {
   textShadow: "1px 3px 3px rgba(0, 0, 0, 0.8)",
@@ -54,25 +55,25 @@ const styles = {
   },
 };
 
-const RenderedContent = ({content}) => {
+const RenderedContent = ({id, content}) => {
   const [showMore, setShowMore] = useState(false);
 
   switch (content.content_type) {
     case "html":
       return <>
         {content.title ? <Typography.Title level={4}>{content.title}</Typography.Title> : null}
-        <div className="html-content" dangerouslySetInnerHTML={{__html: content.content_before_fold ?? ""}} />
+        <HTMLContent id={`${id}-content-before`} htmlContent={content.content_before_fold ?? ""} />
         {content.content_after_fold
           ? <Button onClick={() => setShowMore(!showMore)} style={{marginBottom: 16}}>
             {showMore ? "HIDE" : "READ MORE"}</Button> : null}
         {showMore
-          ? <div className="html-content" dangerouslySetInnerHTML={{__html: content.content_after_fold ?? ""}} />
+          ? <HTMLContent id={`${id}-content-after`} htmlContent={content.content_after_fold ?? ""} />
           : null}
       </>;
     case "gallery":
       return <>
         {content.title ? <Typography.Title level={4}>{content.title}</Typography.Title> : null}
-        <div className="html-content" dangerouslySetInnerHTML={{__html: content.description}} />
+        <HTMLContent id={`${id}-gallery-content`} htmlContent={content.description ?? ""} />
         <Image.PreviewGroup>
           {content.items.map(i => (
             <div key={i.asset} style={{display: "inline-block", paddingRight: 16, paddingBottom: 8}}>
@@ -124,7 +125,7 @@ const StationPreview = ({long_title, subtitle, coordinates_utm, header_image, co
         ) : null}
       </div>
     </div>
-    {(contents ?? []).map((c, i) => <RenderedContent content={c} key={i} />)}
+    {(contents ?? []).map((c, i) => <RenderedContent id={`station-${i}`} content={c} key={i} />)}
   </div>;
 };
 
