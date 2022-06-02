@@ -23,7 +23,7 @@ const ModalAddView = () => {
     const result = await dispatch(addModal(v, accessToken));
     if (!result.error) {
       message.success(`Added new modal: ${result.data.title}`);
-      navigate(`/modals/edit/${result.data.id}`, {replace: true});
+      navigate(`/modals/detail/${result.data.id}`, {replace: true});
     }
   }, [getAccessTokenSilently, navigate]);
 

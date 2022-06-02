@@ -25,15 +25,15 @@ const ModalListView = () => {
       key: "actions",
       render: modal => <Space size="middle">
         <Button icon={<EyeOutlined/>}
-                onClick={() => navigate(`../detail/${modal.id}`)}>View</Button>
+                onClick={() => navigate(`/modals/detail/${modal.id}`)}>View</Button>
         <Button icon={<EditOutlined/>}
-                onClick={() => navigate(`../edit/${modal.id}`)}>Edit</Button>
+                onClick={() => navigate(`/modals/edit/${modal.id}`)}>Edit</Button>
         <Button icon={<DeleteOutlined/>} danger={true} disabled={true}>Delete</Button>
       </Space>,
     },
   ], [navigate]);
 
-  const onAdd = useCallback(() => navigate("./add"), [navigate]);
+  const onAdd = useCallback(() => navigate("/modals/add"), [navigate]);
 
   return <PageHeader
     ghost={false}
