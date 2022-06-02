@@ -9,6 +9,7 @@ import AssetForm from "./AssetForm";
 
 import {addAsset} from "../../modules/assets/actions";
 import {ACCESS_TOKEN_MANAGE} from "../../utils";
+import {useCallback} from "@types/react";
 
 const AssetAddView = () => {
   const dispatch = useDispatch();
@@ -19,7 +20,7 @@ const AssetAddView = () => {
    * @param {{asset_type: string, enabled: boolean, file: string}} v
    * @return {Promise<void>}
    */
-  const onFinish = async v => {
+  const onFinish = useCallback(async v => {
     console.log("adding asset", v);
 
     const body = new FormData();
@@ -38,10 +39,12 @@ const AssetAddView = () => {
       message.success(`Added new asset: ${result.data.file_name}`);
       navigate(`/assets/detail/${result.data.id}`, {replace: true});
     }
-  };
+  }, [getAccessTokenSilently, dispatch, navigate]);
+
+  const onBack = useCallback(() => navigate(-1), [navigate]);
 
   return <PageHeader
-    onBack={() => navigate(-1)}
+    onBack={onBack}
     ghost={false}
     title="Add Asset"
     subTitle="Create a new asset (image, video, or audio) for use in a station or page."
