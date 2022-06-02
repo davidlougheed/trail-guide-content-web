@@ -2,11 +2,11 @@
 // Copyright (C) 2021-2022  David Lougheed
 // See NOTICE for more information.
 
-import React, {useEffect} from "react";
+import React, {useEffect, useMemo} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useAuth0} from "@auth0/auth0-react";
 
-import {Alert, AutoComplete, Button, Layout, Input, Menu, Spin, Typography} from "antd";
+import {Alert, AutoComplete, Button, Layout, Input, Menu, Skeleton, Spin, Typography, PageHeader} from "antd";
 import {
   AppstoreOutlined,
   CloseSquareOutlined,
@@ -97,6 +97,19 @@ const App = () => {
   const siteTitle = (loadingConfig || serverConfig === null) ? "" : (serverConfig?.APP_NAME || "Trail Guide");
   document.title = siteTitle || "Trail Guide";
 
+  const menuItems = useMemo(() => [
+    {key: "stations", label: <Link to="/stations">Stations</Link>, icon: <EnvironmentOutlined />},
+    {key: "sections", label: <Link to="/sections">Sections</Link>, icon: <DatabaseOutlined />},
+    {key: "pages", label: <Link to="/pages">Pages</Link>, icon: <FileOutlined />},
+    {key: "modals", label: <Link to="/modals">Modals</Link>, icon: <CloseSquareOutlined />},
+    {key: "assets", label: <Link to="/assets">Assets</Link>, icon: <PictureOutlined />},
+    {key: "layers", label: <Link to="/layers">Layers</Link>, icon: <GlobalOutlined />},
+    {key: "releases", label: <Link to="/releases">Releases</Link>, icon: <AppstoreOutlined />},
+    {key: "feedback", label: <Link to="/feedback">Feedback</Link>, icon: <SolutionOutlined />},
+    {key: "settings", label: <Link to="/settings">Settings</Link>, icon: <SettingOutlined />},
+  ], []);
+
+  // noinspection JSValidateTypes
   return <Layout style={{height: "100vh"}}>
     <Layout.Header style={{padding: "0 24px"}}>
       <div style={{display: "flex"}}>
@@ -129,77 +142,56 @@ const App = () => {
       <Layout.Sider style={{overflowY: "auto"}}
                     collapsedWidth={0}
                     collapsed={!isAuthenticated || (isAuthenticated && isLoadingAuth)}>
-        <Menu theme="dark" defaultSelectedKeys={defaultSelectedKeys}>
-          <Menu.Item key="stations" icon={<EnvironmentOutlined />}>
-            <Link to="/stations">Stations</Link>
-          </Menu.Item>
-          <Menu.Item key="sections" icon={<DatabaseOutlined />}>
-            <Link to="/sections">Sections</Link>
-          </Menu.Item>
-          <Menu.Item key="pages" icon={<FileOutlined />}>
-            <Link to="/pages">Pages</Link>
-          </Menu.Item>
-          <Menu.Item key="modals" icon={<CloseSquareOutlined />}>
-            <Link to="/modals">Modals</Link>
-          </Menu.Item>
-          <Menu.Item key="assets" icon={<PictureOutlined />}>
-            <Link to="/assets">Assets</Link>
-          </Menu.Item>
-          <Menu.Item key="layers" icon={<GlobalOutlined />}>
-            <Link to="/layers">Layers</Link>
-          </Menu.Item>
-          <Menu.Item key="releases" icon={<AppstoreOutlined />}>
-            <Link to="/releases">Releases</Link>
-          </Menu.Item>
-          <Menu.Item key="feedback" icon={<SolutionOutlined />}>
-            <Link to="/feedback">Feedback</Link>
-          </Menu.Item>
-          <Menu.Item key="settings" icon={<SettingOutlined />}>
-            <Link to="/settings">Settings</Link>
-          </Menu.Item>
-        </Menu>
+        <Menu theme="dark" defaultSelectedKeys={defaultSelectedKeys} items={menuItems} />
       </Layout.Sider>
       <Layout.Content style={{overflowY: "auto"}}>
-        {isLoadingAuth ? "Loading..." : (isAuthenticated ? (
-          <Spin spinning={false}>
-            <Routes>
-              <Route path="/assets/*" element={<AssetsPage />} />
-              <Route path="/feedback/*" element={<FeedbackPage />} />
-              <Route path="/layers/*" element={<LayerPage />} />
-              <Route path="/modals/*" element={<ModalsPage />} />
-              <Route path="/pages/*" element={<PagesPage />} />
-              <Route path="/releases/*" element={<ReleasePage />} />
-              <Route path="/sections/*" element={<SectionsPage />} />
-              <Route path="/settings/*" element={<SettingsPage />} />
-              <Route path="/stations/*" element={<StationsPage />} />
-              <Route path="/" element={<Navigate to="/stations" replace={true} />} />
-            </Routes>
-          </Spin>
-        ) : (
-          <div style={{
-            height: "100%",
-            backgroundColor: "white",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            textAlign: "center",
-          }}>
-            <div style={{paddingBottom: 8}}>
-              <Typography.Text>You must be authenticated to see this content.</Typography.Text>
-            </div>
-            <div>
-              <Button size="large" type="primary" onClick={() => loginWithRedirect()}>Sign In</Button>
-            </div>
-            {urlParams.hasOwnProperty("error_description") ? (
-              <div style={{paddingTop: 16}}>
-                <div style={{maxWidth: 500, padding: "0 16", margin: "0 auto", textAlign: "left"}}>
-                  <Alert message="Authentication Error"
-                         description={urlParams["error_description"]}
-                         type="error"/>
-                </div>
+        {isLoadingAuth
+          ? (
+            <PageHeader
+              ghost={false}
+              title="Loading..."
+              subTitle={<Skeleton title={false} paragraph={{rows: 1, width: 200}} style={{marginTop: 12}} />}
+            />
+          ) : (isAuthenticated ? (
+            <Spin spinning={false}>
+              <Routes>
+                <Route path="/assets/*" element={<AssetsPage />} />
+                <Route path="/feedback/*" element={<FeedbackPage />} />
+                <Route path="/layers/*" element={<LayerPage />} />
+                <Route path="/modals/*" element={<ModalsPage />} />
+                <Route path="/pages/*" element={<PagesPage />} />
+                <Route path="/releases/*" element={<ReleasePage />} />
+                <Route path="/sections/*" element={<SectionsPage />} />
+                <Route path="/settings/*" element={<SettingsPage />} />
+                <Route path="/stations/*" element={<StationsPage />} />
+                <Route path="/" element={<Navigate to="/stations" replace={true} />} />
+              </Routes>
+            </Spin>
+          ) : (
+            <div style={{
+              height: "100%",
+              backgroundColor: "white",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              textAlign: "center",
+            }}>
+              <div style={{paddingBottom: 8}}>
+                <Typography.Text>You must be authenticated to see this content.</Typography.Text>
               </div>
-            ) : null}
-          </div>
+              <div>
+                <Button size="large" type="primary" onClick={() => loginWithRedirect()}>Sign In</Button>
+              </div>
+              {urlParams.hasOwnProperty("error_description") ? (
+                <div style={{paddingTop: 16}}>
+                  <div style={{maxWidth: 500, padding: "0 16", margin: "0 auto", textAlign: "left"}}>
+                    <Alert message="Authentication Error"
+                           description={urlParams["error_description"]}
+                           type="error"/>
+                  </div>
+                </div>
+              ) : null}
+            </div>
         ))}
       </Layout.Content>
     </Layout>
