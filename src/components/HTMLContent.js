@@ -47,12 +47,13 @@ const HTMLContent = React.memo(({id, htmlContent}) => {
 
   return <div>
     <Modal
+      width={640}
       visible={modalShown !== null}
       onCancel={hideModal}
       title={modalShown?.title}
       footer={<Button onClick={hideModal}>{modalShown?.close_text}</Button>}
     >
-      {modalShown ? <div dangerouslySetInnerHTML={{__html: modalShown.content}} /> : null}
+      {modalShown ? <div className="html-content" dangerouslySetInnerHTML={{__html: modalShown.content}} /> : null}
     </Modal>
     <div className="html-content" id={id} dangerouslySetInnerHTML={{__html: htmlContent}} />
   </div>;
