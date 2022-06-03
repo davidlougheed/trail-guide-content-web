@@ -2,7 +2,7 @@ import React, {useState} from "react";
 
 import {Button, Card, Checkbox, Divider, Select, Space, Typography} from "antd";
 
-const Quiz = ({quiz_type, title, question, answer, options, ...props}) => {
+const Quiz = React.memo(({quiz_type, title, question, answer, options, ...props}) => {
   const [showAnswer, setShowAnswer] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState(
     quiz_type === "match_values" ? [...new Array(options.length)] : [],
@@ -91,6 +91,6 @@ const Quiz = ({quiz_type, title, question, answer, options, ...props}) => {
       <div className="html-content" dangerouslySetInnerHTML={{__html: answer}} />
     </> : null}
   </Card>
-};
+});
 
 export default Quiz;

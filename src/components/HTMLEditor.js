@@ -33,7 +33,7 @@ const FORMATS = [
   "html5Video",
 ];
 
-const LinkModal = ({options, objectName, objectPathItem, linkText, onOk, onCancel, visible}) => {
+const LinkModal = React.memo(({options, objectName, objectPathItem, linkText, onOk, onCancel, visible}) => {
   const [selectedItem, setSelectedItem] = useState(null);
 
   const onOk_ = useCallback(
@@ -60,9 +60,9 @@ const LinkModal = ({options, objectName, objectPathItem, linkText, onOk, onCance
       </div>
     </Space>
   </Modal>;
-};
+});
 
-const AudioModal = ({assetOptions, onOk, onCancel, visible}) => {
+const AudioModal = React.memo(({assetOptions, onOk, onCancel, visible}) => {
   const [displayAsLink, setDisplayAsLink] = useState(false);
   const [linkText, setLinkText] = useState("");
 
@@ -104,9 +104,9 @@ const AudioModal = ({assetOptions, onOk, onCancel, visible}) => {
       </Space>
     </Modal>
   );
-};
+});
 
-const ImageModal = ({assetOptions, onOk, onCancel, visible}) => {
+const ImageModal = React.memo(({assetOptions, onOk, onCancel, visible}) => {
   const [selectedAsset, setSelectedAsset] = useState(null);
 
   const onOk_ = () => {
@@ -132,9 +132,9 @@ const ImageModal = ({assetOptions, onOk, onCancel, visible}) => {
       </Select>
     </Modal>
   );
-};
+});
 
-const VideoModal = ({assetOptions, onOk, onCancel, visible}) => {
+const VideoModal = React.memo(({assetOptions, onOk, onCancel, visible}) => {
   const [selectedAsset, setSelectedAsset] = useState(null);
 
   const onOk_ = () => {
@@ -155,7 +155,7 @@ const VideoModal = ({assetOptions, onOk, onCancel, visible}) => {
       </Select>
     </Modal>
   );
-};
+});
 
 const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
   const quillRef = useRef(null);

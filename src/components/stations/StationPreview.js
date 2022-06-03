@@ -55,7 +55,7 @@ const styles = {
   },
 };
 
-const RenderedContent = ({id, content}) => {
+const RenderedContent = React.memo(({id, content}) => {
   const [showMore, setShowMore] = useState(false);
 
   switch (content.content_type) {
@@ -88,9 +88,9 @@ const RenderedContent = ({id, content}) => {
     default:
       return "";
   }
-};
+});
 
-const StationPreview = ({long_title, subtitle, coordinates_utm, header_image, contents}) => {
+const StationPreview = React.memo(({long_title, subtitle, coordinates_utm, header_image, contents}) => {
   const {zone, north, east} = coordinates_utm ?? {};
 
   useEffect(() => {
@@ -127,6 +127,6 @@ const StationPreview = ({long_title, subtitle, coordinates_utm, header_image, co
     </div>
     {(contents ?? []).map((c, i) => <RenderedContent id={`station-${i}`} content={c} key={i} />)}
   </div>;
-};
+});
 
 export default StationPreview;

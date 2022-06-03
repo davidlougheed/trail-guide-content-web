@@ -9,7 +9,7 @@ import {APP_BASE_URL} from "../config";
 const MODAL_PREFIX = `${APP_BASE_URL}/modals/`;
 const PAGE_PREFIX = `${APP_BASE_URL}/pages/`;
 
-const HTMLContent = ({id, htmlContent}) => {
+const HTMLContent = React.memo(({id, htmlContent}) => {
   const navigate = useNavigate();
 
   const modals = useSelector(state => state.modals.items);
@@ -56,6 +56,6 @@ const HTMLContent = ({id, htmlContent}) => {
     </Modal>
     <div className="html-content" id={id} dangerouslySetInnerHTML={{__html: htmlContent}} />
   </div>;
-};
+});
 
 export default HTMLContent;
