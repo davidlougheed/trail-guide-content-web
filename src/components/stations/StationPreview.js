@@ -53,6 +53,11 @@ const styles = {
     marginTop: 4,
     ...textShadow,
   },
+  boldText: {fontWeight: "bold"},
+
+  quiz: {marginBottom: 8},
+
+  galleryItem: {display: "inline-block", paddingRight: 16, paddingBottom: 8},
 };
 
 const RenderedContent = React.memo(({id, content}) => {
@@ -76,7 +81,7 @@ const RenderedContent = React.memo(({id, content}) => {
         <HTMLContent id={`${id}-gallery-content`} htmlContent={content.description ?? ""} />
         <Image.PreviewGroup>
           {content.items.map(i => (
-            <div key={i.asset} style={{display: "inline-block", paddingRight: 16, paddingBottom: 8}}>
+            <div key={i.asset} style={styles.galleryItem}>
               <Image height={180} src={assetIdToBytesUrl(i.asset)} alt={i.caption} /> <br />
               <Typography.Text>{i.caption}</Typography.Text>
             </div>
@@ -84,7 +89,7 @@ const RenderedContent = React.memo(({id, content}) => {
         </Image.PreviewGroup>
       </>;
     case "quiz":
-      return <Quiz {...content} style={{marginBottom: 8}} />;
+      return <Quiz {...content} style={styles.quiz} />;
     default:
       return "";
   }
@@ -120,9 +125,9 @@ const StationPreview = React.memo(({long_title, subtitle, coordinates_utm, heade
           <div style={styles.coordinatesBox}>
             <span style={styles.coordinatesTitle}>UTM Coordinates (Zone {zone ?? ""})</span>
             <span style={styles.coordinatesItem}>
-              <span style={{fontWeight: "bold"}}>East:</span> {east ?? ""}</span>
+              <span style={styles.boldText}>East:</span> {east ?? ""}</span>
             <span style={styles.coordinatesItem}>
-              <span style={{fontWeight: "bold"}}>North:</span> {north ?? ""}</span>
+              <span style={styles.boldText}>North:</span> {north ?? ""}</span>
           </div>
         ) : null}
       </div>
