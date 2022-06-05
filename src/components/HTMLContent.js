@@ -50,7 +50,7 @@ const HTMLContent = React.memo(({id, htmlContent}) => {
     () => <Button onClick={hideModal}>{modalShown?.close_text}</Button>,
     [hideModal, modalShown]);
 
-  const modalContentObj = useMemo(() => ({__html: modalShown.content}), [modalShown]);
+  const modalContentObj = useMemo(() => ({__html: modalShown?.content}), [modalShown]);
   const htmlContentObj = useMemo(() => ({__html: htmlContent}), [htmlContent]);
 
   return <div>
