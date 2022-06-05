@@ -1,4 +1,4 @@
-import React, {useCallback, useRef, useState} from "react";
+import React, {useCallback, useMemo, useRef, useState} from "react";
 import {useSelector} from "react-redux";
 
 import {Button, Checkbox, Divider, Image, Input, Modal, Select, Space, Tooltip} from "antd";
@@ -33,6 +33,9 @@ const FORMATS = [
   "html5Video",
 ];
 
+const filterOption = (v, option) =>
+  (option.search ?? option.value).toLocaleLowerCase().includes(v.toLocaleLowerCase());
+
 const LinkModal = React.memo(({options, objectName, objectPathItem, linkText, onOk, onCancel, visible}) => {
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -42,21 +45,29 @@ const LinkModal = React.memo(({options, objectName, objectPathItem, linkText, on
       onOk(`${APP_BASE_URL}/${objectPathItem}/${selectedItem}`);
       setSelectedItem(null);
     },
-    [objectPathItem, selectedItem]);
+    [objectPathItem, selectedItem, onOk]);
+
+  const mappedOptions = useMemo(() => options.map(item => ({
+    label: item.title,
+    value: item.id,
+    search: item.title,
+  })), [options]);
   
   // noinspection JSValidateTypes
   return <Modal title={`Insert ${objectName} Link`} onOk={onOk_} onCancel={onCancel} visible={visible}>
     <Space direction="vertical" style={{width: "100%"}}>
       <div><strong>Link text:</strong> {linkText}</div>
       <div>
-        <Select placeholder={objectName}
-                onChange={itemId => setSelectedItem(itemId)}
-                value={selectedItem}
-                style={{width: "100%"}} 
-                size="large">
-          {options.map(item => 
-            <Select.Option value={item.id} key={item.id}>{item.title}</Select.Option>)}
-        </Select>
+        <Select
+          placeholder={objectName}
+          showSearch={true}
+          filterOption={filterOption}
+          onChange={itemId => setSelectedItem(itemId)}
+          value={selectedItem}
+          style={{width: "100%"}}
+          size="large"
+          options={mappedOptions}
+        />
       </div>
     </Space>
   </Modal>;
@@ -68,93 +79,111 @@ const AudioModal = React.memo(({assetOptions, onOk, onCancel, visible}) => {
 
   const [selectedAsset, setSelectedAsset] = useState(null);
 
-  const onOk_ = () => {
+  const onOk_ = useCallback(() => {
     if (!selectedAsset) return;
     onOk({
       url: assetIdToBytesUrl(selectedAsset),
       linkText: linkText || undefined,
     });
     setSelectedAsset(null);
-  };
+  }, [selectedAsset, onOk]);
+
+  const options = useMemo(() => assetOptions.map(asset => ({
+    label: asset.file_name,
+    value: asset.id,
+    search: asset.file_name,
+  })), [assetOptions]);
 
   // noinspection JSValidateTypes
-  return (
-    <Modal title="Insert Audio" onOk={onOk_} onCancel={onCancel} visible={visible}>
-      <Space direction="vertical" style={{width: "100%"}}>
-        <div>
-          <Checkbox checked={displayAsLink} onChange={e => setDisplayAsLink(e.target.checked)}>
-            Display as link</Checkbox>
-        </div>
-        <div>
-          <Input placeholder="Link text"
-                 disabled={!displayAsLink}
-                 value={displayAsLink ? linkText : ""}
-                 onChange={e => setLinkText(e.target.value)} />
-        </div>
-        <div>
-          <Select placeholder="Audio asset"
-                  onChange={asset => setSelectedAsset(asset)}
-                  value={selectedAsset}
-                  style={{width: "100%"}}
-                  size="large">
-            {assetOptions.map(asset => <Select.Option value={asset.id} key={asset.id}>
-              {asset.file_name}</Select.Option>)}
-          </Select>
-        </div>
-      </Space>
-    </Modal>
-  );
+  return <Modal title="Insert Audio" onOk={onOk_} onCancel={onCancel} visible={visible}>
+    <Space direction="vertical" style={{width: "100%"}}>
+      <div>
+        <Checkbox checked={displayAsLink} onChange={e => setDisplayAsLink(e.target.checked)}>
+          Display as link</Checkbox>
+      </div>
+      <div>
+        <Input placeholder="Link text"
+               disabled={!displayAsLink}
+               value={displayAsLink ? linkText : ""}
+               onChange={e => setLinkText(e.target.value)} />
+      </div>
+      <div>
+        <Select
+          placeholder="Audio asset"
+          showSearch={true}
+          filterOption={filterOption}
+          onChange={asset => setSelectedAsset(asset)}
+          value={selectedAsset}
+          style={{width: "100%"}}
+          size="large"
+          options={options}
+        />
+      </div>
+    </Space>
+  </Modal>;
 });
 
 const ImageModal = React.memo(({assetOptions, onOk, onCancel, visible}) => {
   const [selectedAsset, setSelectedAsset] = useState(null);
 
-  const onOk_ = () => {
+  const onOk_ = useCallback(() => {
     if (!selectedAsset) return;
     onOk(assetIdToBytesUrl(selectedAsset));
     setSelectedAsset(null);
-  };
+  }, [selectedAsset, onOk]);
+
+  const options = useMemo(() => assetOptions.map(asset => ({
+    label: <div>
+      <Image src={assetIdToBytesUrl(asset.id)} height={40}/>
+      <span style={{marginLeft: 8, verticalAlign: "top"}}>{asset.file_name}</span>
+    </div>,
+    value: asset.id,
+    search: asset.file_name,
+  })), [assetOptions]);
 
   // noinspection JSValidateTypes
-  return (
-    <Modal title="Insert Image" visible={visible} onOk={onOk_} onCancel={onCancel}>
-      <Select placeholder="Image asset"
-              onChange={asset => setSelectedAsset(asset)}
-              value={selectedAsset}
-              style={{width: "100%"}}
-              size="large">
-        {assetOptions.map(asset => (
-          <Select.Option value={asset.id} key={asset.id}>
-            <Image src={assetIdToBytesUrl(asset.id)} height={40}/>
-            <span style={{marginLeft: 8, verticalAlign: "top"}}>{asset.file_name}</span>
-          </Select.Option>
-        ))}
-      </Select>
-    </Modal>
-  );
+  return <Modal title="Insert Image" visible={visible} onOk={onOk_} onCancel={onCancel}>
+    <Select
+      placeholder="Image asset"
+      showSearch={true}
+      filterOption={filterOption}
+      onChange={asset => setSelectedAsset(asset)}
+      value={selectedAsset}
+      style={{width: "100%"}}
+      size="large"
+      options={options}
+    />
+  </Modal>;
 });
 
 const VideoModal = React.memo(({assetOptions, onOk, onCancel, visible}) => {
   const [selectedAsset, setSelectedAsset] = useState(null);
 
-  const onOk_ = () => {
+  const onOk_ = useCallback(() => {
     if (!selectedAsset) return;
     onOk({url: assetIdToBytesUrl(selectedAsset)});
     setSelectedAsset(null);
-  };
+  }, [selectedAsset, onOk]);
+
+  const options = useMemo(() => assetOptions.map(asset => ({
+    label: asset.file_name,
+    value: asset.id,
+    search: asset.file_name,
+  })), [assetOptions]);
 
   // noinspection JSValidateTypes
-  return (
-    <Modal title="Insert Video" visible={visible} onOk={onOk_} onCancel={onCancel}>
-      <Select placeholder="Video asset"
-              onChange={asset => setSelectedAsset(asset)}
-              value={selectedAsset}
-              style={{width: "100%"}}
-              size="large">
-        {assetOptions.map(asset => <Select.Option value={asset.id} key={asset.id}>{asset.file_name}</Select.Option>)}
-      </Select>
-    </Modal>
-  );
+  return <Modal title="Insert Video" visible={visible} onOk={onOk_} onCancel={onCancel}>
+    <Select
+      placeholder="Video asset"
+      showSearch={true}
+      filterOption={filterOption}
+      onChange={asset => setSelectedAsset(asset)}
+      value={selectedAsset}
+      style={{width: "100%"}}
+      size="large"
+      options={options}
+    />
+  </Modal>;
 });
 
 const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
