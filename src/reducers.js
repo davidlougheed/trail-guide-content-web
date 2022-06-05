@@ -12,6 +12,7 @@ import layers from "./modules/layers/reducer";
 import modals from "./modules/modals/reducer";
 import pages from "./modules/pages/reducer";
 import releases from "./modules/releases/reducer";
+import search from "./modules/search/reducer";
 import sections from "./modules/sections/reducer";
 import serverConfig from "./modules/server_config/reducer";
 import settings from "./modules/settings/reducer";
@@ -26,6 +27,7 @@ export default combineReducers({
   modals,
   pages,
   releases,
+  search,
   sections,
   serverConfig,
   settings,

@@ -63,8 +63,10 @@ export const networkAction = (types, url, method = "GET", multipart = false) =>
       "Authorization": `Bearer ${accessToken}`,
     };
 
+    const urlParams = Object.keys(params).length ? new URLSearchParams(params) : null;
+
     try {
-      const r = await fetch(API_BASE_URL + url,
+      const r = await fetch(API_BASE_URL + url + (urlParams ? `?${urlParams.toString()}` : ""),
         {
           method,
           ...(multipart ? {

@@ -6,7 +6,7 @@ import React, {useEffect, useMemo} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useAuth0} from "@auth0/auth0-react";
 
-import {Alert, AutoComplete, Button, Layout, Input, Menu, Skeleton, Spin, Typography, PageHeader} from "antd";
+import {Alert, Button, Layout, Menu, Skeleton, Spin, Typography, PageHeader} from "antd";
 import {
   AppstoreOutlined,
   CloseSquareOutlined,
@@ -15,7 +15,6 @@ import {
   FileOutlined,
   GlobalOutlined,
   PictureOutlined,
-  SearchOutlined,
   SettingOutlined,
   SolutionOutlined,
 } from "@ant-design/icons";
@@ -46,6 +45,7 @@ import ReleasePage from "./releases/ReleasePage";
 import SectionsPage from "./sections/SectionsPage";
 import StationsPage from "./stations/StationsPage";
 import SettingsPage from "./settings/SettingsPage";
+import SearchBar from "./SearchBar";
 
 const App = () => {
   const {
@@ -117,13 +117,7 @@ const App = () => {
           {siteTitle}
         </h1>
         <div style={{flex: 2}}>
-          <AutoComplete style={{marginTop: "12px", width: "100%", float: "right"}}
-                        disabled={true}>
-            {/* TODO: set disabled to !isAuthenticated once it actually does something */}
-            <Input size="large"
-                   placeholder="Coming soon"
-                   prefix={<SearchOutlined />}/>
-          </AutoComplete>
+          <SearchBar />
         </div>
         <div style={{flex: 1, color: "white", textAlign: "right"}}>
           {
