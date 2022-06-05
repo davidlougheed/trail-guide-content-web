@@ -2,6 +2,8 @@
 // Copyright (C) 2021-2022  David Lougheed
 // See NOTICE for more information.
 
+import "./wdyr";
+
 import React from "react";
 import {render} from "react-dom";
 
