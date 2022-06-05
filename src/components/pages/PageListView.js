@@ -7,7 +7,17 @@ import {CheckOutlined, CloseOutlined, EditOutlined, EyeOutlined, QrcodeOutlined}
 
 import PageQR from "./PageQR";
 
-const PageListView = () => {
+const QRModal = React.memo(({page, modalCancel}) => {
+  return <Modal title={page?.title}
+                style={{top: 36}}
+                visible={!!page}
+                onCancel={modalCancel}
+                footer={null}>
+    {page ? <PageQR page={page} /> : null}
+  </Modal>;
+});
+
+const PageListView = React.memo(() => {
   const navigate = useNavigate();
 
   const loadingPages = useSelector(state => state.pages.isFetching);
@@ -23,11 +33,13 @@ const PageListView = () => {
     {
       title: "Enabled",
       dataIndex: "enabled",
+      shouldCellUpdate: (r, pr) => (r?.enabled !== pr?.enabled),
       render: v => v ? (<CheckOutlined/>) : (<CloseOutlined/>),
     },
     {
       title: "Actions",
       key: "actions",
+      shouldCellUpdate: (r, pr) => (r?.id !== pr?.id),
       render: page => (
         <Space size="small">
           <Button icon={<QrcodeOutlined />}
@@ -43,20 +55,10 @@ const PageListView = () => {
 
   const modalCancel = useCallback(() => setQrPage(null), []);
 
-  return <PageHeader
-    ghost={false}
-    title="Pages"
-    subTitle="View and edit app pages"
-  >
-    <Modal title={qrPage?.title}
-           style={{top: 36}}
-           visible={!!qrPage}
-           onCancel={modalCancel}
-           footer={null}>
-      {qrPage ? <PageQR page={qrPage} /> : null}
-    </Modal>
+  return <PageHeader ghost={false} title="Pages" subTitle="View and edit app pages">
+    <QRModal page={qrPage} modalCancel={modalCancel} />
     <Table bordered={true} loading={loadingPages} columns={columns} dataSource={pages} rowKey="id" />
   </PageHeader>;
-};
+});
 
 export default PageListView;

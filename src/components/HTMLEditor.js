@@ -245,7 +245,7 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
 
   if (initialValue === null) return <div/>;
 
-  const modalInsertClose = () => setShowViewer(null);
+  const modalInsertClose = useCallback(() => setShowViewer(null), []);
   const modalInsertOk = type => data => {
     if (!quillRef.current) return;
     if (!data) return;

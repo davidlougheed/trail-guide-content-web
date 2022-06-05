@@ -9,7 +9,7 @@ import ModalForm from "./ModalForm";
 import {updateModal} from "../../modules/modals/actions";
 import {ACCESS_TOKEN_MANAGE, findItemByID} from "../../utils";
 
-const ModalEditView = () => {
+const ModalEditView = React.memo(() => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {id: modalID} = useParams();
@@ -29,17 +29,15 @@ const ModalEditView = () => {
   }, [getAccessTokenSilently, dispatch, modal]);
 
   const onBack = useCallback(() => navigate(-1), [navigate]);
-
-  if (fetchingModals) return <div>Loading...</div>;
-
+  
   return <PageHeader
     onBack={onBack}
     ghost={false}
-    title={modal ? `Edit Modal: ${modal.title}` : "Modal not found"}
+    title={fetchingModals ? "Loading..." : (modal ? `Edit Modal: ${modal.title}` : "Modal not found")}
     subTitle={modal ? "Press submit to save your changes." : ""}
   >
     {modal && <ModalForm initialValues={modal} onFinish={onFinish} loading={updatingModal} />}
   </PageHeader>;
-};
+});
 
 export default ModalEditView;

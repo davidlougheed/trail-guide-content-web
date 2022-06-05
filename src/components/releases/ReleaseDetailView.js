@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2022  David Lougheed
 // See NOTICE for more information.
 
-import React, {useCallback} from "react";
+import React, {useCallback, useMemo} from "react";
 import {useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 
@@ -11,7 +11,7 @@ import {Descriptions, PageHeader} from "antd";
 import {downloadVersionBundle, findItemByID} from "../../utils";
 import {useAuth0} from "@auth0/auth0-react";
 
-const ReleaseDetailView = () => {
+const ReleaseDetailView = React.memo(() => {
   const navigate = useNavigate();
   const {id: strVersion} = useParams();
 
@@ -26,13 +26,11 @@ const ReleaseDetailView = () => {
 
   const onBack = useCallback(() => navigate(-1), [navigate]);
 
-  return <PageHeader
-    ghost={false}
-    onBack={onBack}
-    title={fetchingReleases
-      ? "Loading..."
-      : <span>Version {release?.version}</span>}
-  >
+  const title = useMemo(
+    () => fetchingReleases ? "Loading..." : <span>Version {release?.version}</span>,
+    [fetchingReleases, release])
+
+  return <PageHeader ghost={false} onBack={onBack} title={title}>
     <Descriptions bordered={true} size="small">
       <Descriptions.Item label="Version">{version ?? ""}</Descriptions.Item>
       <Descriptions.Item label="Submitted">{(new Date(submitted_dt)).toLocaleDateString()}</Descriptions.Item>
@@ -44,6 +42,6 @@ const ReleaseDetailView = () => {
       </Descriptions.Item>
     </Descriptions>
   </PageHeader>;
-};
+});
 
 export default ReleaseDetailView;

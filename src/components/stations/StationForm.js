@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useSelector} from "react-redux";
 
 import {throttle} from "lodash";
@@ -90,10 +90,12 @@ const StationForm = ({onFinish, initialValues, loading, localDataKey, ...props})
   const [savedData, setSavedData] = useState(getLocalStorageValues(localDataKey));
   const [lastSavedTime, setLastSavedTime] = useState(null);
 
-  const oldInitialValues = initialValues ? {...initialValues, ...savedData} : {...savedData};
+  const oldInitialValues = useMemo(
+    () => initialValues ? {...initialValues, ...savedData} : {...savedData},
+    [initialValues, savedData]);
 
   console.log("initial values", oldInitialValues);
-  const newInitialValues = {
+  const newInitialValues = useMemo(() => ({
     rank: numStations,  // Add station to the end of the list in the app by default
     coordinates_utm: {
       zone: "18N",
@@ -110,7 +112,7 @@ const StationForm = ({onFinish, initialValues, loading, localDataKey, ...props})
       to: oldInitialValues.visible?.to || "",
     },
     contents: (oldInitialValues.contents ?? []).map(normalizeContents(true)),
-  };
+  }), [numStations, oldInitialValues]);
 
   useEffect(() => {
     if (!form) return;

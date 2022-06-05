@@ -58,19 +58,15 @@ const StationListView = () => {
   ], [navigate]);
 
   const onAdd = useCallback(() => navigate("../add"), [navigate]);
+  const extra = useMemo(() => [
+    <Button key="add"
+            type="primary"
+            icon={<PlusOutlined/>}
+            onClick={onAdd}>
+      Add New</Button>,
+  ], [onAdd]);
 
-  return <PageHeader
-    ghost={false}
-    title="Stations"
-    subTitle="Edit and create app stations"
-    extra={[
-      <Button key="add"
-              type="primary"
-              icon={<PlusOutlined/>}
-              onClick={onAdd}>
-        Add New</Button>,
-    ]}
-  >
+  return <PageHeader ghost={false} title="Stations" subTitle="Edit and create app stations" extra={extra}>
     <Modal title={qrStation?.title}
            style={{top: 36}}
            visible={!!qrStation}

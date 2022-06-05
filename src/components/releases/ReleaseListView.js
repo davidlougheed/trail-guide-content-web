@@ -7,7 +7,7 @@ import {Button, PageHeader, Space, Table} from "antd";
 import {DownloadOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
 import {downloadVersionBundle} from "../../utils";
 
-const ReleaseListView = () => {
+const ReleaseListView = React.memo(() => {
   const navigate = useNavigate();
 
   const {isAuthenticated, getAccessTokenSilently} = useAuth0();
@@ -57,22 +57,18 @@ const ReleaseListView = () => {
   ], [isAuthenticated, getAccessTokenSilently, navigate]);
 
   const onAdd = useCallback(() => navigate("../add"), [navigate]);
+  const extra = useMemo(() => [
+    <Button key="add"
+            type="primary"
+            icon={<PlusOutlined/>}
+            onClick={onAdd}>
+      Add Release
+    </Button>
+  ], [onAdd]);
 
-  return <PageHeader
-    ghost={false}
-    title="Releases"
-    subTitle="View and create app releases"
-    extra={[
-      <Button key="add"
-              type="primary"
-              icon={<PlusOutlined/>}
-              onClick={onAdd}>
-        Add Release
-      </Button>
-    ]}
-  >
+  return <PageHeader ghost={false} title="Releases" subTitle="View and create app releases" extra={extra}>
     <Table bordered={true} loading={loadingReleases} columns={columns} rowKey="version" dataSource={releases} />
   </PageHeader>;
-};
+});
 
 export default ReleaseListView;

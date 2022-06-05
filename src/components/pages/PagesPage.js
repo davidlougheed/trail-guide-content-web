@@ -5,11 +5,11 @@ import PagesListView from "./PageListView";
 import PageEditView from "./PageEditView";
 import PageDetailView from "./PageDetailView";
 
-const PagesPage = () => <Routes>
+const PagesPage = React.memo(() => <Routes>
   <Route path="list" element={<PagesListView />} />
   <Route path="edit/:id" element={<PageEditView />} />
   <Route path="detail/:id" element={<PageDetailView />} />
   <Route path="*" element={<Navigate to="list" replace={true} />} />
-</Routes>;
+</Routes>);
 
 export default PagesPage;

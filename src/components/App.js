@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2022  David Lougheed
 // See NOTICE for more information.
 
-import React, {useEffect, useMemo} from "react";
+import React, {useCallback, useEffect, useMemo} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useAuth0} from "@auth0/auth0-react";
 
@@ -47,6 +47,48 @@ import StationsPage from "./stations/StationsPage";
 import SettingsPage from "./settings/SettingsPage";
 import SearchBar from "./SearchBar";
 
+const MENU_ITEMS = [
+  {key: "stations", label: <Link to="/stations">Stations</Link>, icon: <EnvironmentOutlined />},
+  {key: "sections", label: <Link to="/sections">Sections</Link>, icon: <DatabaseOutlined />},
+  {key: "pages", label: <Link to="/pages">Pages</Link>, icon: <FileOutlined />},
+  {key: "modals", label: <Link to="/modals">Modals</Link>, icon: <CloseSquareOutlined />},
+  {key: "assets", label: <Link to="/assets">Assets</Link>, icon: <PictureOutlined />},
+  {key: "layers", label: <Link to="/layers">Layers</Link>, icon: <GlobalOutlined />},
+  {key: "releases", label: <Link to="/releases">Releases</Link>, icon: <AppstoreOutlined />},
+  {key: "feedback", label: <Link to="/feedback">Feedback</Link>, icon: <SolutionOutlined />},
+  {key: "settings", label: <Link to="/settings">Settings</Link>, icon: <SettingOutlined />},
+];
+
+const styles = {
+  layout: {height: "100vh"},
+  header: {padding: "0 24px"},
+  headerInner: {display: "flex"},
+  headerText: {minWidth: "220px", padding: 0, color: "#DFDFDF", flex: 1},
+  searchContainer: {flex: 2},
+  authContainer: {flex: 1, color: "white", textAlign: "right"},
+  signInLink: {color: "#CCC"},
+
+  sider: {overflowY: "auto"},
+
+  content: {overflowY: "auto"},
+
+  signedOut: {
+    height: "100%",
+    backgroundColor: "white",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    textAlign: "center",
+  },
+  signedOutText: {paddingBottom: 8},
+  signedOutAlertOuter: {paddingTop: 16},
+  signedOutAlertInner: {maxWidth: 500, padding: "0 16", margin: "0 auto", textAlign: "left"},
+};
+
+const PageHeaderSubtitleSkeleton = React.memo(() =>
+  <Skeleton title={false} paragraph={{rows: 1, width: 200}} style={{marginTop: 12}} />
+);
+
 const App = () => {
   const {
     loginWithRedirect,
@@ -57,6 +99,7 @@ const App = () => {
   } = useAuth0();
 
   const dispatch = useDispatch();
+
   useEffect(async () => {
     if (!isAuthenticated) return;
 
@@ -84,67 +127,52 @@ const App = () => {
   }, [isAuthenticated, getAccessTokenSilently]);
 
   const location = useLocation();
-  const defaultSelectedKeys = [location.pathname.split("/")[1] || "stations"];
+  const defaultSelectedKeys = useMemo(
+    () => [location.pathname.split("/")[1] || "stations"], [location]);
 
-  const urlParams = Object.fromEntries(location.search.slice(1).split("&").map(p => {
+  const urlParams = useMemo(() => Object.fromEntries(location.search.slice(1).split("&").map(p => {
     const ps = p.split("=");
     return [ps[0], decodeURIComponent(ps[1])];
-  }));
+  })), [location]);
 
   const loadingConfig = useSelector(state => state.serverConfig.isFetching);
   const serverConfig = useSelector(state => state.serverConfig.data);
 
-  const siteTitle = (loadingConfig || serverConfig === null) ? "" : (serverConfig?.APP_NAME || "Trail Guide");
+  const siteTitle = useMemo(
+    () => (loadingConfig || serverConfig === null) ? "" : (serverConfig?.APP_NAME || "Trail Guide"),
+    [loadingConfig, serverConfig]);
   document.title = siteTitle || "Trail Guide";
 
-  const menuItems = useMemo(() => [
-    {key: "stations", label: <Link to="/stations">Stations</Link>, icon: <EnvironmentOutlined />},
-    {key: "sections", label: <Link to="/sections">Sections</Link>, icon: <DatabaseOutlined />},
-    {key: "pages", label: <Link to="/pages">Pages</Link>, icon: <FileOutlined />},
-    {key: "modals", label: <Link to="/modals">Modals</Link>, icon: <CloseSquareOutlined />},
-    {key: "assets", label: <Link to="/assets">Assets</Link>, icon: <PictureOutlined />},
-    {key: "layers", label: <Link to="/layers">Layers</Link>, icon: <GlobalOutlined />},
-    {key: "releases", label: <Link to="/releases">Releases</Link>, icon: <AppstoreOutlined />},
-    {key: "feedback", label: <Link to="/feedback">Feedback</Link>, icon: <SolutionOutlined />},
-    {key: "settings", label: <Link to="/settings">Settings</Link>, icon: <SettingOutlined />},
-  ], []);
+  const signIn = useCallback(() => loginWithRedirect(), [loginWithRedirect]);
 
   // noinspection JSValidateTypes
-  return <Layout style={{height: "100vh"}}>
-    <Layout.Header style={{padding: "0 24px"}}>
-      <div style={{display: "flex"}}>
-        <h1 style={{minWidth: "220px", padding: 0, color: "#DFDFDF", flex: 1}}>
-          {siteTitle}
-        </h1>
-        <div style={{flex: 2}}>
-          <SearchBar />
-        </div>
-        <div style={{flex: 1, color: "white", textAlign: "right"}}>
-          {
-            isLoadingAuth ? "" : (
-              isAuthenticated ? (
-                <span>{user.name}</span>
-              ) : (
-                <a style={{color: "#CCC"}} onClick={() => loginWithRedirect()}>Sign In</a>
-              )
-            )
-          }
+  return <Layout style={styles.layout}>
+    <Layout.Header style={styles.header}>
+      <div style={styles.headerInner}>
+        <h1 style={styles.headerText}>{siteTitle}</h1>
+        <div style={styles.searchContainer}><SearchBar /></div>
+        <div style={styles.authContainer}>
+          {isLoadingAuth ? "" : (
+            isAuthenticated
+              ? <span>{user.name}</span>
+              : <a style={styles.signInLink} onClick={signIn}>Sign In</a>
+          )}
         </div>
       </div>
     </Layout.Header>
     <Layout>
-      <Layout.Sider style={{overflowY: "auto"}}
+      <Layout.Sider style={styles.sider}
                     collapsedWidth={0}
                     collapsed={!isAuthenticated || (isAuthenticated && isLoadingAuth)}>
-        <Menu theme="dark" defaultSelectedKeys={defaultSelectedKeys} items={menuItems} />
+        <Menu theme="dark" defaultSelectedKeys={defaultSelectedKeys} items={MENU_ITEMS} />
       </Layout.Sider>
-      <Layout.Content style={{overflowY: "auto"}}>
+      <Layout.Content style={styles.content}>
         {isLoadingAuth
           ? (
             <PageHeader
               ghost={false}
               title="Loading..."
-              subTitle={<Skeleton title={false} paragraph={{rows: 1, width: 200}} style={{marginTop: 12}} />}
+              subTitle={<PageHeaderSubtitleSkeleton />}
             />
           ) : (isAuthenticated ? (
             <Spin spinning={false}>
@@ -162,23 +190,16 @@ const App = () => {
               </Routes>
             </Spin>
           ) : (
-            <div style={{
-              height: "100%",
-              backgroundColor: "white",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              textAlign: "center",
-            }}>
-              <div style={{paddingBottom: 8}}>
+            <div style={styles.signedOut}>
+              <div style={styles.signedOutText}>
                 <Typography.Text>You must be authenticated to see this content.</Typography.Text>
               </div>
               <div>
-                <Button size="large" type="primary" onClick={() => loginWithRedirect()}>Sign In</Button>
+                <Button size="large" type="primary" onClick={signIn}>Sign In</Button>
               </div>
               {urlParams.hasOwnProperty("error_description") ? (
-                <div style={{paddingTop: 16}}>
-                  <div style={{maxWidth: 500, padding: "0 16", margin: "0 auto", textAlign: "left"}}>
+                <div style={styles.signedOutAlertOuter}>
+                  <div style={styles.signedOutAlertInner}>
                     <Alert message="Authentication Error"
                            description={urlParams["error_description"]}
                            type="error"/>

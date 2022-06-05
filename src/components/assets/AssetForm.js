@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2022  David Lougheed
 // See NOTICE for more information.
 
-import React from "react";
+import React, {useMemo} from "react";
 
 import {Button, Col, Form, Row, Select, Switch, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
@@ -18,13 +18,13 @@ const ASSET_TYPES = [
 const AssetForm = ({initialValues, ...props}) => {
   const [form] = Form.useForm();
 
-  const oldInitialValues = initialValues ?? {};
+  const oldInitialValues = useMemo(() => initialValues ?? {}, [initialValues]);
   console.log("initial values", oldInitialValues);
-  const newInitialValues = {
+  const newInitialValues = useMemo(() => ({
     enabled: true,
     ...oldInitialValues,
     // TODO
-  };
+  }), [oldInitialValues]);
 
   return <Form {...props} form={form} layout="vertical" initialValues={newInitialValues}>
     <Row gutter={12}>

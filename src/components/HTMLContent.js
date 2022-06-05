@@ -45,17 +45,25 @@ const HTMLContent = React.memo(({id, htmlContent}) => {
     });
   }, [htmlContent, modalsById, navigate, pagesById]);
 
+  /** @type React.ReactNode */
+  const footer = useMemo(
+    () => <Button onClick={hideModal}>{modalShown?.close_text}</Button>,
+    [hideModal, modalShown]);
+
+  const modalContentObj = useMemo(() => ({__html: modalShown.content}), [modalShown]);
+  const htmlContentObj = useMemo(() => ({__html: htmlContent}), [htmlContent]);
+
   return <div>
     <Modal
       width={640}
       visible={modalShown !== null}
       onCancel={hideModal}
       title={modalShown?.title}
-      footer={<Button onClick={hideModal}>{modalShown?.close_text}</Button>}
+      footer={footer}
     >
-      {modalShown ? <div className="html-content" dangerouslySetInnerHTML={{__html: modalShown.content}} /> : null}
+      {modalShown ? <div className="html-content" dangerouslySetInnerHTML={modalContentObj} /> : null}
     </Modal>
-    <div className="html-content" id={id} dangerouslySetInnerHTML={{__html: htmlContent}} />
+    <div className="html-content" id={id} dangerouslySetInnerHTML={htmlContentObj} />
   </div>;
 });
 

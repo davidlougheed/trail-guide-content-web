@@ -30,12 +30,10 @@ const LayerEditView = () => {
 
   const onBack = useCallback(() => navigate(-1), [navigate]);
 
-  if (fetchingLayers) return <div>Loading...</div>;
-
   return <PageHeader
     onBack={onBack}
     ghost={false}
-    title={layer ? `Edit Layer: ${layer.name}` : "Layer not found"}
+    title={fetchingLayers ? "Loading..." : (layer ? `Edit Layer: ${layer.name}` : "Layer not found")}
     subTitle={layer ? "Press submit to save your changes." : ""}
   >
     {layer && <LayerForm initialValues={layer} onFinish={onFinish} loading={updatingLayer} />}

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 
 // TODO: De-duplicate with app itself
 
@@ -103,15 +103,17 @@ const StationPreview = React.memo(({long_title, subtitle, coordinates_utm, heade
     });
   }, [contents]);
 
+  const headerImageStyle = useMemo(() => ({
+    ...(header_image ? {
+      background: `url(${assetIdToBytesUrl(header_image)})`,
+      backgroundSize: "cover",
+    } : {}),
+    ...styles.headerBackground,
+  }), [header_image]);
+
   return <div className="station-preview">
     <div style={styles.header}>
-      <div style={{
-        ...(header_image ? {
-          background: `url(${assetIdToBytesUrl(header_image)})`,
-          backgroundSize: "cover",
-        } : {}),
-        ...styles.headerBackground,
-      }}>
+      <div style={headerImageStyle}>
         <span style={styles.headerTitle}>{long_title}</span>
         {subtitle ? <span style={styles.subtitle}>{subtitle}</span> : null}
         {coordinates_utm ? (

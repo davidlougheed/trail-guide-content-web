@@ -48,20 +48,16 @@ const LayerListView = () => {
   const showPreview = useCallback(() => setPreviewShown(true), []);
   const hidePreview = useCallback(() => setPreviewShown(false), []);
   const onAdd = useCallback(() => navigate("/layers/add"), [navigate]);
+  const extra = useMemo(() => [
+    <Button key="preview" icon={<EyeOutlined />} onClick={showPreview}>Preview Map</Button>,
+    <Button key="add"
+            type="primary"
+            icon={<PlusOutlined/>}
+            onClick={onAdd}>
+      Add New</Button>,
+  ], [showPreview, onAdd]);
 
-  return <PageHeader
-    ghost={false}
-    title="Layers"
-    subTitle="View and edit map layers"
-    extra={[
-      <Button key="preview" icon={<EyeOutlined />} onClick={showPreview}>Preview Map</Button>,
-      <Button key="add"
-              type="primary"
-              icon={<PlusOutlined/>}
-              onClick={onAdd}>
-        Add New</Button>,
-    ]}
-  >
+  return <PageHeader ghost={false} title="Layers" subTitle="View and edit map layers" extra={extra}>
     <Modal
       title="Map Preview"
       visible={previewShown}

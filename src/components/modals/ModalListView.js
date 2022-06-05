@@ -5,7 +5,7 @@ import {useNavigate} from "react-router-dom";
 import {Button, PageHeader, Space, Table} from "antd";
 import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
 
-const ModalListView = () => {
+const ModalListView = React.memo(() => {
   const navigate = useNavigate();
 
   const loadingModals = useSelector(state => state.modals.isFetching);
@@ -23,6 +23,7 @@ const ModalListView = () => {
     {
       title: "Actions",
       key: "actions",
+      shouldCellUpdate: (r, pr) => (r?.id !== pr?.id),
       render: modal => <Space size="middle">
         <Button icon={<EyeOutlined/>}
                 onClick={() => navigate(`/modals/detail/${modal.id}`)}>View</Button>
@@ -34,21 +35,22 @@ const ModalListView = () => {
   ], [navigate]);
 
   const onAdd = useCallback(() => navigate("/modals/add"), [navigate]);
+  const extra = useMemo(() => [
+    <Button key="add"
+            type="primary"
+            icon={<PlusOutlined/>}
+            onClick={onAdd}>
+      Add New</Button>,
+  ], [onAdd]);
 
   return <PageHeader
     ghost={false}
     title="Modals"
     subTitle="View and edit app modals"
-    extra={[
-      <Button key="add"
-              type="primary"
-              icon={<PlusOutlined/>}
-              onClick={onAdd}>
-        Add New</Button>,
-    ]}
+    extra={extra}
   >
-    <Table bordered={true} loading={loadingModals} columns={columns} dataSource={modals} rowKey="id"/>
+    <Table bordered={true} loading={loadingModals} columns={columns} dataSource={modals} rowKey="id" />
   </PageHeader>;
-};
+});
 
 export default ModalListView;

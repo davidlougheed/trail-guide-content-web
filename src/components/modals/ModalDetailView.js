@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2022  David Lougheed
 // See NOTICE for more information.
 
-import React, {useCallback} from "react";
+import React, {useCallback, useMemo} from "react";
 import {useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 
@@ -12,7 +12,7 @@ import {EditOutlined} from "@ant-design/icons";
 import {findItemByID} from "../../utils";
 import HTMLContent from "../HTMLContent";
 
-const ModalDetailView = () => {
+const ModalDetailView = React.memo(() => {
   const navigate = useNavigate();
   const {id: modalID} = useParams();
 
@@ -22,18 +22,16 @@ const ModalDetailView = () => {
   const onBack = useCallback(() => navigate(-1), [navigate]);
   const editModal = useCallback(() => navigate(`/modals/edit/${modalID}`), [navigate, modalID]);
 
-  if (!modal) return "Loading...";
+  const title = useMemo(
+    () => fetchingModals ? "Loading..." : (modal ? <span>Modal: {modal.title}</span> : "Modal not found"),
+    [fetchingModals, modal]);
+  const extra = useMemo(() => [
+    <Button key="edit" icon={<EditOutlined/>} onClick={editModal}>
+      Edit
+    </Button>,
+  ], [editModal]);
 
-  return <PageHeader
-    ghost={false}
-    onBack={onBack}
-    title={fetchingModals ? "Loading..." : <span>Modal: {modal.title}</span>}
-    extra={[
-      <Button key="edit" icon={<EditOutlined/>} onClick={editModal}>
-        Edit
-      </Button>,
-    ]}
-  >
+  return <PageHeader ghost={false} onBack={onBack} title={title} extra={extra}>
     <Typography.Title level={2}>{modal.title}</Typography.Title>
     <Descriptions bordered={true} size="small">
       <Descriptions.Item label="Close Text">{modal.close_text}</Descriptions.Item>
@@ -50,6 +48,6 @@ const ModalDetailView = () => {
       <Button>{modal?.close_text}</Button>
     </Card>
   </PageHeader>;
-};
+});
 
 export default ModalDetailView;

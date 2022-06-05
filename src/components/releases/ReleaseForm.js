@@ -1,19 +1,21 @@
-import React from "react";
+import React, {useMemo} from "react";
 import {useSelector} from "react-redux";
 
 import {Button, Col, Form, Input, Row, Switch} from "antd";
+
+const RULES_REQUIRED = [{required: true}];
 
 const ReleaseForm = ({initialValues, onFinish, loading, ...props}) => {
   const [form] = Form.useForm();
 
   const releases = useSelector(state => state.releases.items);
 
-  const oldInitialValues = initialValues ?? {};
+  const oldInitialValues = useMemo(() => initialValues ?? {}, [initialValues]);
   console.log("initial values", oldInitialValues);
-  const newInitialValues = {
+  const newInitialValues = useMemo(() => ({
     ...oldInitialValues,
     published: !!oldInitialValues.published_dt,
-  };
+  }), [oldInitialValues]);
 
   return <Form {...props} onFinish={onFinish} form={form} layout="vertical" initialValues={newInitialValues}>
     <Row gutter={12}>
@@ -28,7 +30,7 @@ const ReleaseForm = ({initialValues, onFinish, loading, ...props}) => {
         </Form.Item>
       </Col>
     </Row>
-    <Form.Item name="release_notes" label="Release Notes" rules={[{required: true}]}>
+    <Form.Item name="release_notes" label="Release Notes" rules={RULES_REQUIRED}>
       <Input.TextArea rows={5} disabled={newInitialValues.published} />
     </Form.Item>
     <Form.Item>

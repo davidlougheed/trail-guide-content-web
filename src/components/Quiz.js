@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useMemo, useState} from "react";
 
 import {Button, Card, Checkbox, Divider, Select, Space, Typography} from "antd";
 
@@ -10,10 +10,10 @@ const Quiz = React.memo(({quiz_type, title, question, answer, options, ...props}
   const [correct, setCorrect] = useState(false);
 
   // Used for matching quizzes
-  const allOptionAnswers = options.map(o => ({
+  const allOptionAnswers = useMemo(() => options.map(o => ({
     value: o.answer.toString(),
     label: o.answer.toString(),
-  })).sort((o1, o2) => o1.label.localeCompare(o2.label));
+  })).sort((o1, o2) => o1.label.localeCompare(o2.label)), [options]);
 
   return <Card title={title} {...props} className="quiz">
     <Typography.Title level={5}>Question</Typography.Title>

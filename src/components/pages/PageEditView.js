@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2022  David Lougheed
 // See NOTICE for more information.
 
-import React, {useCallback} from "react";
+import React, {useCallback, useMemo} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 import {useAuth0} from "@auth0/auth0-react";
@@ -13,7 +13,7 @@ import PageForm from "./PageForm";
 import {updatePage} from "../../modules/pages/actions";
 import {ACCESS_TOKEN_MANAGE, findItemByID} from "../../utils";
 
-const PageEditView = () => {
+const PageEditView = React.memo(() => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {id: pageID} = useParams();
@@ -36,14 +36,14 @@ const PageEditView = () => {
 
   if (fetchingPages) return <div>Loading...</div>;
 
-  return <PageHeader
-    onBack={onBack}
-    ghost={false}
-    title={page ? `Edit Page: ${page.title}` : "Page not found"}
-    subTitle={page ? "Press submit to save your changes." : ""}
-  >
+  const title = useMemo(
+    () => fetchingPages ? "Loading..." : (page ? `Edit Page: ${page.title}` : "Page not found"),
+    [fetchingPages, page]);
+  const subtitle = useMemo(() => page ? "Press submit to save your changes." : "", [page]);
+
+  return <PageHeader onBack={onBack} ghost={false} title={title} subTitle={subtitle}>
     {page && <PageForm initialValues={page} onFinish={onFinish} loading={updatingPage} />}
   </PageHeader>;
-};
+});
 
 export default PageEditView;

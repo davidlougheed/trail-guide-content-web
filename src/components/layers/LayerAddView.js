@@ -10,7 +10,7 @@ import LayerForm from "./LayerForm";
 import {addLayer} from "../../modules/layers/actions";
 import {ACCESS_TOKEN_MANAGE} from "../../utils";
 
-const LayerAddView = () => {
+const LayerAddView = React.memo(() => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {getAccessTokenSilently} = useAuth0();
@@ -37,6 +37,6 @@ const LayerAddView = () => {
   >
     <LayerForm onFinish={onFinish} loading={addingLayer} />
   </PageHeader>;
-};
+});
 
 export default LayerAddView;

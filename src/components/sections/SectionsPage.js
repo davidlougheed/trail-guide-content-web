@@ -18,15 +18,11 @@ const COLUMNS = [
   // },
 ];
 
-const SectionsPage = () => {
+const SectionsPage = React.memo(() => {
   const loadingSections = useSelector(state => state.sections.isFetching);
   const sections = useSelector(state => state.sections.items);
 
-  return <PageHeader
-    ghost={false}
-    title="Sections"
-    subTitle="View station sections"
-  >
+  return <PageHeader ghost={false} title="Sections" subTitle="View station sections">
     <Table
       bordered={true}
       loading={loadingSections}
@@ -35,6 +31,6 @@ const SectionsPage = () => {
       rowKey="id"
     />
   </PageHeader>;
-};
+});
 
 export default SectionsPage;

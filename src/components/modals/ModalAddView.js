@@ -10,7 +10,7 @@ import ModalForm from "./ModalForm";
 import {addModal} from "../../modules/modals/actions";
 import {ACCESS_TOKEN_MANAGE} from "../../utils";
 
-const ModalAddView = () => {
+const ModalAddView = React.memo(() => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {getAccessTokenSilently} = useAuth0();
@@ -37,6 +37,6 @@ const ModalAddView = () => {
   >
     <ModalForm onFinish={onFinish} loading={addingModal} />
   </PageHeader>;
-};
+});
 
 export default ModalAddView;

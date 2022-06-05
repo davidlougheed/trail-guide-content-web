@@ -10,7 +10,7 @@ import ReleaseForm from "./ReleaseForm";
 import {addRelease} from "../../modules/releases/actions";
 import {ACCESS_TOKEN_MANAGE} from "../../utils";
 
-const ReleaseAddView = () => {
+const ReleaseAddView = React.memo(() => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {getAccessTokenSilently} = useAuth0();
@@ -43,6 +43,6 @@ const ReleaseAddView = () => {
   >
     <ReleaseForm onFinish={onFinish} loading={addingRelease} />
   </PageHeader>;
-};
+});
 
 export default ReleaseAddView;

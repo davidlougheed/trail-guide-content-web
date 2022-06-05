@@ -13,7 +13,7 @@ import {findItemByID} from "../../utils";
 import StationPreview from "./StationPreview";
 import StationQR from "./StationQR";
 
-const StationDetailView = () => {
+const StationDetailView = React.memo(() => {
   const navigate = useNavigate();
 
   const {id: stationID} = useParams();
@@ -71,6 +71,6 @@ const StationDetailView = () => {
 
     <StationPreview {...(station ?? {})} />
   </PageHeader>;
-};
+});
 
 export default StationDetailView;

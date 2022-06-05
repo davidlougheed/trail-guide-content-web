@@ -27,8 +27,10 @@ const StationAddView = () => {
     }
   }, [getAccessTokenSilently, dispatch, navigate]);
 
+  const goBack = useCallback(() => navigate(-1), [navigate]);
+
   return <PageHeader
-    onBack={() => navigate(-1)}
+    onBack={goBack}
     ghost={false}
     title="Add Station"
     subTitle="Create a new app station within a section"

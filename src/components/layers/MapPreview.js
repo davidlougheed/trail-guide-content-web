@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 
 import {transformCoords} from "../../utils";
 
-const MapPreview = ({layers, stations}) => {
+const MapPreview = React.memo(({layers, stations}) => {
   // noinspection JSValidateTypes
   // TODO: Configurable centre, boundaries
   return <MapContainer center={[44.4727488, -76.4295608]} zoom={14} style={{height: 400}}>
@@ -30,6 +30,6 @@ const MapPreview = ({layers, stations}) => {
       </Marker>;
     })}
   </MapContainer>;
-};
+});
 
 export default MapPreview;

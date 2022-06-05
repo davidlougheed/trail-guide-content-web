@@ -30,12 +30,10 @@ const StationEditView = () => {
 
   const onBack = useCallback(() => navigate(-1), [navigate]);
 
-  if (fetchingStations) return <div>Loading...</div>;  // TODO: Nice loading
-
   return <PageHeader
     onBack={onBack}
     ghost={false}
-    title={station ? `Edit Station: ${station.title}` : "Station not found"}
+    title={fetchingStations ? "Loading..." : (station ? `Edit Station: ${station.title}` : "Station not found")}
     subTitle={station ? "Press submit to save your changes." : ""}
   >
     {station && <StationForm initialValues={station} onFinish={onFinish} loading={updatingStations} />}

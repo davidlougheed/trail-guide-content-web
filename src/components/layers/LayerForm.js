@@ -1,18 +1,18 @@
-import React, {useCallback} from "react";
+import React, {useCallback, useMemo} from "react";
 
 import {Button, Col, Form, Input, InputNumber, Row, Switch} from "antd"
 
 const LayerForm = ({initialValues, onFinish, loading, ...props}) => {
   const [form] = Form.useForm();
 
-  const oldInitialValues = initialValues ?? {};
+  const oldInitialValues = useMemo(() => initialValues ?? {}, [initialValues]);
   console.log("initial values", oldInitialValues);
-  const newInitialValues = {
+  const newInitialValues = useMemo(() => ({
     enabled: true,
     rank: 0,
     ...oldInitialValues,
     geojson: oldInitialValues.geojson ? JSON.stringify(oldInitialValues.geojson, null, 2) : "",
-  };
+  }), [oldInitialValues]);
 
   const _onFinish = useCallback(v => onFinish({
     ...v,

@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2022  David Lougheed
 // See NOTICE for more information.
 
-import React, {useState} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 
 import {Button, Divider, Input, List, Select} from "antd";
@@ -31,7 +31,7 @@ import {CSS} from "@dnd-kit/utilities";
 import {assetIdToBytesUrl} from "../utils";
 
 
-const SortableItem = ({id, asset, caption, remove, onChangeCaption}) => {
+const SortableItem = React.memo(({id, asset, caption, remove, onChangeCaption}) => {
   const {
     attributes,
     listeners,
@@ -43,10 +43,10 @@ const SortableItem = ({id, asset, caption, remove, onChangeCaption}) => {
     id,
   });
 
-  const style = {
+  const style = useMemo(() => ({
     transform: CSS.Translate.toString(transform),
     transition,
-  };
+  }), [transform, transition]);
 
   return <div ref={setNodeRef} style={style}>
     <List.Item extra={
@@ -64,7 +64,7 @@ const SortableItem = ({id, asset, caption, remove, onChangeCaption}) => {
       <Input value={caption} onChange={e => onChangeCaption(e.target.value)} placeholder="Caption" />
     </List.Item>
   </div>;
-};
+});
 
 
 const SortableGalleryInput = ({value, onChange}) => {
@@ -73,7 +73,7 @@ const SortableGalleryInput = ({value, onChange}) => {
   const items = value ?? [];
 
   const assets = useSelector(state => state.assets.items.filter(a => a.asset_type === "image"));
-  const assetsByID = Object.fromEntries(assets.map(a => [a.id, a]));
+  const assetsByID = useMemo(() => Object.fromEntries(assets.map(a => [a.id, a])), [assets]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -82,7 +82,7 @@ const SortableGalleryInput = ({value, onChange}) => {
     })
   );
 
-  const handleDragEnd = ({active, over}) => {
+  const handleDragEnd = useCallback(({active, over}) => {
     if (active.id === over.id) return;
 
     onChange(arrayMove(
@@ -90,7 +90,7 @@ const SortableGalleryInput = ({value, onChange}) => {
       items.findIndex(i => i.asset === active.id),
       items.findIndex(i => i.asset === over.id),
     ));
-  };
+  }, [onChange, items]);
 
   // noinspection JSValidateTypes
   return <List itemLayout="vertical" bordered={true} footer={<div>

@@ -1,9 +1,11 @@
-import React, {useCallback, useRef} from "react";
+import React, {useCallback, useMemo, useRef} from "react";
 import {useSelector} from "react-redux";
 
 import {Button, Col, Divider, Form, Input, Row, Select, Switch} from "antd";
 
 import HTMLEditor from "../HTMLEditor";
+
+const RULES_REQUIRED = [{required: true}];
 
 const PageForm = ({initialValues, onFinish, loading, ...props}) => {
   const [form] = Form.useForm();
@@ -12,16 +14,21 @@ const PageForm = ({initialValues, onFinish, loading, ...props}) => {
   const numPages = useSelector(state => state.pages.items.length);
   const assets = useSelector(state => state.assets.items);
 
-  const oldInitialValues = initialValues ?? {};
+  const assetOptions = useMemo(() => assets.filter(a => a.asset_type === "image").map(a => ({
+    value: a.id,
+    label: a.file_name,
+  })), [assets]);
+
+  const oldInitialValues = useMemo(() => initialValues ?? {}, [initialValues]);
   console.log("initial values", oldInitialValues);
-  const newInitialValues = {
+  const newInitialValues = useMemo(() => ({
     rank: numPages,  // Add page to the end of the list in the app by default
     ...oldInitialValues,
     revision: {
       working_copy: oldInitialValues.revision?.number ?? null,
       message: "",  // Clear revision message for possible filling out & re-submission
     },
-  };
+  }), [oldInitialValues]);
 
   const _onFinish = useCallback(data => {
     onFinish({
@@ -33,12 +40,12 @@ const PageForm = ({initialValues, onFinish, loading, ...props}) => {
   return <Form {...props} onFinish={_onFinish} form={form} layout="vertical" initialValues={newInitialValues}>
     <Row gutter={12}>
       <Col span={8}>
-        <Form.Item name="title" label="Title" rules={[{required: true}]}>
+        <Form.Item name="title" label="Title" rules={RULES_REQUIRED}>
           <Input/>
         </Form.Item>
       </Col>
       <Col span={16}>
-        <Form.Item name="long_title" label="Long Title" rules={[{required: true}]}>
+        <Form.Item name="long_title" label="Long Title" rules={RULES_REQUIRED}>
           <Input/>
         </Form.Item>
       </Col>
@@ -56,17 +63,14 @@ const PageForm = ({initialValues, onFinish, loading, ...props}) => {
       </Col>
       <Col span={4}>
         <Form.Item name="rank" label="Rank">
-          <Input type="number" min={0}/>
+          <Input type="number" min={0} />
         </Form.Item>
       </Col>
     </Row>
     <Form.Item name="header_image" label="Header Image">
       <Select placeholder="Select header image for this station"
               allowClear={true}
-              options={assets.filter(a => a.asset_type === "image").map(a => ({
-                value: a.id,
-                label: a.file_name,
-              }))}/>
+              options={assetOptions} />
     </Form.Item>
     <Form.Item label="Content">
       <HTMLEditor initialValue={newInitialValues.content} innerRef={quillRef}/>
