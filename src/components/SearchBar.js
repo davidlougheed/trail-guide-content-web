@@ -9,6 +9,11 @@ import {SearchOutlined} from "@ant-design/icons";
 import {performSearch} from "../modules/search/actions";
 import {ACCESS_TOKEN_READ} from "../utils";
 
+const styles = {
+  autocomplete: {marginTop: "12px", width: "100%", float: "right"},
+  longTitle: {marginLeft: "1em", color: "#888"},
+};
+
 const SearchBar = React.memo(() => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -36,11 +41,11 @@ const SearchBar = React.memo(() => {
       label: <span>{sName}</span>,
       options: sValues.map(r => ({
         value: [sName, r.id],
-        label: <div>{r.title}</div>,
+        label: <div>{r.title} <em style={styles.longTitle}>{r.long_title}</em></div>,
       })),
     })), [searchData]);
 
-  return <AutoComplete style={{marginTop: "12px", width: "100%", float: "right"}}
+  return <AutoComplete style={styles.autocomplete}
                        onSelect={onSelect}
                        onSearch={onSearch}
                        options={options}
