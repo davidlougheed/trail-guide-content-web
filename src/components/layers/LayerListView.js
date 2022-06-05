@@ -34,11 +34,12 @@ const LayerListView = () => {
     {
       title: "Actions",
       key: "actions",
-      render: modal => <Space size="small">
+      shouldCellUpdate: (r, pr) => (r?.id !== pr?.id),
+      render: layer => <Space size="small">
         <Button icon={<EyeOutlined/>}
-                onClick={() => navigate(`../detail/${modal.id}`)}>View</Button>
+                onClick={() => navigate(`/layers/detail/${layer.id}`)}>View</Button>
         <Button icon={<EditOutlined/>}
-                onClick={() => navigate(`../edit/${modal.id}`)}>Edit</Button>
+                onClick={() => navigate(`/layers/edit/${layer.id}`)}>Edit</Button>
         <Button icon={<DeleteOutlined/>} danger={true} disabled={true}>Delete</Button>
       </Space>,
     },
@@ -46,7 +47,7 @@ const LayerListView = () => {
 
   const showPreview = useCallback(() => setPreviewShown(true), []);
   const hidePreview = useCallback(() => setPreviewShown(false), []);
-  const onAdd = useCallback(() => navigate("../add"), [navigate]);
+  const onAdd = useCallback(() => navigate("/layers/add"), [navigate]);
 
   return <PageHeader
     ghost={false}
