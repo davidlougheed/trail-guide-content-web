@@ -6,6 +6,7 @@ import {useAuth0} from "@auth0/auth0-react";
 import {Button, PageHeader, Space, Table} from "antd";
 import {DownloadOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
 import {downloadVersionBundle} from "../../utils";
+import {useUrlPagination} from "../../hooks/pages";
 
 const ReleaseListView = React.memo(() => {
   const navigate = useNavigate();
@@ -66,8 +67,17 @@ const ReleaseListView = React.memo(() => {
     </Button>
   ], [onAdd]);
 
+  const pagination = useUrlPagination();
+
   return <PageHeader ghost={false} title="Releases" subTitle="View and create app releases" extra={extra}>
-    <Table bordered={true} loading={loadingReleases} columns={columns} rowKey="version" dataSource={releases} />
+    <Table
+      bordered={true}
+      loading={loadingReleases}
+      columns={columns}
+      rowKey="version"
+      dataSource={releases}
+      pagination={pagination}
+    />
   </PageHeader>;
 });
 

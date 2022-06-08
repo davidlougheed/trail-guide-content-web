@@ -6,6 +6,7 @@ import {Button, Modal, PageHeader, Space, Table} from "antd";
 import {CheckOutlined, CloseOutlined, EditOutlined, EyeOutlined, QrcodeOutlined} from "@ant-design/icons";
 
 import PageQR from "./PageQR";
+import {useUrlPagination} from "../../hooks/pages";
 
 const QRModal = React.memo(({page, modalCancel}) => {
   return <Modal title={page?.title}
@@ -55,9 +56,18 @@ const PageListView = React.memo(() => {
 
   const modalCancel = useCallback(() => setQrPage(null), []);
 
+  const pagination = useUrlPagination();
+
   return <PageHeader ghost={false} title="Pages" subTitle="View and edit app pages">
     <QRModal page={qrPage} modalCancel={modalCancel} />
-    <Table bordered={true} loading={loadingPages} columns={columns} dataSource={pages} rowKey="id" />
+    <Table
+      bordered={true}
+      loading={loadingPages}
+      columns={columns}
+      dataSource={pages}
+      rowKey="id"
+      pagination={pagination}
+    />
   </PageHeader>;
 });
 

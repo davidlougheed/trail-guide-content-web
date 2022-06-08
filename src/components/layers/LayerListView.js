@@ -6,6 +6,7 @@ import {Button, Modal, PageHeader, Space, Table} from "antd";
 import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
 
 import MapPreview from "./MapPreview";
+import {useUrlPagination} from "../../hooks/pages";
 
 const LayerListView = () => {
   const navigate = useNavigate();
@@ -57,6 +58,8 @@ const LayerListView = () => {
       Add New</Button>,
   ], [showPreview, onAdd]);
 
+  const pagination = useUrlPagination();
+
   return <PageHeader ghost={false} title="Layers" subTitle="View and edit map layers" extra={extra}>
     <Modal
       title="Map Preview"
@@ -67,7 +70,14 @@ const LayerListView = () => {
     >
       <MapPreview layers={layers} stations={stations} />
     </Modal>
-    <Table bordered={true} loading={loadingLayers} columns={columns} dataSource={layers} rowKey="id" />
+    <Table
+      bordered={true}
+      loading={loadingLayers}
+      columns={columns}
+      dataSource={layers}
+      rowKey="id"
+      pagination={pagination}
+    />
   </PageHeader>;
 };
 

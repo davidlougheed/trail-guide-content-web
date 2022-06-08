@@ -2,6 +2,7 @@ import React from "react";
 import {useSelector} from "react-redux";
 
 import {PageHeader, Table} from "antd";
+import {useUrlPagination} from "../../hooks/pages";
 
 const COLUMNS = [
   {
@@ -22,6 +23,8 @@ const SectionsPage = React.memo(() => {
   const loadingSections = useSelector(state => state.sections.isFetching);
   const sections = useSelector(state => state.sections.items);
 
+  const pagination = useUrlPagination();
+
   return <PageHeader ghost={false} title="Sections" subTitle="View station sections">
     <Table
       bordered={true}
@@ -29,6 +32,7 @@ const SectionsPage = React.memo(() => {
       columns={COLUMNS}
       dataSource={sections}
       rowKey="id"
+      pagination={pagination}
     />
   </PageHeader>;
 });

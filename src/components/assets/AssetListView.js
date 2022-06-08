@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useMemo, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Link, useNavigate} from "react-router-dom";
 import {useAuth0} from "@auth0/auth0-react";
@@ -8,6 +8,7 @@ import {CheckSquareOutlined, CloseSquareOutlined, DeleteOutlined, EyeOutlined, P
 
 import {updateAsset} from "../../modules/assets/actions";
 import {ACCESS_TOKEN_MANAGE} from "../../utils";
+import {useUrlPagination} from "../../hooks/pages";
 
 const AssetListView = () => {
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ const AssetListView = () => {
     }
   };
 
+  // noinspection JSUnusedGlobalSymbols
   const columns = [
     {
       title: "File Name",
@@ -78,21 +80,27 @@ const AssetListView = () => {
     },
   ];
 
-  const totalEnabledAssetSize = assets
-    .filter(a => a.enabled)
-    .reduce(((acc, asset) => acc + asset.file_size), 0);
+  const extra = useMemo(() => [
+    <Button key="add"
+            type="primary"
+            icon={<PlusOutlined/>}
+            onClick={() => navigate("../add")}>
+      Add New</Button>,
+  ], [navigate]);
+
+  const totalEnabledAssetSize = useMemo(
+    () => assets
+      .filter(a => a.enabled)
+      .reduce(((acc, asset) => acc + asset.file_size), 0),
+    [assets]);
+
+  const pagination = useUrlPagination();
 
   return <PageHeader
     ghost={false}
     title="Assets"
     subTitle="View and edit app assets (images, videos, and audio)"
-    extra={[
-      <Button key="add"
-              type="primary"
-              icon={<PlusOutlined/>}
-              onClick={() => navigate("../add")}>
-        Add New</Button>,
-    ]}
+    extra={extra}
   >
     <Table
       bordered={true}
@@ -105,6 +113,7 @@ const AssetListView = () => {
           {loadingAssets ? `–` : `${(totalEnabledAssetSize / 1000).toFixed(0)} KB`}
         </span>}
       rowKey="id"
+      pagination={pagination}
     />
   </PageHeader>;
 };

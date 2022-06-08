@@ -3,6 +3,7 @@ import {useSelector} from "react-redux";
 
 import {Button, PageHeader, Space, Table} from "antd";
 import {DeleteOutlined} from "@ant-design/icons";
+import {useUrlPagination} from "../../hooks/pages";
 
 const FeedbackListView = () => {
   const loadingFeedback = useSelector(state => state.feedback.isFetching);
@@ -36,12 +37,21 @@ const FeedbackListView = () => {
     },
   ];
 
+  const pagination = useUrlPagination();
+
   return <PageHeader
     ghost={false}
     title="Feedback"
     subTitle="View user-submitted app feedback"
   >
-    <Table bordered={true} loading={loadingFeedback} columns={columns} dataSource={feedback} rowKey="id"/>
+    <Table
+      bordered={true}
+      loading={loadingFeedback}
+      columns={columns}
+      dataSource={feedback}
+      rowKey="id"
+      pagination={pagination}
+    />
   </PageHeader>;
 };
 

@@ -5,6 +5,7 @@ import {useNavigate} from "react-router-dom";
 import {Button, Modal, PageHeader, Space, Table} from "antd";
 import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined, QrcodeOutlined} from "@ant-design/icons";
 import StationQR from "./StationQR";
+import {useUrlPagination} from "../../hooks/pages";
 
 const StationListView = () => {
   const navigate = useNavigate();
@@ -66,6 +67,8 @@ const StationListView = () => {
       Add New</Button>,
   ], [onAdd]);
 
+  const pagination = useUrlPagination();
+
   return <PageHeader ghost={false} title="Stations" subTitle="Edit and create app stations" extra={extra}>
     <Modal title={qrStation?.title}
            style={{top: 36}}
@@ -74,11 +77,14 @@ const StationListView = () => {
            footer={null}>
       {qrStation ? <StationQR station={qrStation} /> : null}
     </Modal>
-    <Table bordered={true}
-           loading={loadingStations}
-           columns={columns}
-           rowKey="id"
-           dataSource={stations}/>
+    <Table
+      bordered={true}
+      loading={loadingStations}
+      columns={columns}
+      rowKey="id"
+      dataSource={stations}
+      pagination={pagination}
+    />
   </PageHeader>;
 };
 

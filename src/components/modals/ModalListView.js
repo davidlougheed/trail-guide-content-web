@@ -4,6 +4,7 @@ import {useNavigate} from "react-router-dom";
 
 import {Button, PageHeader, Space, Table} from "antd";
 import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
+import {useUrlPagination} from "../../hooks/pages";
 
 const ModalListView = React.memo(() => {
   const navigate = useNavigate();
@@ -43,13 +44,22 @@ const ModalListView = React.memo(() => {
       Add New</Button>,
   ], [onAdd]);
 
+  const pagination = useUrlPagination();
+
   return <PageHeader
     ghost={false}
     title="Modals"
     subTitle="View and edit app modals"
     extra={extra}
   >
-    <Table bordered={true} loading={loadingModals} columns={columns} dataSource={modals} rowKey="id" />
+    <Table
+      bordered={true}
+      loading={loadingModals}
+      columns={columns}
+      dataSource={modals}
+      rowKey="id"
+      pagination={pagination}
+    />
   </PageHeader>;
 });
 
