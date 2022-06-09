@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Link, useNavigate} from "react-router-dom";
 import {useAuth0} from "@auth0/auth0-react";
@@ -21,7 +21,7 @@ const AssetListView = () => {
   const assets = useSelector(state => state.assets.items);
   const assetTypes = useSelector(state => state.assetTypes.items);
 
-  const setAssetEnable = async (assetID, enabledValue) => {
+  const setAssetEnable = useCallback(async (assetID, enabledValue) => {
     setAssetsLoading({...assetsLoading, [assetID]: true});
     try {
       const body = new FormData();
@@ -31,10 +31,10 @@ const AssetListView = () => {
     } finally {
       setAssetsLoading({...assetsLoading, [assetID]: undefined});
     }
-  };
+  }, [assetsLoading, getAccessTokenSilently, dispatch]);
 
   // noinspection JSUnusedGlobalSymbols
-  const columns = [
+  const columns = useMemo(() => [
     {
       title: "File Name",
       dataIndex: "file_name",
@@ -78,7 +78,7 @@ const AssetListView = () => {
         </Space>
       )
     },
-  ];
+  ], [navigate, assetsLoading, setAssetEnable]);
 
   const extra = useMemo(() => [
     <Button key="add"
