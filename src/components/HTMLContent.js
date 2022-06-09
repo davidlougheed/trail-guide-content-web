@@ -8,15 +8,21 @@ import {APP_BASE_URL} from "../config";
 
 const MODAL_PREFIX = `${APP_BASE_URL}/modals/`;
 const PAGE_PREFIX = `${APP_BASE_URL}/pages/`;
+const STATION_PREFIX = `${APP_BASE_URL}/stations/`;
+
+const byIdFactory = items => () =>  Object.fromEntries((items ?? []).map(obj => [obj.id, obj]));
 
 const HTMLContent = React.memo(({id, htmlContent}) => {
   const navigate = useNavigate();
 
   const modals = useSelector(state => state.modals.items);
-  const modalsById = useMemo(() => Object.fromEntries((modals ?? []).map(m => [m.id, m])), [modals]);
+  const modalsById = useMemo(byIdFactory(modals), [modals]);
 
   const pages = useSelector(state => state.pages.items);
-  const pagesById = useMemo(() => Object.fromEntries((pages ?? []).map(m => [m.id, m])), [pages]);
+  const pagesById = useMemo(byIdFactory(pages), [pages]);
+
+  const stations = useSelector(state => state.stations.items);
+  const stationsById = useMemo(byIdFactory(stations), [stations]);
 
   const [modalShown, setModalShown] = useState(null);
   const hideModal = useCallback(() => setModalShown(null), []);
@@ -37,9 +43,13 @@ const HTMLContent = React.memo(({id, htmlContent}) => {
         anchorEl.addEventListener("click", e => {
           e.preventDefault();
           const pageId = href.replace(PAGE_PREFIX, "");
-          if (pagesById.hasOwnProperty(pageId)) {
-            navigate(`/pages/detail/${pageId}`);
-          }
+          if (pagesById.hasOwnProperty(pageId)) navigate(`/pages/detail/${pageId}`);
+        });
+      } else if (href.startsWith(STATION_PREFIX)) {
+        anchorEl.addEventListener("click", e => {
+          e.preventDefault();
+          const stationId = href.replace(STATION_PREFIX, "");
+          if (stationsById.hasOwnProperty(stationId)) navigate(`/stations/detail/${stationId}`);
         });
       }
     });

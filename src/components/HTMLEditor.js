@@ -11,10 +11,10 @@ import "./VideoBlot";
 
 import {assetIdToBytesUrl} from "../utils";
 import {
-  CloseSquareOutlined,
+  CloseSquareOutlined, EnvironmentOutlined,
   FileOutlined,
-  PictureOutlined, 
-  SoundOutlined, 
+  PictureOutlined,
+  SoundOutlined,
   VideoCameraOutlined
 } from "@ant-design/icons";
 import {APP_BASE_URL} from "../config";
@@ -197,6 +197,7 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
   const [showViewer, setShowViewer] = useState(null);
 
   const assets = useSelector(state => state.assets.items);
+  const stations = useSelector(state => state.stations.items);
   const modals = useSelector(state => state.modals.items);
   const pages = useSelector(state => state.pages.items);
 
@@ -219,6 +220,8 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
     setShowViewer(type);
   };
 
+  /** @type {(function(): void)} */
+  const stationHandler = linkHandler("station");
   /** @type {(function(): void)} */
   const modalHandler = linkHandler("modal");
   /** @type {(function(): void)} */
@@ -259,6 +262,14 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
 
   // noinspection JSValidateTypes
   return <div>
+    <LinkModal objectName="Station"
+               objectPathItem="stations"
+               options={stations}
+               linkText={currentSelection}
+               visible={showViewer === "station"}
+               onOk={modalInsertOk("link")}
+               onCancel={modalInsertClose} />
+
     <LinkModal objectName="Modal"
                objectPathItem="modals"
                options={modals}
@@ -294,6 +305,7 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
       <div style={{position: "absolute", top: 5, right: 16}}>
         {/* I'm too lazy to work with Quill's annoying toolbar API */}
         <Space direction="horizontal">
+          <Button onClick={stationHandler} icon={<EnvironmentOutlined />}>Station</Button>
           <Button onClick={modalHandler} icon={<CloseSquareOutlined />}>Modal</Button>
           <Button onClick={pageHandler} icon={<FileOutlined />}>Page</Button>
           <Divider type="vertical" style={{margin: "0 6px"}} />
