@@ -9,7 +9,7 @@ import LayerForm from "./LayerForm";
 import {updateLayer} from "../../modules/layers/actions";
 import {ACCESS_TOKEN_MANAGE, findItemByID} from "../../utils";
 
-const LayerEditView = () => {
+const LayerEditView = React.memo(() => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {id: layerID} = useParams();
@@ -38,6 +38,6 @@ const LayerEditView = () => {
   >
     {layer && <LayerForm initialValues={layer} onFinish={onFinish} loading={updatingLayer} />}
   </PageHeader>;
-};
+});
 
 export default LayerEditView;

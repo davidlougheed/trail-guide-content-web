@@ -10,7 +10,7 @@ import StationForm from "./StationForm";
 import {addStation} from "../../modules/stations/actions";
 import {ACCESS_TOKEN_MANAGE} from "../../utils";
 
-const StationAddView = () => {
+const StationAddView = React.memo(() => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {getAccessTokenSilently} = useAuth0();
@@ -37,6 +37,6 @@ const StationAddView = () => {
   >
     <StationForm onFinish={onFinish} loading={addingStation} localDataKey="tgcw:station:add" />
   </PageHeader>;
-};
+});
 
 export default StationAddView;

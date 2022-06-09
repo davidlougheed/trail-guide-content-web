@@ -67,7 +67,7 @@ const SortableItem = React.memo(({id, asset, caption, remove, onChangeCaption}) 
 });
 
 
-const SortableGalleryInput = ({value, onChange}) => {
+const SortableGalleryInput = React.memo(({value, onChange}) => {
   const [toAdd, setToAdd] = useState(null);
 
   const items = value ?? [];
@@ -137,6 +137,6 @@ const SortableGalleryInput = ({value, onChange}) => {
       </SortableContext>
     </DndContext>
   </List>;
-};
+});
 
 export default SortableGalleryInput;

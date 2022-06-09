@@ -5,11 +5,11 @@ import ReleaseAddView from "./ReleaseAddView";
 import ReleaseListView from "./ReleaseListView";
 import ReleaseDetailView from "./ReleaseDetailView";
 
-const ReleasePage = () => <Routes>
+const ReleasePage = React.memo(() => <Routes>
   <Route path="add" element={<ReleaseAddView />} />
   <Route path="detail/:id" element={<ReleaseDetailView />} />
   <Route path="list" element={<ReleaseListView />} />
   <Route path="*" element={<Navigate to="list" replace={true} />} />
-</Routes>;
+</Routes>);
 
 export default ReleasePage;

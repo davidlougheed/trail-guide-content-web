@@ -11,7 +11,7 @@ import {EditOutlined} from "@ant-design/icons";
 
 import {findItemByID} from "../../utils";
 
-const FeedbackDetailView = () => {
+const FeedbackDetailView = React.memo(() => {
   const navigate = useNavigate();
   const {id: feedbackID} = useParams();
 
@@ -42,6 +42,6 @@ const FeedbackDetailView = () => {
       {feedback.content}
     </Card>
   </PageHeader>;
-};
+});
 
 export default FeedbackDetailView;

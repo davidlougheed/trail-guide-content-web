@@ -14,6 +14,10 @@ import ReactJson from "react-json-view";
 import {findItemByID} from "../../utils";
 import MapPreview from "./MapPreview";
 
+const styles = {
+  jsonCard: {marginTop: 16},
+};
+
 const LayerDetailView = React.memo(() => {
   const navigate = useNavigate();
   const {id: layerID} = useParams();
@@ -45,7 +49,7 @@ const LayerDetailView = React.memo(() => {
       <Descriptions.Item label="Rank">{layer?.rank ?? "—"}</Descriptions.Item>
     </Descriptions>
 
-    <Card size="small" title="GeoJSON" style={{marginTop: 16}}>
+    <Card size="small" title="GeoJSON" style={styles.jsonCard}>
       <ReactJson src={geoJSON} groupArraysAfterLength={50} />
     </Card>
 

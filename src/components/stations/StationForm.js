@@ -79,7 +79,7 @@ const getLocalStorageValues = k => {
   return ls ? JSON.parse(ls) : {};
 };
 
-const StationForm = ({onFinish, initialValues, loading, localDataKey, ...props}) => {
+const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey, ...props}) => {
   const [form] = Form.useForm();
 
   const sections = useSelector(state => state.sections.items);
@@ -531,6 +531,6 @@ const StationForm = ({onFinish, initialValues, loading, localDataKey, ...props})
       </Space>
     </Form.Item>
   </Form>;
-};
+});
 
 export default StationForm;

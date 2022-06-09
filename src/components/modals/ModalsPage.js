@@ -10,12 +10,12 @@ import ModalAddView from "./ModalAddView";
 import ModalEditView from "./ModalEditView";
 import ModalDetailView from "./ModalDetailView";
 
-const ModalsPage = () => <Routes>
+const ModalsPage = React.memo(() => <Routes>
   <Route path="list" element={<ModalListView />} />
   <Route path="add" element={<ModalAddView />} />
   <Route path="edit/:id" element={<ModalEditView />} />
   <Route path="detail/:id" element={<ModalDetailView />} />
   <Route path="*" element={<Navigate to="list" replace={true} />} />
-</Routes>;
+</Routes>);
 
 export default ModalsPage;

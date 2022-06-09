@@ -7,7 +7,7 @@ import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined, QrcodeOutlined}
 import StationQR from "./StationQR";
 import {useUrlPagination} from "../../hooks/pages";
 
-const StationListView = () => {
+const StationListView = React.memo(() => {
   const navigate = useNavigate();
 
   const loadingStations = useSelector(state => state.stations.isFetching);
@@ -86,6 +86,6 @@ const StationListView = () => {
       pagination={pagination}
     />
   </PageHeader>;
-};
+});
 
 export default StationListView;

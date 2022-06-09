@@ -10,7 +10,11 @@ import {updateAsset} from "../../modules/assets/actions";
 import {ACCESS_TOKEN_MANAGE} from "../../utils";
 import {useUrlPagination} from "../../hooks/pages";
 
-const AssetListView = () => {
+const styles = {
+  footerLabel: {fontWeight: "bold"},
+};
+
+const AssetListView = React.memo(() => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {getAccessTokenSilently} = useAuth0();
@@ -33,12 +37,13 @@ const AssetListView = () => {
     }
   }, [assetsLoading, getAccessTokenSilently, dispatch]);
 
-  // noinspection JSUnusedGlobalSymbols
+  // noinspection JSUnusedGlobalSymbols,JSUnresolvedVariable
   const columns = useMemo(() => [
     {
       title: "File Name",
       dataIndex: "file_name",
-      render: (fileName, asset) => <Link to={`../detail/${asset.id}`}>{fileName}</Link>,
+      shouldCellUpdate: (r, pr) => r.id !== pr.id || r.file_name !== pr.file_name,
+      render: (fileName, asset) => <Link to={`/assets/detail/${asset.id}`}>{fileName}</Link>,
     },
     {
       title: "Type",
@@ -49,20 +54,23 @@ const AssetListView = () => {
     {
       title: "Size",
       dataIndex: "file_size",
+      shouldCellUpdate: (r, pr) => r.file_size !== pr.file_size,
       render: fileSize => <span>{(fileSize / 1000).toFixed(0)}&nbsp;KB</span>,
     },
     {
       title: "Enabled?",
       dataIndex: "enabled",
+      shouldCellUpdate: (r, pr) => r.enabled !== pr.enabled,
       render: enabled => enabled ? "Yes" : "No",
     },
     {
       title: "Actions",
       key: "actions",
+      shouldCellUpdate: (r, pr) => r.id !== pr.id || r.enabled !== pr.enabled,
       render: asset => (
         <Space size="small">
           <Button icon={<EyeOutlined/>}
-                  onClick={() => navigate(`../detail/${asset.id}`)}>View</Button>
+                  onClick={() => navigate(`/assets/detail/${asset.id}`)}>View</Button>
           {asset.enabled ? (
             <Button loading={assetsLoading[asset.id]}
                     icon={<CloseSquareOutlined />}
@@ -84,15 +92,24 @@ const AssetListView = () => {
     <Button key="add"
             type="primary"
             icon={<PlusOutlined/>}
-            onClick={() => navigate("../add")}>
+            onClick={() => navigate("/assets/add")}>
       Add New</Button>,
   ], [navigate]);
 
+  // noinspection JSUnresolvedVariable
   const totalEnabledAssetSize = useMemo(
     () => assets
       .filter(a => a.enabled)
       .reduce(((acc, asset) => acc + asset.file_size), 0),
     [assets]);
+
+  const footer = useCallback(
+    () => <span>
+        <span style={styles.footerLabel}>Total Enabled Asset Size:</span>&nbsp;
+        {loadingAssets ? `–` : `${(totalEnabledAssetSize / 1000).toFixed(0)} KB`}
+      </span>,
+    [loadingAssets, totalEnabledAssetSize],
+  );
 
   const pagination = useUrlPagination();
 
@@ -107,15 +124,11 @@ const AssetListView = () => {
       loading={loadingAssets}
       columns={columns}
       dataSource={assets}
-      footer={() =>
-        <span>
-          <span style={{fontWeight: "bold"}}>Total Enabled Asset Size:</span>&nbsp;
-          {loadingAssets ? `–` : `${(totalEnabledAssetSize / 1000).toFixed(0)} KB`}
-        </span>}
+      footer={footer}
       rowKey="id"
       pagination={pagination}
     />
   </PageHeader>;
-};
+});
 
 export default AssetListView;

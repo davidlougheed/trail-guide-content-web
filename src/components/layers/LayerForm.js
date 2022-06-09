@@ -2,7 +2,7 @@ import React, {useCallback, useMemo} from "react";
 
 import {Button, Col, Form, Input, InputNumber, Row, Switch} from "antd"
 
-const LayerForm = ({initialValues, onFinish, loading, ...props}) => {
+const LayerForm = React.memo(({initialValues, onFinish, loading, ...props}) => {
   const [form] = Form.useForm();
 
   const oldInitialValues = useMemo(() => initialValues ?? {}, [initialValues]);
@@ -44,6 +44,6 @@ const LayerForm = ({initialValues, onFinish, loading, ...props}) => {
       <Button type="primary" htmlType="submit" loading={loading}>Submit</Button>
     </Form.Item>
   </Form>;
-};
+});
 
 export default LayerForm;

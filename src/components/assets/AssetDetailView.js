@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2022  David Lougheed
 // See NOTICE for more information.
 
-import React from "react";
+import React, {useCallback} from "react";
 import {useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 
@@ -11,7 +11,7 @@ import {FileTextOutlined, PictureOutlined, SoundOutlined, VideoCameraOutlined} f
 
 import {assetIdToBytesUrl, findItemByID} from "../../utils";
 
-const AssetTypeIcon = ({type}) => {
+const AssetTypeIcon = React.memo(({type}) => {
   switch (type) {
     case "image":
       return <PictureOutlined />;
@@ -24,9 +24,9 @@ const AssetTypeIcon = ({type}) => {
   }
 
   return <span/>;
-}
+});
 
-const AssetPreview = ({asset}) => {
+const AssetPreview = React.memo(({asset}) => {
   if (!asset) return <div/>;
 
   switch (asset.asset_type) {
@@ -45,18 +45,20 @@ const AssetPreview = ({asset}) => {
   }
 
   return <div/>;
-};
+});
 
-const AssetDetailView = () => {
+const AssetDetailView = React.memo(() => {
   const navigate = useNavigate();
   const {id: assetID} = useParams();
 
   const fetchingAssets = useSelector(state => state.assets.isFetching);
   const asset = useSelector(state => findItemByID(state.assets.items, assetID));
 
+  const onBack = useCallback(() => navigate(-1), [navigate]);
+
   return <PageHeader
     ghost={false}
-    onBack={() => navigate(-1)}
+    onBack={onBack}
     title={fetchingAssets
       ? "Loading..."
       : <span>Asset: <AssetTypeIcon type={asset?.asset_type}/> {asset?.file_name}</span>}
@@ -77,9 +79,9 @@ const AssetDetailView = () => {
     </Descriptions>
 
     <Card size="small" title="Preview" style={{marginTop: 16}}>
-      <AssetPreview asset={asset}/>
+      <AssetPreview asset={asset} />
     </Card>
   </PageHeader>;
-};
+});
 
 export default AssetDetailView;

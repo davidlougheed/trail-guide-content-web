@@ -8,7 +8,7 @@ import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined} from "@ant-desi
 import MapPreview from "./MapPreview";
 import {useUrlPagination} from "../../hooks/pages";
 
-const LayerListView = () => {
+const LayerListView = React.memo(() => {
   const navigate = useNavigate();
 
   const loadingLayers = useSelector(state => state.layers.isFetching);
@@ -26,6 +26,7 @@ const LayerListView = () => {
     {
       title: "Enabled",
       dataIndex: "enabled",
+      shouldCellUpdate: (r, pr) => (r?.enabled !== pr?.enabled),
       render: enabled => enabled ? "Yes" : "No",
     },
     {
@@ -79,6 +80,6 @@ const LayerListView = () => {
       pagination={pagination}
     />
   </PageHeader>;
-};
+});
 
 export default LayerListView;

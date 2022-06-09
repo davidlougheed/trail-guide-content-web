@@ -6,7 +6,7 @@ import React, {useCallback, useMemo} from "react";
 import {useSelector} from "react-redux";
 import {Button, Form, Select} from "antd";
 
-const SettingsForm = ({onFinish, loading, ...props}) => {
+const SettingsForm = React.memo(({onFinish, loading, ...props}) => {
   const [form] = Form.useForm();
 
   const modals = useSelector(state => state.modals.items);
@@ -30,6 +30,6 @@ const SettingsForm = ({onFinish, loading, ...props}) => {
       <Button type="primary" htmlType="submit" loading={loading}>Save</Button>
     </Form.Item>
   </Form>;
-};
+});
 
 export default SettingsForm;

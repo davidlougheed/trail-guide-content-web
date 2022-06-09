@@ -4,10 +4,18 @@ import {Link} from "react-router-dom";
 
 import {transformCoords} from "../../utils";
 
+const styles = {
+  mapContainer: {height: 400},
+};
+
 const MapPreview = React.memo(({layers, stations}) => {
   // noinspection JSValidateTypes
   // TODO: Configurable centre, boundaries
-  return <MapContainer center={[44.4727488, -76.4295608]} zoom={14} style={{height: 400}}>
+
+  const centre = [44.4727488, -76.4295608];
+
+  // noinspection JSValidateTypes
+  return <MapContainer center={centre} zoom={14} style={styles.styles}>
     <TileLayer
       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

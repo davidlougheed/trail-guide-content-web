@@ -10,12 +10,12 @@ import LayerAddView from "./LayerAddView";
 import LayerEditView from "./LayerEditView";
 import LayerDetailView from "./LayerDetailView";
 
-const LayerPage = () => <Routes>
+const LayerPage = React.memo(() => <Routes>
   <Route path="list" element={<LayerListView />} />
   <Route path="add" element={<LayerAddView />} />
   <Route path="edit/:id" element={<LayerEditView />} />
   <Route path="detail/:id" element={<LayerDetailView />} />
   <Route path="*" element={<Navigate to="list" replace={true} />} />
-</Routes>;
+</Routes>);
 
 export default LayerPage;

@@ -1,15 +1,15 @@
-import React from "react";
+import React, {useMemo} from "react";
 import {useSelector} from "react-redux";
 
 import {Button, PageHeader, Space, Table} from "antd";
 import {DeleteOutlined} from "@ant-design/icons";
 import {useUrlPagination} from "../../hooks/pages";
 
-const FeedbackListView = () => {
+const FeedbackListView = React.memo(() => {
   const loadingFeedback = useSelector(state => state.feedback.isFetching);
   const feedback = useSelector(state => state.feedback.items);
 
-  const columns = [
+  const columns = useMemo(() => [
     {
       title: "Name",
       dataIndex: ["from", "name"],
@@ -35,7 +35,7 @@ const FeedbackListView = () => {
         </Space>
       )
     },
-  ];
+  ], []);
 
   const pagination = useUrlPagination();
 
@@ -53,6 +53,6 @@ const FeedbackListView = () => {
       pagination={pagination}
     />
   </PageHeader>;
-};
+});
 
 export default FeedbackListView;

@@ -89,7 +89,7 @@ const PageHeaderSubtitleSkeleton = React.memo(() =>
   <Skeleton title={false} paragraph={{rows: 1, width: 200}} style={{marginTop: 12}} />
 );
 
-const App = () => {
+const App = React.memo(() => {
   const {
     loginWithRedirect,
     isLoading: isLoadingAuth,
@@ -211,6 +211,6 @@ const App = () => {
       </Layout.Content>
     </Layout>
   </Layout>;
-}
+});
 
 export default App;

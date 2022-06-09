@@ -6,7 +6,7 @@ import React, {useCallback, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useAuth0} from "@auth0/auth0-react";
 
-import {Button, Form, Input, message, Modal, PageHeader, Typography} from "antd";
+import {Button, Form, Input, message, Modal, PageHeader, Skeleton, Typography} from "antd";
 
 import SettingsForm from "./SettingsForm";
 import {updateSettings} from "../../modules/settings/actions";
@@ -14,7 +14,7 @@ import {ACCESS_TOKEN_MANAGE} from "../../utils";
 
 import * as c from "../../config";
 
-const SettingsPage = () => {
+const SettingsPage = React.memo(() => {
   const dispatch = useDispatch();
   const fetchingSettings = useSelector(state => state.settings.isFetching);
   const updatingSettings = useSelector(state => state.settings.isUpdating);
@@ -36,8 +36,7 @@ const SettingsPage = () => {
   const showConfig = useCallback(() => setConfigShown(true), []);
   const hideConfig = useCallback(() => setConfigShown(false), []);
 
-  if (fetchingSettings) return <div>Loading...</div>;
-
+  // noinspection JSValidateTypes
   return <>
     <Modal visible={configShown} onCancel={hideConfig} footer={null}>
       <Typography.Title level={3}>Front End</Typography.Title>
@@ -54,11 +53,13 @@ const SettingsPage = () => {
       </Form>
     </Modal>
     <PageHeader title="Settings" ghost={false} extra={[
-      <Button key="config" onClick={showConfig}>View Instance Configuration</Button>
+      <Button key="config" loading={fetchingSettings} onClick={showConfig}>View Instance Configuration</Button>
     ]}>
-      <SettingsForm initialValues={settings} onFinish={onFinish} loading={updatingSettings} />
+      {settings
+        ? <SettingsForm initialValues={settings} onFinish={onFinish} loading={updatingSettings} />
+        : <Skeleton title={false} />}
     </PageHeader>
   </>;
-};
+});
 
 export default SettingsPage;

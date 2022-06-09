@@ -7,6 +7,10 @@ import React, {useMemo} from "react";
 import {Button, Col, Form, Row, Select, Switch, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
 
+const styles = {
+  upload: {width: "100%"},
+};
+
 const ASSET_TYPES = [
   {value: "image", label: "Image"},
   {value: "audio", label: "Audio"},
@@ -14,6 +18,8 @@ const ASSET_TYPES = [
   {value: "video_text_track", label: "Video Text Track"},
   {value: "pdf", label: "PDF"},
 ];
+
+const RULE_REQUIRED = [{required: true}];
 
 const AssetForm = ({initialValues, ...props}) => {
   const [form] = Form.useForm();
@@ -34,7 +40,7 @@ const AssetForm = ({initialValues, ...props}) => {
         </Form.Item>
       </Col>
       <Col flex={1}>
-        <Form.Item name="asset_type" label="Asset Type" rules={[{required: true}]}>
+        <Form.Item name="asset_type" label="Asset Type" rules={RULE_REQUIRED}>
           <Select options={ASSET_TYPES} />
         </Form.Item>
       </Col>
@@ -43,11 +49,11 @@ const AssetForm = ({initialValues, ...props}) => {
                    label="File"
                    valuePropName="file"
                    getValueFromEvent={e => e.file}
-                   rules={[{required: true}]}>
+                   rules={RULE_REQUIRED}>
           <Upload maxCount={1}
                   showUploadList={{showRemoveIcon: false}}
                   beforeUpload={() => false}
-                  style={{width: "100%"}}>
+                  style={styles.upload}>
             <Button icon={<UploadOutlined />}>Click to Upload</Button>
           </Upload>
         </Form.Item>

@@ -9,7 +9,7 @@ import StationForm from "./StationForm";
 import {updateStation} from "../../modules/stations/actions";
 import {ACCESS_TOKEN_MANAGE, findItemByID} from "../../utils";
 
-const StationEditView = () => {
+const StationEditView = React.memo(() => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {id: stationID} = useParams();
@@ -38,6 +38,6 @@ const StationEditView = () => {
   >
     {station && <StationForm initialValues={station} onFinish={onFinish} loading={updatingStations} />}
   </PageHeader>;
-};
+});
 
 export default StationEditView;

@@ -5,7 +5,7 @@ import {Button, Col, Form, Input, Row, Switch} from "antd";
 
 const RULES_REQUIRED = [{required: true}];
 
-const ReleaseForm = ({initialValues, onFinish, loading, ...props}) => {
+const ReleaseForm = React.memo(({initialValues, onFinish, loading, ...props}) => {
   const [form] = Form.useForm();
 
   const releases = useSelector(state => state.releases.items);
@@ -37,6 +37,6 @@ const ReleaseForm = ({initialValues, onFinish, loading, ...props}) => {
       <Button type="primary" htmlType="submit" loading={loading}>Submit</Button>
     </Form.Item>
   </Form>;
-};
+});
 
 export default ReleaseForm;
