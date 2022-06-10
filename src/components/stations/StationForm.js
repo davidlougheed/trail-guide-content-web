@@ -25,9 +25,9 @@ const quizTypes = [
 ];
 
 const normalizeHTMLContent = content => {
-  content = content.trim();
   if (!content) return "";
-  if (["<p><br></p>", "<p></p>"].includes(content)) {
+  content = content.trim();
+  if (["", "<p><br></p>", "<p></p>"].includes(content)) {
     // Annoying WYSIWYG "blanks"
     return "";
   }
