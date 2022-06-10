@@ -131,7 +131,7 @@ const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey,
 
   const contentsRefs = useRef({});
   const getContentKey = useCallback((k, i) => ({
-    [k]: contentsRefs?.current[contentItemField(i)(k)]?.getEditor()?.root?.innerHTML ?? ""
+    [k]: normalizeHTMLContent(contentsRefs?.current[contentItemField(i)(k)]?.getEditor()?.root?.innerHTML),
   }), [contentsRefs]);
 
   const processValues = useCallback(values => ({

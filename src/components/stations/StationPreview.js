@@ -68,7 +68,7 @@ const RenderedContent = React.memo(({id, content}) => {
       return <>
         {content.title ? <Typography.Title level={4}>{content.title}</Typography.Title> : null}
         <HTMLContent id={`${id}-content-before`} htmlContent={content.content_before_fold ?? ""} />
-        {content.content_after_fold
+        {(content.content_after_fold && content.content_after_fold !== "<p><br></p>")
           ? <Button onClick={() => setShowMore(!showMore)} style={{marginBottom: 16}}>
             {showMore ? "HIDE" : "READ MORE"}</Button> : null}
         {showMore
