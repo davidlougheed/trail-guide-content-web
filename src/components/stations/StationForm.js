@@ -24,24 +24,34 @@ const quizTypes = [
   {value: "choose_one", label: "Choose the correct option"},
 ];
 
+const normalizeHTMLContent = content => {
+  content = content.trim();
+  if (!content) return "";
+  if (["<p><br></p>", "<p></p>"].includes(content)) {
+    // Annoying WYSIWYG "blanks"
+    return "";
+  }
+  return content;
+};
+
 const contentItemField = i => k => `contents_${i}_${k}`;
 const normalizeContents = fromAPI => c => c ? ({
   ...c,
   title: c.title || "",
 
   ...(c.content_type === "html" ? {
-    content_before_fold: c.content_before_fold || "",
-    content_after_fold: c.content_after_fold || "",
+    content_before_fold: normalizeHTMLContent(c.content_before_fold),
+    content_after_fold: normalizeHTMLContent(c.content_after_fold),
   } : {}),
 
   ...(c.content_type === "gallery" ? {
-    description: c.description || "",
+    description: normalizeHTMLContent(c.description),
     items: c.items || []
   } : {}),
 
   ...(c.content_type === "quiz" ? {
-    question: c.question || "",
-    answer: c.answer || "",
+    question: normalizeHTMLContent(c.question),
+    answer: normalizeHTMLContent(c.answer),
     options: (c.options || []).map(o => ({
       ...o,
 
