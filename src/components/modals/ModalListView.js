@@ -12,6 +12,7 @@ const ModalListView = React.memo(() => {
   const loadingModals = useSelector(state => state.modals.isFetching);
   const modals = useSelector(state => state.modals.items);
 
+  // noinspection JSUnusedGlobalSymbols
   const columns = useMemo(() => [
     {
       title: "Title",
@@ -22,10 +23,14 @@ const ModalListView = React.memo(() => {
       dataIndex: "close_text",
     },
     {
+      title: "Last Modified",
+      render: station => (new Date(station.revision.timestamp)).toLocaleString(),
+    },
+    {
       title: "Actions",
       key: "actions",
       shouldCellUpdate: (r, pr) => (r?.id !== pr?.id),
-      render: modal => <Space size="middle">
+      render: modal => <Space size="small">
         <Button icon={<EyeOutlined/>}
                 onClick={() => navigate(`/modals/detail/${modal.id}`)}>View</Button>
         <Button icon={<EditOutlined/>}
@@ -54,6 +59,7 @@ const ModalListView = React.memo(() => {
   >
     <Table
       bordered={true}
+      size="small"
       loading={loadingModals}
       columns={columns}
       dataSource={modals}

@@ -72,6 +72,7 @@ const ReleaseListView = React.memo(() => {
   return <PageHeader ghost={false} title="Releases" subTitle="View and create app releases" extra={extra}>
     <Table
       bordered={true}
+      size="small"
       loading={loadingReleases}
       columns={columns}
       rowKey="version"

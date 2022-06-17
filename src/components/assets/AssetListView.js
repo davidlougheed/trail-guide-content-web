@@ -121,6 +121,7 @@ const AssetListView = React.memo(() => {
   >
     <Table
       bordered={true}
+      size="small"
       loading={loadingAssets}
       columns={columns}
       dataSource={assets}

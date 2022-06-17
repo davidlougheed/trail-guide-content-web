@@ -2,7 +2,7 @@ import React, {useCallback, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 
-import {Button, Modal, PageHeader, Space, Table} from "antd";
+import {Button, Modal, PageHeader, Space, Table, Tooltip} from "antd";
 import {CheckOutlined, CloseOutlined, EditOutlined, EyeOutlined, QrcodeOutlined} from "@ant-design/icons";
 
 import PageQR from "./PageQR";
@@ -38,13 +38,19 @@ const PageListView = React.memo(() => {
       render: v => v ? (<CheckOutlined/>) : (<CloseOutlined/>),
     },
     {
+      title: "Last Modified",
+      render: station => (new Date(station.revision.timestamp)).toLocaleString(),
+    },
+    {
       title: "Actions",
       key: "actions",
       shouldCellUpdate: (r, pr) => (r?.id !== pr?.id),
       render: page => (
         <Space size="small">
-          <Button icon={<QrcodeOutlined />}
-                  onClick={() => setQrPage(page)}>QR</Button>
+          <Tooltip title="Show QR Code">
+            <Button icon={<QrcodeOutlined />}
+                    onClick={() => setQrPage(page)} />
+          </Tooltip>
           <Button icon={<EyeOutlined/>}
                   onClick={() => navigate(`../detail/${page.id}`)}>View</Button>
           <Button icon={<EditOutlined/>}
@@ -62,6 +68,7 @@ const PageListView = React.memo(() => {
     <QRModal page={qrPage} modalCancel={modalCancel} />
     <Table
       bordered={true}
+      size="small"
       loading={loadingPages}
       columns={columns}
       dataSource={pages}

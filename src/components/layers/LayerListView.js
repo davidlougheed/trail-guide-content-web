@@ -73,6 +73,7 @@ const LayerListView = React.memo(() => {
     </Modal>
     <Table
       bordered={true}
+      size="small"
       loading={loadingLayers}
       columns={columns}
       dataSource={layers}

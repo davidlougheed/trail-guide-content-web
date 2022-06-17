@@ -1,4 +1,4 @@
-import {useCallback, useState} from "react";
+import {useCallback} from "react";
 import {useSearchParams} from "react-router-dom";
 
 export const useUrlPagination = () => {
@@ -9,5 +9,5 @@ export const useUrlPagination = () => {
     setSearchParams({page: page_, pageSize: pageSize_});
   }, []);
 
-  return {current: page, pageSize, onChange};
+  return {current: page, pageSize, onChange, size: "default"};
 };

@@ -2,10 +2,14 @@ import React, {useCallback, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 
-import {Button, Modal, PageHeader, Space, Table} from "antd";
+import {Button, Modal, PageHeader, Space, Table, Tooltip} from "antd";
 import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined, QrcodeOutlined} from "@ant-design/icons";
 import StationQR from "./StationQR";
 import {useUrlPagination} from "../../hooks/pages";
+
+const styles = {
+  qrModal: {top: 36},
+};
 
 const StationListView = React.memo(() => {
   const navigate = useNavigate();
@@ -42,12 +46,18 @@ const StationListView = React.memo(() => {
           : (station.enabled ? "Yes" : "No"),
     },
     {
+      title: "Last Modified",
+      render: station => (new Date(station.revision.timestamp)).toLocaleString(),
+    },
+    {
       title: "Actions",
       key: "actions",
       render: station => (
         <Space size="small">
+          <Tooltip title="Show QR Code">
           <Button icon={<QrcodeOutlined />}
-                  onClick={() => setQrStation(station)}>QR</Button>
+                  onClick={() => setQrStation(station)} />
+          </Tooltip>
           <Button icon={<EyeOutlined />}
                   onClick={() => navigate(`../detail/${station.id}`)}>View</Button>
           <Button icon={<EditOutlined />}
@@ -67,18 +77,21 @@ const StationListView = React.memo(() => {
       Add New</Button>,
   ], [onAdd]);
 
+  const closeQrModal = useCallback(() => setQrStation(null), []);
+
   const pagination = useUrlPagination();
 
   return <PageHeader ghost={false} title="Stations" subTitle="Edit and create app stations" extra={extra}>
     <Modal title={qrStation?.title}
-           style={{top: 36}}
+           style={styles.qrModal}
            visible={!!qrStation}
-           onCancel={() => setQrStation(null)}
+           onCancel={closeQrModal}
            footer={null}>
       {qrStation ? <StationQR station={qrStation} /> : null}
     </Modal>
     <Table
       bordered={true}
+      size="small"
       loading={loadingStations}
       columns={columns}
       rowKey="id"

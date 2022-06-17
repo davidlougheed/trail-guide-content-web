@@ -28,6 +28,7 @@ const SectionsPage = React.memo(() => {
   return <PageHeader ghost={false} title="Sections" subTitle="View station sections">
     <Table
       bordered={true}
+      size="small"
       loading={loadingSections}
       columns={COLUMNS}
       dataSource={sections}
