@@ -15,7 +15,7 @@ const MapPreview = React.memo(({layers, stations}) => {
   const centre = [44.4727488, -76.4295608];
 
   // noinspection JSValidateTypes
-  return <MapContainer center={centre} zoom={14} style={styles.styles}>
+  return <MapContainer center={centre} zoom={14} style={styles.mapContainer}>
     <TileLayer
       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
