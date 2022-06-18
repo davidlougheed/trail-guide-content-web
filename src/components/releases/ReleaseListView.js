@@ -20,6 +20,8 @@ const ReleaseListView = React.memo(() => {
     {
       title: "Version",
       dataIndex: "version",
+      sorter: (a, b) => a.version - b.version,
+      defaultSortOrder: "descend",
     },
     {
       title: "Release Notes",
