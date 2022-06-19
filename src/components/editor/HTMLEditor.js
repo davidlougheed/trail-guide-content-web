@@ -7,6 +7,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
 import "./AudioBlot";
+import "./DividerBlot";
 import "./VideoBlot";
 
 import {assetIdToBytesUrl} from "../../utils";
@@ -18,6 +19,17 @@ import {
   VideoCameraOutlined
 } from "@ant-design/icons";
 import {APP_BASE_URL} from "../../config";
+
+const styles = {
+  modalFormSpace: {width: "100%"},
+  modalFormSelect: {width: "100%"},
+
+  imageOptionText: {marginLeft: 8, verticalAlign: "top"},
+
+  editorContainer: {position: "relative"},
+  extraToolbar: {position: "absolute", top: 5, right: 16},
+  extraToolbarDivider: {margin: "0 6px"},
+};
 
 const FORMATS = [
   "header",
@@ -31,6 +43,7 @@ const FORMATS = [
   "video",
   "tgcsAudio",
   "html5Video",
+  "divider",
 ];
 
 const filterOption = (v, option) =>
@@ -55,7 +68,7 @@ const LinkModal = React.memo(({options, objectName, objectPathItem, linkText, on
   
   // noinspection JSValidateTypes
   return <Modal title={`Insert ${objectName} Link`} onOk={onOk_} onCancel={onCancel} visible={visible}>
-    <Space direction="vertical" style={{width: "100%"}}>
+    <Space direction="vertical" style={styles.modalFormSpace}>
       <div><strong>Link text:</strong> {linkText}</div>
       <div>
         <Select
@@ -64,7 +77,7 @@ const LinkModal = React.memo(({options, objectName, objectPathItem, linkText, on
           filterOption={filterOption}
           onChange={itemId => setSelectedItem(itemId)}
           value={selectedItem}
-          style={{width: "100%"}}
+          style={styles.modalFormSelect}
           size="large"
           options={mappedOptions}
         />
@@ -96,7 +109,7 @@ const AudioModal = React.memo(({assetOptions, onOk, onCancel, visible}) => {
 
   // noinspection JSValidateTypes
   return <Modal title="Insert Audio" onOk={onOk_} onCancel={onCancel} visible={visible}>
-    <Space direction="vertical" style={{width: "100%"}}>
+    <Space direction="vertical" style={styles.modalFormSpace}>
       <div>
         <Checkbox checked={displayAsLink} onChange={e => setDisplayAsLink(e.target.checked)}>
           Display as link</Checkbox>
@@ -114,7 +127,7 @@ const AudioModal = React.memo(({assetOptions, onOk, onCancel, visible}) => {
           filterOption={filterOption}
           onChange={asset => setSelectedAsset(asset)}
           value={selectedAsset}
-          style={{width: "100%"}}
+          style={styles.modalFormSelect}
           size="large"
           options={options}
         />
@@ -134,8 +147,8 @@ const ImageModal = React.memo(({assetOptions, onOk, onCancel, visible}) => {
 
   const options = useMemo(() => assetOptions.map(asset => ({
     label: <div>
-      <Image src={assetIdToBytesUrl(asset.id)} height={40}/>
-      <span style={{marginLeft: 8, verticalAlign: "top"}}>{asset.file_name}</span>
+      <Image src={assetIdToBytesUrl(asset.id)} height={40} />
+      <span style={styles.imageOptionText}>{asset.file_name}</span>
     </div>,
     value: asset.id,
     search: asset.file_name,
@@ -149,7 +162,7 @@ const ImageModal = React.memo(({assetOptions, onOk, onCancel, visible}) => {
       filterOption={filterOption}
       onChange={asset => setSelectedAsset(asset)}
       value={selectedAsset}
-      style={{width: "100%"}}
+      style={styles.modalFormSelect}
       size="large"
       options={options}
     />
@@ -179,7 +192,7 @@ const VideoModal = React.memo(({assetOptions, onOk, onCancel, visible}) => {
       filterOption={filterOption}
       onChange={asset => setSelectedAsset(asset)}
       value={selectedAsset}
-      style={{width: "100%"}}
+      style={styles.modalFormSelect}
       size="large"
       options={options}
     />
@@ -249,7 +262,7 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
   if (initialValue === null) return <div/>;
 
   const modalInsertClose = useCallback(() => setShowViewer(null), []);
-  const modalInsertOk = type => data => {
+  const modalInsertOk = useCallback(type => data => {
     if (!quillRef.current) return;
     if (!data) return;
     if (type === "link") {
@@ -258,7 +271,12 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
       quillRef.current.getEditor().insertEmbed(currentRange.index, type, data, "user");
     }
     modalInsertClose();
-  };
+  }, [modalInsertClose, quillRef, currentRange]);
+
+  const dividerInsert = useCallback(() => {
+    const cr = quillRef.current.getEditor().getSelection(true);
+    quillRef.current.getEditor().insertEmbed(cr.index, "divider", {}, "user");
+  }, [quillRef]);
 
   // noinspection JSValidateTypes
   return <div>
@@ -301,14 +319,18 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
                 onOk={modalInsertOk("html5Video")}
                 onCancel={modalInsertClose} />
 
-    <div style={{position: "relative"}}>
-      <div style={{position: "absolute", top: 5, right: 16}}>
+    <div style={styles.editorContainer}>
+      <div style={styles.extraToolbar}>
         {/* I'm too lazy to work with Quill's annoying toolbar API */}
         <Space direction="horizontal">
+          <Tooltip title="Divider">
+            <Button onClick={dividerInsert} icon={<span>&mdash;</span>} />
+          </Tooltip>
+          <Divider type="vertical" style={styles.extraToolbarDivider} />
           <Button onClick={stationHandler} icon={<EnvironmentOutlined />}>Station</Button>
           <Button onClick={modalHandler} icon={<CloseSquareOutlined />}>Modal</Button>
           <Button onClick={pageHandler} icon={<FileOutlined />}>Page</Button>
-          <Divider type="vertical" style={{margin: "0 6px"}} />
+          <Divider type="vertical" style={styles.extraToolbarDivider} />
           <Tooltip title="Audio">
             <Button onClick={audioHandler} icon={<SoundOutlined />} />
           </Tooltip>
@@ -320,19 +342,21 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
           </Tooltip>
         </Space>
       </div>
-      <ReactQuill theme="snow"
-                  ref={el => {
-                    if (innerRef) {
-                      if (typeof innerRef === "function") { innerRef(el); }
-                      else { innerRef.current = el; }
-                    }
-                    quillRef.current = el;
-                  }}
-                  formats={FORMATS}
-                  modules={modules}
-                  defaultValue={initialValue}
-                  onChange={onChange}
-                  placeholder={placeholder}/>
+      <ReactQuill
+        theme="snow"
+        ref={el => {
+          if (innerRef) {
+            if (typeof innerRef === "function") { innerRef(el); }
+            else { innerRef.current = el; }
+          }
+          quillRef.current = el;
+        }}
+        formats={FORMATS}
+        modules={modules}
+        defaultValue={initialValue}
+        onChange={onChange}
+        placeholder={placeholder}
+      />
     </div>
   </div>;
 };
