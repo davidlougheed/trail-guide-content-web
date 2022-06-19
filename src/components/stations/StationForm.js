@@ -466,7 +466,7 @@ const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey,
                                           name={[optionField.name, "label"]}
                                           rules={[{required: true}]}
                                         >
-                                          <Input placeholder="Label" style={{width: 240}} />
+                                          <Input placeholder="Label" style={{width: 400}} />
                                         </Form.Item>
                                         <Form.Item
                                           label="Answer"
