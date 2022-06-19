@@ -4,10 +4,11 @@ import {useSelector} from "react-redux";
 import {throttle} from "lodash";
 
 import {Button, Card, Col, Divider, Form, Input, Row, Select, Space, Switch} from "antd";
-import {CloseCircleOutlined, MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
+import {CheckOutlined, CloseCircleOutlined, MinusCircleOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons";
 
 import HTMLEditor from "../editor/HTMLEditor";
 import SortableGalleryInput from "../SortableGalleryInput";
+import {useNavigate} from "react-router-dom";
 
 // Maximum number of days each month can have.
 const MONTH_DAYS = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -90,6 +91,8 @@ const getLocalStorageValues = k => {
 };
 
 const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey, ...props}) => {
+  const navigate = useNavigate();
+
   const [form] = Form.useForm();
 
   const sections = useSelector(state => state.sections.items);
@@ -207,6 +210,12 @@ const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey,
   const onValuesChange = useCallback(
     (_, allValues) => saveChangesLocally(allValues),
     [saveChangesLocally]);
+
+  const submitAndView = useCallback(() => {
+    onFinish_(form.getFieldsValue(true));
+    if (!newInitialValues.id) return;
+    navigate(`/stations/detail/${newInitialValues.id}`);
+  }, [form, navigate, newInitialValues]);
 
   const resetChanges = useCallback(() => {
     setSavedData({});
@@ -533,7 +542,11 @@ const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey,
     </Form.Item>
     <Form.Item>
       <Space>
-        <Button type="primary" htmlType="submit" loading={loading}>Submit</Button>
+        <Button type="primary" htmlType="submit" loading={loading} icon={<SaveOutlined />}>
+          {initialValues ? "Save" : "Submit"}</Button>
+        {initialValues && (
+          <Button onClick={submitAndView} icon={<CheckOutlined />}>Save and View</Button>
+        )}
         <Button onClick={resetChanges}>Reset Changes</Button>
         {(localDataKey && lastSavedTime) ? (
           <span style={{color: "#AAA", fontStyle: "italic"}}>Changes last saved locally at {lastSavedTime}.</span>
