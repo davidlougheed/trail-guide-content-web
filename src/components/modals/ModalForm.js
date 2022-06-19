@@ -2,7 +2,7 @@ import React, {useCallback, useMemo, useRef} from "react";
 
 import {Button, Divider, Form, Input} from "antd"
 
-import HTMLEditor from "../HTMLEditor";
+import HTMLEditor from "../editor/HTMLEditor";
 
 const RULES_REQUIRED = [{required: true}];
 

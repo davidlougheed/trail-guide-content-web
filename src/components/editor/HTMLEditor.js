@@ -9,7 +9,7 @@ import "react-quill/dist/quill.snow.css";
 import "./AudioBlot";
 import "./VideoBlot";
 
-import {assetIdToBytesUrl} from "../utils";
+import {assetIdToBytesUrl} from "../../utils";
 import {
   CloseSquareOutlined, EnvironmentOutlined,
   FileOutlined,
@@ -17,7 +17,7 @@ import {
   SoundOutlined,
   VideoCameraOutlined
 } from "@ant-design/icons";
-import {APP_BASE_URL} from "../config";
+import {APP_BASE_URL} from "../../config";
 
 const FORMATS = [
   "header",

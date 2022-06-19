@@ -6,7 +6,7 @@ import {throttle} from "lodash";
 import {Button, Card, Col, Divider, Form, Input, Row, Select, Space, Switch} from "antd";
 import {CloseCircleOutlined, MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 
-import HTMLEditor from "../HTMLEditor";
+import HTMLEditor from "../editor/HTMLEditor";
 import SortableGalleryInput from "../SortableGalleryInput";
 
 // Maximum number of days each month can have.

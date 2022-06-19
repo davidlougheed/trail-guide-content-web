@@ -3,7 +3,7 @@ import {useSelector} from "react-redux";
 
 import {Button, Col, Divider, Form, Input, Row, Select, Switch} from "antd";
 
-import HTMLEditor from "../HTMLEditor";
+import HTMLEditor from "../editor/HTMLEditor";
 
 const RULES_REQUIRED = [{required: true}];
 
