@@ -1,6 +1,6 @@
 {
   "name": "trail-guide-content-web",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "A web interface for managing content for a trail guide app.",
   "main": "src/index.js",
   "scripts": {
