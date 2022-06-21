@@ -214,7 +214,7 @@ const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey,
   const submitAndView = useCallback(() => {
     onFinish_(form.getFieldsValue(true));
     if (!newInitialValues.id) return;
-    navigate(`/stations/detail/${newInitialValues.id}`);
+    navigate(`/stations/detail/${newInitialValues.id}`, {replace: true});
   }, [form, navigate, newInitialValues]);
 
   const resetChanges = useCallback(() => {
