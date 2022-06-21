@@ -46,10 +46,12 @@ const ReleaseListView = React.memo(() => {
       key: "actions",
       render: release => (
         <Space size="small">
-          <Button
-            icon={<DownloadOutlined/>}
-            onClick={downloadVersionBundle(release.version, isAuthenticated, getAccessTokenSilently)}
-          >Download Bundle</Button>
+          <Button icon={<DownloadOutlined/>}
+                  onClick={downloadVersionBundle(release.version, isAuthenticated, getAccessTokenSilently)}>
+            Download Bundle{release.bundle_size
+              ? ` (${(release.bundle_size / 1000000).toFixed(1)} MB)`
+              : ""}
+          </Button>
           <Button icon={<EyeOutlined/>}
                   onClick={() => navigate(`../detail/${release.version}`)}>View</Button>
           {/*<Button icon={<EditOutlined/>}*/}
