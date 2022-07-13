@@ -180,9 +180,18 @@ const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey,
     rank: parseInt(values.rank),
   }), [getContentKey]);
 
+  const clearLocalData = useCallback(() => {
+    if (localDataKey) {
+      localStorage.removeItem(localDataKey);
+    }
+  }, [localDataKey]);
+
   const onFinish_ = useCallback(
-    values => (onFinish ?? (() => {}))(processValues(values)),
-    [onFinish, processValues]);
+    values => {
+      (onFinish ?? (() => {}))(processValues(values));
+      clearLocalData();
+    },
+    [onFinish, processValues, clearLocalData]);
 
   // noinspection JSCheckFunctionSignatures
   const saveChangesLocally = useCallback(throttle((providedValues=undefined) => {
@@ -219,10 +228,8 @@ const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey,
 
   const resetChanges = useCallback(() => {
     setSavedData({});
-    if (localDataKey) {
-      localStorage.removeItem(localDataKey);
-    }
-  }, [localDataKey]);
+    clearLocalData();
+  }, [clearLocalData]);
 
   useEffect(() => {
     // Reset fields to initial value if savedData changes
