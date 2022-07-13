@@ -1,11 +1,21 @@
 import React, {useCallback, useMemo, useState} from "react";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
+import {useAuth0} from "@auth0/auth0-react";
 
 import {Button, Modal, PageHeader, Space, Table, Tooltip} from "antd";
-import {DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined, QrcodeOutlined} from "@ant-design/icons";
+import {
+  CloseSquareOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  EyeOutlined,
+  PlusOutlined,
+  QrcodeOutlined
+} from "@ant-design/icons";
 import StationQR from "./StationQR";
 import {useUrlPagination} from "../../hooks/pages";
+import {deleteStation, updateStation} from "../../modules/stations/actions";
+import {ACCESS_TOKEN_MANAGE} from "../../utils";
 
 const styles = {
   qrModal: {top: 36},
@@ -13,6 +23,8 @@ const styles = {
 
 const StationListView = React.memo(() => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const {getAccessTokenSilently} = useAuth0();
 
   const loadingStations = useSelector(state => state.stations.isFetching);
   const stations = useSelector(state => state.stations.items);
@@ -20,6 +32,7 @@ const StationListView = React.memo(() => {
   const categories = useSelector(state => state.categories.items);
 
   const [qrStation, setQrStation] = useState(null);
+  const [delStation, setDelStation] = useState(null);
 
   const columns = useMemo(() => [
     {
@@ -62,7 +75,7 @@ const StationListView = React.memo(() => {
                   onClick={() => navigate(`../detail/${station.id}`)}>View</Button>
           <Button icon={<EditOutlined />}
                   onClick={() => navigate(`../edit/${station.id}`)}>Edit</Button>
-          <Button icon={<DeleteOutlined />} danger={true} disabled={true}>Delete</Button>
+          <Button icon={<DeleteOutlined />} danger={true} onClick={() => setDelStation(station)}>Delete</Button>
         </Space>
       ),
     },
@@ -78,6 +91,34 @@ const StationListView = React.memo(() => {
   ], [onAdd]);
 
   const closeQrModal = useCallback(() => setQrStation(null), []);
+  const closeDelModal = useCallback(() => setDelStation(null), []);
+
+  const onDisable = useCallback(async () => {
+    if (!delStation) return;
+    try {
+      const token = await getAccessTokenSilently(ACCESS_TOKEN_MANAGE);
+      await dispatch(updateStation(delStation.id, {
+        enabled: false,
+        revision: {
+          working_copy: delStation.revision?.number ?? null,
+        },
+      }, token));
+    } catch (e) {
+      console.error(e);
+    }
+    closeDelModal();
+  }, [dispatch, getAccessTokenSilently, delStation]);
+
+  const onDelete = useCallback(async () => {
+    if (!delStation) return;
+    try {
+      const token = await getAccessTokenSilently(ACCESS_TOKEN_MANAGE);
+      await dispatch(deleteStation(delStation.id, token));
+    } catch (e) {
+      console.error(e);
+    }
+    closeDelModal();
+  }, [dispatch, getAccessTokenSilently, delStation]);
 
   const pagination = useUrlPagination();
 
@@ -88,6 +129,27 @@ const StationListView = React.memo(() => {
            onCancel={closeQrModal}
            footer={null}>
       {qrStation ? <StationQR station={qrStation} /> : null}
+    </Modal>
+    <Modal title={`Delete station: ${delStation?.title}`}
+           visible={!!delStation}
+           onCancel={closeDelModal}
+           footer={<Space>
+             <Button type="primary"
+                     danger={true}
+                     icon={<DeleteOutlined />}
+                     onClick={onDelete}>Delete</Button>
+             {delStation?.enabled
+               ? <Button type="primary"
+                         icon={<CloseSquareOutlined />}
+                         onClick={onDisable}>Disable</Button>
+               : null}
+             <Button onClick={closeDelModal}>Cancel</Button>
+           </Space>}>
+      Are you sure you wish to delete the station &ldquo;{delStation?.title}&rdquo;? If other content refers to
+      this station, those links will be <strong>broken</strong>.&nbsp;
+      {delStation?.enabled ? <span>
+        If you wish, you can instead <a href="#" onClick={onDisable}>disable</a> this station.
+      </span> : ""}
     </Modal>
     <Table
       bordered={true}

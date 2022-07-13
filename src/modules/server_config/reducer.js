@@ -10,5 +10,6 @@ export default makeGenericNetworkReducer(
   undefined,
   undefined,
   undefined,
+  undefined,
   false,
 );

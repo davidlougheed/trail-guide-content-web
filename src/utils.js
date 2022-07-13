@@ -63,7 +63,7 @@ export const networkAction = (types, url, method = "GET", multipart = false) =>
       "Authorization": `Bearer ${accessToken}`,
     };
 
-    const urlParams = Object.keys(params).length ? new URLSearchParams(params) : null;
+    const urlParams = method === "GET" ? (Object.keys(params).length ? new URLSearchParams(params) : null) : null;
 
     try {
       const r = await fetch(API_BASE_URL + url + (urlParams ? `?${urlParams.toString()}` : ""),
@@ -114,6 +114,7 @@ export const makeGenericNetworkReducer = (
   fetchTypes,
   addTypes=undefined,
   updateTypes=undefined,
+  deleteTypes=undefined,
   idKey="id",
   isArrayData=true,
 ) => (
@@ -121,6 +122,7 @@ export const makeGenericNetworkReducer = (
     isFetching: false,
     isAdding: false,
     isUpdating: false,
+    isDeleting: false,
     ...(isArrayData ? {items: []} : {data: null}),
     error: "",
   },
@@ -178,6 +180,25 @@ export const makeGenericNetworkReducer = (
         };
       case updateTypes.ERROR:
         return {...state, isUpdating: false, error: action.message};
+    }
+  }
+
+  if (deleteTypes) {
+    switch (action.type) {
+      case deleteTypes.REQUEST:
+        return {...state, isDeleting: true};
+      case deleteTypes.RECEIVE:
+        return {
+          ...state,
+          isDeleting: false,
+          ...(isArrayData
+              ? {items: state.items.filter(i => i[idKey] !== action.params.id)}
+              : {data: null}
+          ),
+          error: "",
+        };
+      case deleteTypes.ERROR:
+        return {...state, isDeleting: false, error: action.message};
     }
   }
 
