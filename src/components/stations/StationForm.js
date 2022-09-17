@@ -1,12 +1,14 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useSelector} from "react-redux";
 
-import {throttle} from "lodash";
+import {throttle, isEqual} from "lodash";
 
 import {Button, Card, Col, Divider, Form, Input, Row, Select, Space, Switch, Tooltip} from "antd";
 import {
   CheckOutlined,
-  CloseCircleOutlined, DownOutlined,
+  CloseCircleOutlined,
+  DownOutlined,
+  EyeOutlined,
   MinusCircleOutlined,
   PlusOutlined,
   SaveOutlined,
@@ -43,7 +45,7 @@ const normalizeHTMLContent = content => {
 };
 
 const contentItemField = i => k => `contents_${i}_${k}`;
-const normalizeContents = fromAPI => c => c ? ({
+const normalizeContents = c => c ? ({
   ...c,
   title: c.title || "",
 
@@ -65,7 +67,7 @@ const normalizeContents = fromAPI => c => c ? ({
 
       ...(["select_all_that_apply", "choose_one"].includes(c.quiz_type) ? {
         // "cast" these answers to booleans
-        answer: fromAPI ? (o.answer ? "true" : "false") : (o.answer === "true"),
+        answer: o.answer,  // fromAPI ? (o.answer ? "true" : "false") : (o.answer === "true"),
       } : {}),
     })),
   } : {}),
@@ -128,15 +130,19 @@ const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey,
       message: "",  // Clear revision message for possible filling out & re-submission
     },
     visible: {
-      from: oldInitialValues.visible?.from || "",
-      to: oldInitialValues.visible?.to || "",
+      from: oldInitialValues.visible?.from || null,
+      to: oldInitialValues.visible?.to || null,
     },
-    contents: (oldInitialValues.contents ?? []).map(normalizeContents(true)),
+    contents: (oldInitialValues.contents ?? []).map(normalizeContents),
   }), [numStations, oldInitialValues]);
+
+  const [initialFormRetrievedValues, setInitialFormRetrievedValues] = useState(null);
+  const [isInInitialState, setIsInInitialState] = useState(true);
 
   useEffect(() => {
     if (!form) return;
     form.setFieldsValue(newInitialValues);
+    setInitialFormRetrievedValues(form.getFieldsValue(true));
   }, [form])
 
   const contentsRefs = useRef({});
@@ -162,7 +168,7 @@ const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey,
       east: values.coordinates_utm.east ? parseInt(values.coordinates_utm.east, 10) : undefined,
       north: values.coordinates_utm.north ? parseInt(values.coordinates_utm.north, 10) : undefined,
     },
-    contents: (values.contents.map(normalizeContents(false)) ?? []).map((c, ci) => {
+    contents: (values.contents.map(normalizeContents) ?? []).map((c, ci) => {
       switch (c.content_type) {
         case "html":
           return {
@@ -201,37 +207,47 @@ const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey,
     [onFinish, processValues, clearLocalData]);
 
   // noinspection JSCheckFunctionSignatures
-  const saveChangesLocally = useCallback(throttle((providedValues=undefined) => {
-    if (!form || !localDataKey) return;
+  const processLocalChanges = useCallback(throttle((providedValues=undefined) => {
+    if (!form) return;
 
     const values = processValues(providedValues ?? form.getFieldsValue(true));
+    console.log(values, initialFormRetrievedValues, isEqual(values, initialFormRetrievedValues));
+    setIsInInitialState(isEqual(values, initialFormRetrievedValues));
 
-    console.log("saving locally", values);
+    if (!localDataKey) return;
 
-    localStorage.setItem(localDataKey, JSON.stringify(values));
+    const valuesJSON = JSON.stringify(values);
 
-    const date = new Date(Date.now());
-    setLastSavedTime(`${date.toLocaleDateString()}, ${date.getHours()}:${date.getMinutes()}`);
-  }, 1000), [form, localDataKey]);
+    if (localStorage.getItem(localDataKey) !== valuesJSON) {
+      console.log("saving locally", values);
+      localStorage.setItem(localDataKey, JSON.stringify(values));
+      const date = new Date(Date.now());
+      setLastSavedTime(`${date.toLocaleDateString()}, ${date.getHours()}:${date.getMinutes()}`);
+    }
+  }, 500), [form, localDataKey, initialFormRetrievedValues]);
 
   useEffect(() => {
     // noinspection JSCheckFunctionSignatures
-    const interval = setInterval(saveChangesLocally, 15000);
+    const interval = setInterval(processLocalChanges, 1000);
     return () => {
       clearInterval(interval);
     };
-  }, [saveChangesLocally]);
+  }, [processLocalChanges]);
 
   // noinspection JSValidateTypes,JSCheckFunctionSignatures
   const onValuesChange = useCallback(
-    (_, allValues) => saveChangesLocally(allValues),
-    [saveChangesLocally]);
+    (_, allValues) => processLocalChanges(allValues),
+    [processLocalChanges]);
+
+  const view = useCallback(() => {
+    if (!newInitialValues.id) return;
+    navigate(`/stations/detail/${newInitialValues.id}`, {replace: true});
+  }, [navigate, newInitialValues]);
 
   const submitAndView = useCallback(() => {
     onFinish_(form.getFieldsValue(true));
-    if (!newInitialValues.id) return;
-    navigate(`/stations/detail/${newInitialValues.id}`, {replace: true});
-  }, [form, navigate, newInitialValues]);
+    view();
+  }, [form, view]);
 
   const resetChanges = useCallback(() => {
     setSavedData({});
@@ -533,8 +549,8 @@ const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey,
                                                 return <Form.Item name={[optionField.name, "answer"]}
                                                                   rules={[{required: true}]}>
                                                   <Select style={{width: 150}} options={[
-                                                    {value: "true", label: "Correct"},
-                                                    {value: "false", label: "Incorrect"},
+                                                    {value: true, label: "Correct"},
+                                                    {value: false, label: "Incorrect"},
                                                   ]} />
                                                 </Form.Item>;
                                             }
@@ -569,7 +585,7 @@ const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey,
             <Button onClick={() => {
               add();
               // noinspection JSValidateTypes
-              saveChangesLocally();
+              processLocalChanges();
             }} icon={<PlusOutlined/>}>Add Content Item</Button>
           </Form.Item>
         </>
@@ -581,10 +597,18 @@ const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey,
     </Form.Item>
     <Form.Item>
       <Space>
-        <Button type="primary" htmlType="submit" loading={loading} icon={<SaveOutlined />}>
-          {initialValues ? "Save" : "Submit"}</Button>
+        <Button
+          type="primary"
+          htmlType="submit" 
+          disabled={initialValues && isInInitialState}
+          loading={loading}
+          icon={<SaveOutlined />}>{initialValues ? "Save" : "Submit"}</Button>
         {initialValues && (
-          <Button onClick={submitAndView} icon={<CheckOutlined />}>Save and View</Button>
+          isInInitialState ? (
+            <Button onClick={view} icon={<EyeOutlined />}>View</Button>
+          ) : (
+            <Button onClick={submitAndView} icon={<CheckOutlined />}>Save and View</Button>
+          )
         )}
         <Button onClick={resetChanges}>Reset Changes</Button>
         {(localDataKey && lastSavedTime) ? (
