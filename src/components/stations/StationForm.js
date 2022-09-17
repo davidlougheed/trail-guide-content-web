@@ -15,6 +15,8 @@ import {
   UpOutlined
 } from "@ant-design/icons";
 
+import {helpText as helpTextStyle} from "../../styles";
+
 import HTMLEditor from "../editor/HTMLEditor";
 import SortableGalleryInput from "../SortableGalleryInput";
 import {useNavigate} from "react-router-dom";
@@ -449,12 +451,16 @@ const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey,
                       switch (f.getFieldValue(["contents", field.name, "content_type"])) {
                         case "html":
                           return <>
+                            <p style={helpTextStyle}>
+                              Use this content type for article-style content, for example mixed text and multimedia.
+                            </p>
                             <Form.Item key="content_before_fold" label="Content Before Fold">
                               <HTMLEditor
                                 initialValue={newInitialValues.contents[field.name]?.content_before_fold}
                                 innerRef={el => {
                                   contentsRefs.current = {...contentsRefs.current, [fi("content_before_fold")]: el};
                                 }}
+                                helpText="Initial / above-the-fold / main content to show."
                               />
                             </Form.Item>
                             <Form.Item key="content_after_fold" label="Content After Fold" style={{marginBottom: 0}}>
@@ -463,12 +469,19 @@ const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey,
                                 innerRef={el => {
                                   contentsRefs.current = {...contentsRefs.current, [fi("content_after_fold")]: el};
                                 }}
+                                helpText={
+                                  "Content to be hidden behind a 'Read More' button. If this is left blank, no " +
+                                  "'Read More' button will be found."
+                                }
                               />
                             </Form.Item>
                           </>;
 
                         case "gallery":
                           return <>
+                            <p style={helpTextStyle}>
+                              Use this content type for a gallery of images. Captions can be provided, or left out.
+                            </p>
                             <Form.Item key="description"
                                        label="Description"
                                        name={[field.name, "description"]}>
@@ -477,6 +490,9 @@ const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey,
                                 innerRef={el => {
                                   contentsRefs.current = {...contentsRefs.current, [fi("description")]: el};
                                 }}
+                                helpText={
+                                  "Descriptive text for the entire gallery. In most cases, images DO NOT go here!"
+                                }
                               />
                             </Form.Item>
                             <Form.Item key="items"
@@ -488,6 +504,11 @@ const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey,
 
                         case "quiz":
                           return <>
+                            <p style={helpTextStyle}>
+                              Use this content type for creating an interactive quiz. Currently, three types of quizzes
+                              are available: A 'match values' quiz, for matching values to a provided picture or set
+                              of hints; a 'select all that apply' quiz; and a 'choose the correct answer' quiz.
+                            </p>
                             <Form.Item key="quiz_type"
                                        label="Quiz Type"
                                        name={[field.name, "quiz_type"]}>

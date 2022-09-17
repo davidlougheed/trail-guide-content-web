@@ -6,6 +6,8 @@ import {Button, Checkbox, Divider, Image, Input, Modal, Select, Space, Tooltip} 
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
+import {helpText as helpTextStyle} from "../../styles";
+
 import "./AudioBlot";
 import "./DividerBlot";
 import "./VideoBlot";
@@ -199,7 +201,7 @@ const VideoModal = React.memo(({assetOptions, onOk, onCancel, open}) => {
   </Modal>;
 });
 
-const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
+const HTMLEditor = ({initialValue, onChange, placeholder, innerRef, helpText}) => {
   const quillRef = useRef(null);
 
   const [assetOptions, setAssetOptions] = useState([]);
@@ -318,6 +320,8 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
                 open={showViewer === "video"}
                 onOk={modalInsertOk("html5Video")}
                 onCancel={modalInsertClose} />
+
+    {helpText && <p style={helpTextStyle}>{helpText}</p>}
 
     <div style={styles.editorContainer}>
       <div style={styles.extraToolbar}>
