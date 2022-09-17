@@ -599,7 +599,7 @@ const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey,
       <Space>
         <Button
           type="primary"
-          htmlType="submit" 
+          htmlType="submit"
           disabled={initialValues && isInInitialState}
           loading={loading}
           icon={<SaveOutlined />}>{initialValues ? "Save" : "Submit"}</Button>
