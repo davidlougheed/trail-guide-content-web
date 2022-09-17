@@ -3,8 +3,15 @@ import {useSelector} from "react-redux";
 
 import {throttle} from "lodash";
 
-import {Button, Card, Col, Divider, Form, Input, Row, Select, Space, Switch} from "antd";
-import {CheckOutlined, CloseCircleOutlined, MinusCircleOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons";
+import {Button, Card, Col, Divider, Form, Input, Row, Select, Space, Switch, Tooltip} from "antd";
+import {
+  CheckOutlined,
+  CloseCircleOutlined, DownOutlined,
+  MinusCircleOutlined,
+  PlusOutlined,
+  SaveOutlined,
+  UpOutlined
+} from "@ant-design/icons";
 
 import HTMLEditor from "../editor/HTMLEditor";
 import SortableGalleryInput from "../SortableGalleryInput";
@@ -356,10 +363,10 @@ const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey,
       </Col>
     </Row>
     <Form.List name="contents">
-      {(fields, {add, remove}, {errors}) => (
+      {(fields, {add, move, remove}, {errors}) => (
         <>
           {errors}
-          {fields.map((field) => {
+          {fields.map((field, idx) => {
             const fi = contentItemField(field.name);
             return (
               <Card
@@ -368,12 +375,37 @@ const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey,
                 title="Content Item"
                 style={{
                   marginBottom: "12px",
-                  position: "relative"
+                  position: "relative",
                 }}
               >
-                <CloseCircleOutlined
-                  onClick={() => remove(field.name)}
-                  style={{position: "absolute", top: "12px", right: "12px", zIndex: 1}}/>
+                <div style={{
+                  position: "absolute",
+                  height: 22,
+                  top: "8px",
+                  right: "12px",
+                  zIndex: 1,
+                  display: "flex",
+                  gap: 8,
+                  alignItems: "center",
+                }}>
+                  <span style={{color: "#CCC"}}>#{idx + 1}</span>
+                  {fields.length > 1 && <>
+                    {idx > 0 && (
+                      <Tooltip title="Move content item up">
+                        <UpOutlined onClick={() => move(idx, idx - 1)} />
+                      </Tooltip>
+                    )}
+                    {idx < fields.length - 1 && (
+                      <Tooltip title="Move content item down">
+                        <DownOutlined onClick={() => move(idx, idx + 1)} />
+                      </Tooltip>
+                    )}
+                    <Divider type="vertical" />
+                  </>}
+                  <Tooltip title="Remove content item">
+                    <CloseCircleOutlined style={{color: "#f5222d"}} onClick={() => remove(field.name)} />
+                  </Tooltip>
+                </div>
                 <Form.Item noStyle={true}>
                   <Row gutter={12}>
                     <Col span={8}>
