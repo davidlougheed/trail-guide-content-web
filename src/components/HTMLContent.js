@@ -66,7 +66,7 @@ const HTMLContent = React.memo(({id, htmlContent}) => {
   return <div>
     <Modal
       width={640}
-      visible={modalShown !== null}
+      open={modalShown !== null}
       onCancel={hideModal}
       title={modalShown?.title}
       footer={footer}

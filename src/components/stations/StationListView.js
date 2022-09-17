@@ -125,13 +125,13 @@ const StationListView = React.memo(() => {
   return <PageHeader ghost={false} title="Stations" subTitle="Edit and create app stations" extra={extra}>
     <Modal title={qrStation?.title}
            style={styles.qrModal}
-           visible={!!qrStation}
+           open={!!qrStation}
            onCancel={closeQrModal}
            footer={null}>
       {qrStation ? <StationQR station={qrStation} /> : null}
     </Modal>
     <Modal title={`Delete station: ${delStation?.title}`}
-           visible={!!delStation}
+           open={!!delStation}
            onCancel={closeDelModal}
            footer={<Space>
              <Button type="primary"

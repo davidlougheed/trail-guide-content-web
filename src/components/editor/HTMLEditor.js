@@ -49,7 +49,7 @@ const FORMATS = [
 const filterOption = (v, option) =>
   (option.search ?? option.value).toLocaleLowerCase().includes(v.toLocaleLowerCase());
 
-const LinkModal = React.memo(({options, objectName, objectPathItem, linkText, onOk, onCancel, visible}) => {
+const LinkModal = React.memo(({options, objectName, objectPathItem, linkText, onOk, onCancel, open}) => {
   const [selectedItem, setSelectedItem] = useState(null);
 
   const onOk_ = useCallback(
@@ -67,7 +67,7 @@ const LinkModal = React.memo(({options, objectName, objectPathItem, linkText, on
   })), [options]);
   
   // noinspection JSValidateTypes
-  return <Modal title={`Insert ${objectName} Link`} onOk={onOk_} onCancel={onCancel} visible={visible}>
+  return <Modal title={`Insert ${objectName} Link`} onOk={onOk_} onCancel={onCancel} open={open}>
     <Space direction="vertical" style={styles.modalFormSpace}>
       <div><strong>Link text:</strong> {linkText}</div>
       <div>
@@ -86,7 +86,7 @@ const LinkModal = React.memo(({options, objectName, objectPathItem, linkText, on
   </Modal>;
 });
 
-const AudioModal = React.memo(({assetOptions, onOk, onCancel, visible}) => {
+const AudioModal = React.memo(({assetOptions, onOk, onCancel, open}) => {
   const [displayAsLink, setDisplayAsLink] = useState(false);
   const [linkText, setLinkText] = useState("");
 
@@ -108,7 +108,7 @@ const AudioModal = React.memo(({assetOptions, onOk, onCancel, visible}) => {
   })), [assetOptions]);
 
   // noinspection JSValidateTypes
-  return <Modal title="Insert Audio" onOk={onOk_} onCancel={onCancel} visible={visible}>
+  return <Modal title="Insert Audio" onOk={onOk_} onCancel={onCancel} open={open}>
     <Space direction="vertical" style={styles.modalFormSpace}>
       <div>
         <Checkbox checked={displayAsLink} onChange={e => setDisplayAsLink(e.target.checked)}>
@@ -136,7 +136,7 @@ const AudioModal = React.memo(({assetOptions, onOk, onCancel, visible}) => {
   </Modal>;
 });
 
-const ImageModal = React.memo(({assetOptions, onOk, onCancel, visible}) => {
+const ImageModal = React.memo(({assetOptions, onOk, onCancel, open}) => {
   const [selectedAsset, setSelectedAsset] = useState(null);
 
   const onOk_ = useCallback(() => {
@@ -155,7 +155,7 @@ const ImageModal = React.memo(({assetOptions, onOk, onCancel, visible}) => {
   })), [assetOptions]);
 
   // noinspection JSValidateTypes
-  return <Modal title="Insert Image" visible={visible} onOk={onOk_} onCancel={onCancel}>
+  return <Modal title="Insert Image" open={open} onOk={onOk_} onCancel={onCancel}>
     <Select
       placeholder="Image asset"
       showSearch={true}
@@ -169,7 +169,7 @@ const ImageModal = React.memo(({assetOptions, onOk, onCancel, visible}) => {
   </Modal>;
 });
 
-const VideoModal = React.memo(({assetOptions, onOk, onCancel, visible}) => {
+const VideoModal = React.memo(({assetOptions, onOk, onCancel, open}) => {
   const [selectedAsset, setSelectedAsset] = useState(null);
 
   const onOk_ = useCallback(() => {
@@ -185,7 +185,7 @@ const VideoModal = React.memo(({assetOptions, onOk, onCancel, visible}) => {
   })), [assetOptions]);
 
   // noinspection JSValidateTypes
-  return <Modal title="Insert Video" visible={visible} onOk={onOk_} onCancel={onCancel}>
+  return <Modal title="Insert Video" open={open} onOk={onOk_} onCancel={onCancel}>
     <Select
       placeholder="Video asset"
       showSearch={true}
@@ -284,7 +284,7 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
                objectPathItem="stations"
                options={stations}
                linkText={currentSelection}
-               visible={showViewer === "station"}
+               open={showViewer === "station"}
                onOk={modalInsertOk("link")}
                onCancel={modalInsertClose} />
 
@@ -292,7 +292,7 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
                objectPathItem="modals"
                options={modals}
                linkText={currentSelection}
-               visible={showViewer === "modal"}
+               open={showViewer === "modal"}
                onOk={modalInsertOk("link")}
                onCancel={modalInsertClose} />
 
@@ -300,22 +300,22 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef}) => {
                objectPathItem="pages"
                options={pages}
                linkText={currentSelection}
-               visible={showViewer === "page"}
+               open={showViewer === "page"}
                onOk={modalInsertOk("link")}
                onCancel={modalInsertClose} />
     
     <AudioModal assetOptions={assetOptions}
-                visible={showViewer === "audio"}
+                open={showViewer === "audio"}
                 onOk={modalInsertOk("tgcsAudio")}
                 onCancel={modalInsertClose} />
 
     <ImageModal assetOptions={assetOptions}
-                visible={showViewer === "image"}
+                open={showViewer === "image"}
                 onOk={modalInsertOk("image")}
                 onCancel={modalInsertClose} />
 
     <VideoModal assetOptions={assetOptions}
-                visible={showViewer === "video"}
+                open={showViewer === "video"}
                 onOk={modalInsertOk("html5Video")}
                 onCancel={modalInsertClose} />
 

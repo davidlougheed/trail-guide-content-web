@@ -11,7 +11,7 @@ import {useUrlPagination} from "../../hooks/pages";
 const QRModal = React.memo(({page, modalCancel}) => {
   return <Modal title={page?.title}
                 style={{top: 36}}
-                visible={!!page}
+                open={!!page}
                 onCancel={modalCancel}
                 footer={null}>
     {page ? <PageQR page={page} /> : null}

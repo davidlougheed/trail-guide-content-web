@@ -21,11 +21,11 @@ const StationDetailView = React.memo(() => {
   const fetchingStations = useSelector(state => state.stations.isFetching);
   const station = useSelector(state => findItemByID(state.stations.items, stationID));
 
-  const [qrModalVisible, setQrModalVisible] = useState(false);
+  const [qrModalOpen, setQrModalOpen] = useState(false);
 
   const onBack = useCallback(() => navigate(-1), [navigate]);
-  const showQrModal = useCallback(() => setQrModalVisible(true), []);
-  const hideQrModal = useCallback(() => setQrModalVisible(false), []);
+  const showQrModal = useCallback(() => setQrModalOpen(true), []);
+  const hideQrModal = useCallback(() => setQrModalOpen(false), []);
   const editStation = useCallback(() => navigate(`/stations/edit/${stationID}`), [navigate, stationID]);
 
   const enabled = station?.enabled ? "Yes" : "No";
@@ -41,7 +41,7 @@ const StationDetailView = React.memo(() => {
       </Button>,
     ]}
   >
-    <Modal visible={qrModalVisible} onCancel={hideQrModal} footer={null}>
+    <Modal open={qrModalOpen} onCancel={hideQrModal} footer={null}>
       {station ? <StationQR station={station} /> : null}
     </Modal>
     <Descriptions bordered={true} size="small">

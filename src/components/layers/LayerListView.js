@@ -64,7 +64,7 @@ const LayerListView = React.memo(() => {
   return <PageHeader ghost={false} title="Layers" subTitle="View and edit map layers" extra={extra}>
     <Modal
       title="Map Preview"
-      visible={previewShown}
+      open={previewShown}
       footer={null}
       onCancel={hidePreview}
       width={800}

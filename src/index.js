@@ -2,10 +2,10 @@
 // Copyright (C) 2021-2022  David Lougheed
 // See NOTICE for more information.
 
-import "./wdyr";
+// import "./wdyr";
 
 import React from "react";
-import {render} from "react-dom";
+import {createRoot} from "react-dom/client";
 
 import {applyMiddleware, createStore} from "redux";
 import thunkMiddleware from "redux-thunk";
@@ -20,17 +20,20 @@ import App from "./components/App";
 
 const store = createStore(rootReducer, applyMiddleware(thunkMiddleware));
 
-document.addEventListener("DOMContentLoaded", () => render(
-  <Provider store={store}>
-    <Auth0Provider domain={AUTH_DOMAIN}
-                   clientId={AUTH_CLIENT_ID}
-                   redirectUri={window.location.origin}
-                   audience={AUTH_AUDIENCE}
-                   scope="read:content manage:content">
-      <BrowserRouter>
-        <App/>
-      </BrowserRouter>
-    </Auth0Provider>
-  </Provider>,
-  document.getElementById("root")
-));
+document.addEventListener("DOMContentLoaded", () => {
+  const root = createRoot(document.getElementById("root"));
+
+  root.render(
+    <Provider store={store}>
+      <Auth0Provider domain={AUTH_DOMAIN}
+                     clientId={AUTH_CLIENT_ID}
+                     redirectUri={window.location.origin}
+                     audience={AUTH_AUDIENCE}
+                     scope="read:content manage:content">
+        <BrowserRouter>
+          <App/>
+        </BrowserRouter>
+      </Auth0Provider>
+    </Provider>
+  );
+});

@@ -100,30 +100,34 @@ const App = React.memo(() => {
 
   const dispatch = useDispatch();
 
-  useEffect(async () => {
-    if (!isAuthenticated) return;
+  useEffect(() => {
+    const initialFetch = async () => {
+      if (!isAuthenticated) return;
 
-    try {
-      await dispatch(fetchServerConfigIfNeeded());
+      try {
+        await dispatch(fetchServerConfigIfNeeded());
 
-      const accessToken = await getAccessTokenSilently(ACCESS_TOKEN_READ);
+        const accessToken = await getAccessTokenSilently(ACCESS_TOKEN_READ);
 
-      [
-        fetchAssetTypesIfNeeded,
-        fetchAssetsIfNeeded,
-        fetchCategoriesIfNeeded,
-        fetchFeedbackIfNeeded,
-        fetchLayersIfNeeded,
-        fetchModalsIfNeeded,
-        fetchPagesIfNeeded,
-        fetchReleasesIfNeeded,
-        fetchSectionsIfNeeded,
-        fetchSettingsIfNeeded,
-        fetchStationsIfNeeded,
-      ].map(a => dispatch(a({}, {}, accessToken)));
-    } catch (e) {
-      console.error(e.message);
-    }
+        [
+          fetchAssetTypesIfNeeded,
+          fetchAssetsIfNeeded,
+          fetchCategoriesIfNeeded,
+          fetchFeedbackIfNeeded,
+          fetchLayersIfNeeded,
+          fetchModalsIfNeeded,
+          fetchPagesIfNeeded,
+          fetchReleasesIfNeeded,
+          fetchSectionsIfNeeded,
+          fetchSettingsIfNeeded,
+          fetchStationsIfNeeded,
+        ].map(a => dispatch(a({}, {}, accessToken)));
+      } catch (e) {
+        console.error(e.message);
+      }
+    };
+
+    initialFetch().catch(e => console.error(e.message));
   }, [isAuthenticated, getAccessTokenSilently]);
 
   const location = useLocation();

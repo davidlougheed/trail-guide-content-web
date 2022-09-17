@@ -9,7 +9,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {Button, Card, Descriptions, Modal, PageHeader} from "antd";
 import {EditOutlined, EyeOutlined} from "@ant-design/icons";
 
-import ReactJson from "react-json-view";
+import {JsonViewer} from "@textea/json-viewer";
 
 import {findItemByID} from "../../utils";
 import MapPreview from "./MapPreview";
@@ -50,12 +50,13 @@ const LayerDetailView = React.memo(() => {
     </Descriptions>
 
     <Card size="small" title="GeoJSON" style={styles.jsonCard}>
-      <ReactJson src={geoJSON} groupArraysAfterLength={50} />
+      {/* TODO: revert defaultCOllapsed if groupArraysAfterLenght gets re-implemented */}
+      <JsonViewer value={geoJSON} defaultCollapsed={true} groupArraysAfterLength={50} />
     </Card>
 
     <Modal
       title="Layer Preview"
-      visible={previewShown}
+      open={previewShown}
       footer={null}
       onCancel={hidePreview}
       width={800}

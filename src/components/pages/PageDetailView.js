@@ -18,8 +18,8 @@ const styles = {
   content: {marginTop: 16},
 };
 
-const QRModal = React.memo(({qrModalVisible, hideQrModal, page}) => {
-  return <Modal visible={qrModalVisible} onCancel={hideQrModal} footer={null}>
+const QRModal = React.memo(({qrModalOpen, hideQrModal, page}) => {
+  return <Modal open={qrModalOpen} onCancel={hideQrModal} footer={null}>
     <PageQR page={page} />
   </Modal>;
 });
@@ -53,11 +53,11 @@ const PageDetailView = React.memo(() => {
   const fetchingPages = useSelector(state => state.pages.isFetching);
   const page = useSelector(state => findItemByID(state.pages.items, pageID));
 
-  const [qrModalVisible, setQrModalVisible] = useState(false);
+  const [qrModalOpen, setQrModalOpen] = useState(false);
 
   const onBack = useCallback(() => navigate(-1), [navigate]);
-  const showQrModal = useCallback(() => setQrModalVisible(true), []);
-  const hideQrModal = useCallback(() => setQrModalVisible(false), []);
+  const showQrModal = useCallback(() => setQrModalOpen(true), []);
+  const hideQrModal = useCallback(() => setQrModalOpen(false), []);
   const editPage = useCallback(() => navigate(`/pages/edit/${pageID}`), [navigate, pageID]);
 
   const title = useMemo(
@@ -69,7 +69,7 @@ const PageDetailView = React.memo(() => {
   ], [page, showQrModal, editPage]);
 
   return <PageHeader ghost={false} onBack={onBack} title={title} extra={extra}>
-    <QRModal qrModalVisible={qrModalVisible} hideQrModal={hideQrModal} page={page} />
+    <QRModal qrModalOpen={qrModalOpen} hideQrModal={hideQrModal} page={page} />
     <PageDisplay page={page} />
   </PageHeader>;
 });

@@ -38,7 +38,7 @@ const SettingsPage = React.memo(() => {
 
   // noinspection JSValidateTypes
   return <>
-    <Modal visible={configShown} onCancel={hideConfig} footer={null}>
+    <Modal open={configShown} onCancel={hideConfig} footer={null}>
       <Typography.Title level={3}>Front End</Typography.Title>
       <Form>
         {Object.entries(c).map(([ck, cv]) => <Form.Item label={ck} key={ck}>
