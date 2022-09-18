@@ -631,7 +631,7 @@ const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey,
             <Button onClick={submitAndView} icon={<CheckOutlined />}>Save and View</Button>
           )
         )}
-        <Button onClick={resetChanges}>Reset Changes</Button>
+        <Button disabled={isInInitialState} onClick={resetChanges}>Reset Changes</Button>
         {(localDataKey && lastSavedTime) ? (
           <span style={{color: "#AAA", fontStyle: "italic"}}>Changes last saved locally at {lastSavedTime}.</span>
         ) : null}
