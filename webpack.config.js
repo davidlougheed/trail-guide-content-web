@@ -10,6 +10,11 @@ module.exports = env => ({
     module: {
         rules: [
             {
+                test: /\.(js|mjs)$/,
+                enforce: "pre",
+                use: ["source-map-loader"],
+            },
+            {
                 test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
                 use: ["babel-loader"]
