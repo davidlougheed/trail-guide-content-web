@@ -35,7 +35,7 @@ const LayerDetailView = React.memo(() => {
   const editLayer = useCallback(() => navigate(`/layers/edit/${layerID}`), [navigate, layerID]);
 
   const title = useMemo(
-    () => fetchingLayers ? "Loading..." : <span>Layer: {layer.name}</span>,
+    () => fetchingLayers ? "Loading..." : <span>Layer: {layer?.name}</span>,
     [fetchingLayers, layer])
   const extra = useMemo(() => [
     <Button key="preview" icon={<EyeOutlined />} onClick={showPreview}>Preview Layer</Button>,
