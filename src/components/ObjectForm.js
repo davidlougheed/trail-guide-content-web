@@ -3,11 +3,12 @@
 // See NOTICE for more information.
 
 import React, {useCallback, useEffect, useMemo, useState} from "react";
-import {Button, Form, Space} from "antd";
-import {id, nop} from "../utils";
 import {isEqual, throttle} from "lodash";
+
+import {Button, Form, Space} from "antd";
 import {CheckOutlined, EyeOutlined, SaveOutlined} from "@ant-design/icons";
-import {useNavigate} from "react-router-dom";
+
+import {id, nop} from "../utils";
 
 export const RULES_REQUIRED_BASIC = [{required: true}];
 
@@ -23,120 +24,163 @@ const getLocalStorageValues = k => {
   return ls ? JSON.parse(ls) : {};
 };
 
+export const useObjectForm = ({
+  initialValues,
+  transformInitialValues,
+  transformFinalValues,
+  onFinish,
+  onView,
+  localDataKey,
+}) => {
+  // Process parameters
+
+  transformInitialValues = transformInitialValues || id;
+  transformFinalValues = transformFinalValues || id;
+
+  onView = onView || nop;
+
+  // Set up hooks
+
+  const [form] = Form.useForm();
+
+  const editMode = useMemo(() => !!Object.keys(initialValues ?? {}).length, [initialValues]);
+
+  const [savedData, setSavedData] = useState(getLocalStorageValues(localDataKey));
+  const [lastSavedTime, setLastSavedTime] = useState(null);
+
+  const [initialFormRetrievedValues, setInitialFormRetrievedValues] = useState(null);
+  const [isInInitialState, setIsInInitialState] = useState(true);
+
+  const oldInitialValues = useMemo(
+    () => initialValues ? {...initialValues, ...savedData} : {...savedData},
+    [initialValues, savedData]);
+  const newInitialValues = useMemo(() => transformInitialValues(oldInitialValues), [oldInitialValues]);
+
+  useEffect(() => {
+    if (!form) return;
+    form.setFieldsValue(newInitialValues);
+    setInitialFormRetrievedValues(transformFinalValues(form.getFieldsValue(true)));
+    setIsInInitialState(true);
+  }, [form, newInitialValues]);
+
+  const clearLocalData = useCallback(() => {
+    if (localDataKey) {
+      localStorage.removeItem(localDataKey);
+    }
+  }, [localDataKey]);
+
+  // noinspection JSCheckFunctionSignatures
+  const processLocalChanges = useCallback(throttle((providedValues=undefined) => {
+    if (!form) return;
+
+    const values = transformFinalValues(providedValues ?? form.getFieldsValue(true));
+
+    setIsInInitialState(isEqual(values, initialFormRetrievedValues));
+
+    if (!localDataKey) return;
+
+    const valuesJSON = JSON.stringify(values);
+
+    if (localStorage.getItem(localDataKey) !== valuesJSON) {
+      console.log("saving locally", values);
+      localStorage.setItem(localDataKey, JSON.stringify(values));
+      const date = new Date(Date.now());
+      setLastSavedTime(`${date.toLocaleDateString()}, ${date.getHours()}:${date.getMinutes()}`);
+    }
+  }, 500), [form, localDataKey, initialFormRetrievedValues]);
+
+  useEffect(() => {
+    // noinspection JSCheckFunctionSignatures
+    const interval = setInterval(processLocalChanges, 1000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [processLocalChanges]);
+
+  useEffect(() => {
+    // Reset fields to initial value if savedData changes
+    form.resetFields();
+  }, [savedData]);
+
+  // noinspection JSCheckFunctionSignatures
+  const onValuesChange = useCallback(
+    (_, allValues) => processLocalChanges(allValues),
+    [processLocalChanges]);
+
+  const onFinish_ = useCallback(
+    v => {
+      const fv = transformFinalValues({...newInitialValues, ...v});
+      (onFinish ?? nop)(fv);
+      clearLocalData();
+    },
+    [transformFinalValues, newInitialValues, onFinish, clearLocalData]);
+
+  const view = useCallback(() => {
+    onView(newInitialValues);
+  }, [newInitialValues]);
+
+  const submitAndView = useCallback(() => {
+    onFinish_(form.getFieldsValue(true));
+    view();
+  }, [form, view]);
+
+  const resetChanges = useCallback(() => {
+    setSavedData({});
+    clearLocalData();
+  }, [clearLocalData]);
+
+  return {
+    clearLocalData,
+    processLocalChanges,
+
+    onFinish_,
+    onValuesChange,
+
+    resetChanges,
+    submitAndView,
+    view,
+
+    form,
+
+    editMode,
+    isInInitialState,
+    lastSavedTime,
+    transformedInitialValues: newInitialValues,
+  };
+};
+
 const ObjectForm = React.memo(
   ({
-     initialValues,
-     transformInitialValues,
-     transformFinalValues,
-     onFinish,
-     onCancel,
-     loading,
-     localDataKey,
-     children,
-     ...props
+    initialValues,
+    loading,
+    objectForm,
+    onCancel,
+    children,
+    ...props
   }) => {
-    const navigate = useNavigate();
+    const {
+      form,
 
-    const [form] = Form.useForm();
+      editMode,
+      isInInitialState,
+      lastSavedTime,
+      localDataKey,
+      transformedInitialValues,
 
-    const [savedData, setSavedData] = useState(getLocalStorageValues(localDataKey));
-    const [lastSavedTime, setLastSavedTime] = useState(null);
+      onFinish_,
+      onValuesChange,
 
-    const transformInitialValues_ = transformInitialValues || id;
-    const transformFinalValues_ = transformFinalValues || id;
-
-    const oldInitialValues = initialValues ?? {};
-
-    const newInitialValues = useMemo(() => transformInitialValues_(oldInitialValues), [oldInitialValues]);
-
-    const [initialFormRetrievedValues, setInitialFormRetrievedValues] = useState(null);
-    const [isInInitialState, setIsInInitialState] = useState(true);
-
-    useEffect(() => {
-      if (!form) return;
-      form.setFieldsValue(newInitialValues);
-      setInitialFormRetrievedValues(transformFinalValues_(form.getFieldsValue(true)));
-    }, [form])
-
-    const clearLocalData = useCallback(() => {
-      if (localDataKey) {
-        localStorage.removeItem(localDataKey);
-      }
-    }, [localDataKey]);
-
-    const processLocalChanges = useCallback(throttle((providedValues=undefined) => {
-      if (!form) return;
-
-      const values = transformFinalValues_(providedValues ?? form.getFieldsValue(true));
-
-      console.log(values, initialFormRetrievedValues);
-
-      setIsInInitialState(isEqual(values, initialFormRetrievedValues));
-
-      if (!localDataKey) return;
-
-      const valuesJSON = JSON.stringify(values);
-
-      if (localStorage.getItem(localDataKey) !== valuesJSON) {
-        console.log("saving locally", values);
-        localStorage.setItem(localDataKey, JSON.stringify(values));
-        const date = new Date(Date.now());
-        setLastSavedTime(`${date.toLocaleDateString()}, ${date.getHours()}:${date.getMinutes()}`);
-      }
-    }, 500), [form, localDataKey, initialFormRetrievedValues]);
-
-    useEffect(() => {
-      // noinspection JSCheckFunctionSignatures
-      const interval = setInterval(processLocalChanges, 1000);
-      return () => {
-        clearInterval(interval);
-      };
-    }, [processLocalChanges]);
-
-    useEffect(() => {
-      // Reset fields to initial value if savedData changes
-      form.resetFields();
-    }, [savedData]);
-
-    // noinspection JSValidateTypes,JSCheckFunctionSignatures
-    const onValuesChange = useCallback(
-      (_, allValues) => processLocalChanges(allValues),
-      [processLocalChanges]);
-
-
-    const onFinish_ = useCallback(
-      v => {
-        const fv = transformFinalValues_({...newInitialValues, ...v});
-        (onFinish ?? nop)(fv);
-        clearLocalData();
-        setInitialFormRetrievedValues(fv);
-        setIsInInitialState(true);
-      },
-      [transformFinalValues_, newInitialValues, onFinish, clearLocalData]);
-
-
-    const view = useCallback(() => {
-      if (!newInitialValues.id) return;
-      navigate(`/stations/detail/${newInitialValues.id}`, {replace: true});
-    }, [navigate, newInitialValues]);
-
-    const submitAndView = useCallback(() => {
-      onFinish_(form.getFieldsValue(true));
-      view();
-    }, [form, view]);
-
-    const resetChanges = useCallback(() => {
-      setSavedData({});
-      clearLocalData();
-    }, [clearLocalData]);
-
+      resetChanges,
+      submitAndView,
+      view,
+    } = objectForm;
 
     return <Form
       {...props}
       onFinish={onFinish_}
       form={form}
       layout="vertical"
-      initialValues={newInitialValues}
+      initialValues={transformedInitialValues}
       onValuesChange={onValuesChange}
     >
       {children}
@@ -145,11 +189,11 @@ const ObjectForm = React.memo(
           <Button
             type="primary"
             htmlType="submit"
-            disabled={initialValues && isInInitialState}
+            disabled={editMode && isInInitialState}
             loading={loading}
-            icon={<SaveOutlined />}>{initialValues ? "Save" : "Submit"}</Button>
+            icon={<SaveOutlined />}>{editMode ? "Save" : "Submit"}</Button>
 
-          {initialValues && (
+          {editMode && (
             isInInitialState ? (
               <Button onClick={view} icon={<EyeOutlined />}>View</Button>
             ) : (

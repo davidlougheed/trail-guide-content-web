@@ -1,14 +1,17 @@
 import React, {useCallback, useMemo, useRef} from "react";
 import {useSelector} from "react-redux";
+import {useNavigate} from "react-router-dom";
 
-import {Button, Col, Divider, Form, Input, Row, Select, Switch} from "antd";
+import {Col, Divider, Form, Input, Row, Select, Switch} from "antd";
 
 import HTMLEditor from "../editor/HTMLEditor";
+import ObjectForm, {RULES_REQUIRED_BASIC, useObjectForm} from "../ObjectForm";
 
-const RULES_REQUIRED = [{required: true}];
+const REVISION_MESSAGE_PATH = ["revision", "message"];
 
-const PageForm = ({initialValues, onFinish, loading, ...props}) => {
-  const [form] = Form.useForm();
+const PageForm = props => {
+  const navigate = useNavigate();
+
   const quillRef = useRef(undefined);
 
   const numPages = useSelector(state => state.pages.items.length);
@@ -19,33 +22,42 @@ const PageForm = ({initialValues, onFinish, loading, ...props}) => {
     label: a.file_name,
   })), [assets]);
 
-  const oldInitialValues = useMemo(() => initialValues ?? {}, [initialValues]);
-  console.log("initial values", oldInitialValues);
-  const newInitialValues = useMemo(() => ({
+  const transformInitialValues = useCallback(v => ({
     rank: numPages,  // Add page to the end of the list in the app by default
-    ...oldInitialValues,
+    ...v,
     revision: {
-      working_copy: oldInitialValues.revision?.number ?? null,
+      working_copy: v.revision?.number ?? null,
       message: "",  // Clear revision message for possible filling out & re-submission
     },
-  }), [oldInitialValues]);
+  }), [numPages]);
+  const transformFinalValues = useCallback(v => ({
+    ...v,
+    content: quillRef.current.getEditor().root.innerHTML,
+  }), [quillRef]);
 
-  const _onFinish = useCallback(data => {
-    onFinish({
-      ...data,
-      content: quillRef.current.getEditor().root.innerHTML,
-    });
-  }, [onFinish, quillRef]);
+  const onView = useCallback(v => {
+    if (!v.id) return;
+    navigate(`/pages/detail/${v.id}`, {replace: true});
+  }, [navigate]);
 
-  return <Form {...props} onFinish={_onFinish} form={form} layout="vertical" initialValues={newInitialValues}>
+  const objectForm = useObjectForm({
+    transformInitialValues,
+    transformFinalValues,
+    onView,
+    ...props,
+  });
+
+  const {transformedInitialValues} = objectForm;
+
+  return <ObjectForm objectForm={objectForm} {...props}>
     <Row gutter={12}>
       <Col span={8}>
-        <Form.Item name="title" label="Title" rules={RULES_REQUIRED}>
+        <Form.Item name="title" label="Title" rules={RULES_REQUIRED_BASIC}>
           <Input/>
         </Form.Item>
       </Col>
       <Col span={16}>
-        <Form.Item name="long_title" label="Long Title" rules={RULES_REQUIRED}>
+        <Form.Item name="long_title" label="Long Title" rules={RULES_REQUIRED_BASIC}>
           <Input/>
         </Form.Item>
       </Col>
@@ -68,21 +80,16 @@ const PageForm = ({initialValues, onFinish, loading, ...props}) => {
       </Col>
     </Row>
     <Form.Item name="header_image" label="Header Image">
-      <Select placeholder="Select header image for this station"
-              allowClear={true}
-              options={assetOptions} />
+      <Select placeholder="Select header image for this station" allowClear={true} options={assetOptions} />
     </Form.Item>
     <Form.Item label="Content">
-      <HTMLEditor initialValue={newInitialValues.content} innerRef={quillRef}/>
+      <HTMLEditor initialValue={transformedInitialValues.content ?? ""} innerRef={quillRef}/>
     </Form.Item>
     <Divider />
-    <Form.Item name={["revision", "message"]} label="Revision Message">
+    <Form.Item name={REVISION_MESSAGE_PATH} label="Revision Message">
       <Input />
     </Form.Item>
-    <Form.Item>
-      <Button type="primary" htmlType="submit" loading={loading}>Submit</Button>
-    </Form.Item>
-  </Form>;
+  </ObjectForm>;
 };
 
 export default PageForm;

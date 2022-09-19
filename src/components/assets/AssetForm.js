@@ -4,10 +4,11 @@
 
 import React from "react";
 
-import {Button, Col, Form, Row, Select, Space, Switch, Upload} from "antd";
+import {Button, Col, Form, Row, Select, Switch, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
 
-import ObjectForm, {RULES_REQUIRED_BASIC} from "../ObjectForm";
+import ObjectForm, {RULES_REQUIRED_BASIC, useObjectForm} from "../ObjectForm";
+import {getFalse} from "../../utils";
 
 const styles = {
   upload: {width: "100%"},
@@ -27,8 +28,16 @@ const transformInitialValues = v => ({
   // TODO
 });
 
-const AssetForm = ({...props}) => {
-  return <ObjectForm {...props} transformInitialValues={transformInitialValues}>
+const fileGetValueFromEvent = e => e.file;
+const showUploadList = {showRemoveIcon: false};
+
+const AssetForm = props => {
+  const objectForm = useObjectForm({
+    transformInitialValues,
+    ...props,
+  });
+
+  return <ObjectForm objectForm={objectForm} {...props}>
     <Row gutter={12}>
       <Col flex="80px">
         <Form.Item name="enabled" label="Enabled" valuePropName="checked">
@@ -44,11 +53,11 @@ const AssetForm = ({...props}) => {
         <Form.Item name="file"
                    label="File"
                    valuePropName="file"
-                   getValueFromEvent={e => e.file}
+                   getValueFromEvent={fileGetValueFromEvent}
                    rules={RULES_REQUIRED_BASIC}>
           <Upload maxCount={1}
-                  showUploadList={{showRemoveIcon: false}}
-                  beforeUpload={() => false}
+                  showUploadList={showUploadList}
+                  beforeUpload={getFalse}
                   style={styles.upload}>
             <Button icon={<UploadOutlined />}>Click to Upload</Button>
           </Upload>

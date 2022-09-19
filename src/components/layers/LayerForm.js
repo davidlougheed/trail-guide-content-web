@@ -2,11 +2,12 @@
 // Copyright (C) 2021-2022  David Lougheed
 // See NOTICE for more information.
 
-import React from "react";
+import React, {useCallback} from "react";
+import {useNavigate} from "react-router-dom";
 
 import {Col, Form, Input, InputNumber, Row, Switch} from "antd";
 
-import ObjectForm, {RULES_REQUIRED_BASIC} from "../ObjectForm";
+import ObjectForm, {RULES_REQUIRED_BASIC, useObjectForm} from "../ObjectForm";
 
 const styles = {
   textarea: {fontFamily: "monospace"},
@@ -18,12 +19,27 @@ const transformInitialValues = v => ({
   ...v,
   geojson: v.geojson ? JSON.stringify(v.geojson, null, 2) : "",
 });
-const transformFinalValues = v => ({...v, geojson: v.geojson ? JSON.parse(v.geojson) : null});
+const transformFinalValues = v => ({
+  ...v,
+  geojson: v.geojson ? JSON.parse(v.geojson) : null,
+});
 
 const LayerForm = React.memo(({...props}) => {
-  return <ObjectForm {...props}
-                     transformInitialValues={transformInitialValues}
-                     transformFinalValues={transformFinalValues}>
+  const navigate = useNavigate();
+
+  const onView = useCallback(v => {
+    if (!v.id) return;
+    navigate(`/layers/detail/${v.id}`, {replace: true});
+  }, [navigate]);
+
+  const objectForm = useObjectForm({
+    transformInitialValues,
+    transformFinalValues,
+    onView,
+    ...props,
+  });
+
+  return <ObjectForm objectForm={objectForm} {...props}>
     <Row gutter={12}>
       <Col span={16}>
         <Form.Item name="name" label="Name" rules={RULES_REQUIRED_BASIC}>

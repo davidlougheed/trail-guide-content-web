@@ -1,48 +1,65 @@
-import React, {useCallback, useMemo, useRef} from "react";
+// A web interface to manage a trail guide mobile app's content and data.
+// Copyright (C) 2021-2022  David Lougheed
+// See NOTICE for more information.
 
-import {Button, Divider, Form, Input} from "antd"
+import React, {useCallback, useRef} from "react";
+import {useNavigate} from "react-router-dom";
+
+import {Divider, Form, Input} from "antd"
 
 import HTMLEditor from "../editor/HTMLEditor";
+import ObjectForm, {RULES_REQUIRED_BASIC, useObjectForm} from "../ObjectForm";
 
-const RULES_REQUIRED = [{required: true}];
+const REVISION_MESSAGE_PATH = ["revision", "message"];
 
-const ModalForm = ({initialValues, onFinish, loading, ...props}) => {
-  const [form] = Form.useForm();
+const transformInitialValues = v => ({
+  close_text: "Close",
+  ...v,
+  revision: {
+    working_copy: v.revision?.number ?? null,
+    message: "",  // Clear revision message for possible filling out & re-submission
+  },
+});
+
+const ModalForm = ({...props}) => {
+  const navigate = useNavigate();
+
   const quillRef = useRef(undefined);
 
-  const oldInitialValues = useMemo(() => initialValues ?? {}, [initialValues]);
-  console.log("initial values", oldInitialValues);
-  const newInitialValues = useMemo(() => ({
-    close_text: "Close",
-    ...oldInitialValues,
-    revision: {
-      working_copy: oldInitialValues.revision?.number ?? null,
-      message: "",  // Clear revision message for possible filling out & re-submission
-    },
-  }), [oldInitialValues]);
+  const transformFinalValues = useCallback(v => ({
+    ...v,
+    content: quillRef.current.getEditor().root.innerHTML,
+  }), [quillRef]);
 
-  const _onFinish = useCallback(data => {
-    onFinish({...data, content: quillRef.current.getEditor().root.innerHTML});
-  }, [onFinish, quillRef]);
+  const onView = useCallback(v => {
+    if (!v.id) return;
+    navigate(`/modals/detail/${v.id}`, {replace: true});
+  }, [navigate]);
 
-  return <Form {...props} onFinish={_onFinish} form={form} layout="vertical" initialValues={newInitialValues}>
-    <Form.Item name="title" label="Title" rules={RULES_REQUIRED}>
+  const objectForm = useObjectForm({
+    transformInitialValues,
+    transformFinalValues,
+    onView,
+    ...props,
+  });
+
+  const {transformedInitialValues} = objectForm;
+
+  return <ObjectForm objectForm={objectForm} {...props}>
+    <Form.Item name="title" label="Title" rules={RULES_REQUIRED_BASIC}>
       <Input />
     </Form.Item>
-    <Form.Item name="close_text" label="Close Button Text" rules={RULES_REQUIRED}>
+    <Form.Item name="close_text" label="Close Button Text" rules={RULES_REQUIRED_BASIC}>
       <Input />
     </Form.Item>
     <Form.Item label="Content">
-      <HTMLEditor initialValue={newInitialValues.content} innerRef={quillRef}/>
+      <HTMLEditor initialValue={transformedInitialValues.content ?? ""} innerRef={quillRef} />
     </Form.Item>
     <Divider />
-    <Form.Item name={["revision", "message"]} label="Revision Message">
+    <Form.Item name={REVISION_MESSAGE_PATH} label="Revision Message">
       <Input />
     </Form.Item>
-    <Form.Item>
-      <Button type="primary" htmlType="submit" loading={loading}>Submit</Button>
-    </Form.Item>
-  </Form>;
+  </ObjectForm>;
 };
 
 export default ModalForm;
