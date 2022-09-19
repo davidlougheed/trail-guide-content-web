@@ -6,7 +6,9 @@ import {Button, Modal, PageHeader, Space, Table, Tooltip} from "antd";
 import {CheckOutlined, CloseOutlined, EditOutlined, EyeOutlined, QrcodeOutlined} from "@ant-design/icons";
 
 import PageQR from "./PageQR";
+
 import {useUrlPagination} from "../../hooks/pages";
+import {timestampToString} from "../../utils";
 
 const QRModal = React.memo(({page, modalCancel}) => {
   return <Modal title={page?.title}
@@ -39,7 +41,7 @@ const PageListView = React.memo(() => {
     },
     {
       title: "Last Modified",
-      render: station => (new Date(station.revision.timestamp)).toLocaleString(),
+      render: page => timestampToString(page.revision.timestamp),
     },
     {
       title: "Actions",
@@ -48,13 +50,10 @@ const PageListView = React.memo(() => {
       render: page => (
         <Space size="small">
           <Tooltip title="Show QR Code">
-            <Button icon={<QrcodeOutlined />}
-                    onClick={() => setQrPage(page)} />
+            <Button icon={<QrcodeOutlined />} onClick={() => setQrPage(page)} />
           </Tooltip>
-          <Button icon={<EyeOutlined/>}
-                  onClick={() => navigate(`../detail/${page.id}`)}>View</Button>
-          <Button icon={<EditOutlined/>}
-                  onClick={() => navigate(`../edit/${page.id}`)}>Edit</Button>
+          <Button icon={<EyeOutlined/>} onClick={() => navigate(`/pages/detail/${page.id}`)}>View</Button>
+          <Button icon={<EditOutlined/>} onClick={() => navigate(`/pages/edit/${page.id}`)}>Edit</Button>
         </Space>
       )
     },

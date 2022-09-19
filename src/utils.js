@@ -11,6 +11,8 @@ export const id = x => x;
 export const nop = () => {};
 export const getFalse = () => false;
 
+export const timestampToString = timestamp => timestamp ? (new Date(timestamp)).toLocaleString() : undefined;
+
 export const ACCESS_TOKEN_READ = {
   audience: AUTH_AUDIENCE,
   scope: "read:content",

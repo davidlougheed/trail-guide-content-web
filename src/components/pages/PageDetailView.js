@@ -6,12 +6,15 @@ import React, {useCallback, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 
-import {Button, Card, Descriptions, Modal, PageHeader, Typography} from "antd";
+import {Button, Descriptions, Divider, Modal, PageHeader} from "antd";
 import {EditOutlined, QrcodeOutlined} from "@ant-design/icons";
 
-import {findItemByID} from "../../utils";
+import {findItemByID, timestampToString} from "../../utils";
+
 import PageQR from "./PageQR";
 import HTMLContent from "../HTMLContent";
+import TGCPreviewHeader from "../TGCPreviewHeader";
+import TGCPreviewContent from "../TGCPreviewContent";
 
 const styles = {
   revision: {marginTop: 16},
@@ -24,25 +27,12 @@ const QRModal = React.memo(({qrModalOpen, hideQrModal, page}) => {
   </Modal>;
 });
 
-const PageDisplay = React.memo(({page}) => {
-  if (!page) return <div />;
-  return <div>
-    <Typography.Title level={2}>{page.long_title}</Typography.Title>
-    <Descriptions bordered={true} size="small">
-      <Descriptions.Item label="Subtitle">{page.subtitle}</Descriptions.Item>
-      <Descriptions.Item label="Menu Icon">{page.icon}</Descriptions.Item>
-      <Descriptions.Item label="Enabled">{page.enabled ? "Yes" : "No"}</Descriptions.Item>
-    </Descriptions>
-
-    <Descriptions bordered={true} size="small" style={styles.revision}>
-      <Descriptions.Item label="Revision" span={1}>{page.revision.number}</Descriptions.Item>
-      <Descriptions.Item label="Update" span={1}>{page.revision.message}</Descriptions.Item>
-      <Descriptions.Item label="Last Updated" span={1}>{page?.revision.timestamp}</Descriptions.Item>
-    </Descriptions>
-
-    <Card size="small" title="Content" style={styles.content}>
-      <HTMLContent id="page-detail-content" htmlContent={page.content} />
-    </Card>
+const PagePreview = React.memo(({page}) => {
+  return <div className="tgc-preview page-preview">
+    <TGCPreviewHeader headerImage={page.header_image} longTitle={page.long_title} subtitle={page.subtitle} />
+    <TGCPreviewContent>
+      <HTMLContent id="page-detail-content" htmlContent={page?.content ?? ""} />
+    </TGCPreviewContent>
   </div>;
 });
 
@@ -70,7 +60,25 @@ const PageDetailView = React.memo(() => {
 
   return <PageHeader ghost={false} onBack={onBack} title={title} extra={extra}>
     <QRModal qrModalOpen={qrModalOpen} hideQrModal={hideQrModal} page={page} />
-    <PageDisplay page={page} />
+    <div>
+      <Descriptions bordered={true} size="small">
+        <Descriptions.Item label="Subtitle">{page?.subtitle ?? ""}</Descriptions.Item>
+        <Descriptions.Item label="Menu Icon">{page?.icon ?? ""}</Descriptions.Item>
+        <Descriptions.Item label="Enabled">{page?.enabled ? "Yes" : "No"}</Descriptions.Item>
+      </Descriptions>
+
+      <Descriptions bordered={true} size="small" style={styles.revision}>
+        <Descriptions.Item label="Revision" span={1}>{page?.revision?.number ?? ""}</Descriptions.Item>
+        <Descriptions.Item label="Update" span={1}>{page?.revision?.message ?? ""}</Descriptions.Item>
+        <Descriptions.Item label="Last Updated" span={1}>
+          {timestampToString(page?.revision?.timestamp)}
+        </Descriptions.Item>
+      </Descriptions>
+
+      <Divider />
+
+      {page && <PagePreview page={page} />}
+    </div>
   </PageHeader>;
 });
 
