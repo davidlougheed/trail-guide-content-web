@@ -7,6 +7,9 @@ import proj4 from "proj4";
 
 import {AUTH_AUDIENCE, API_BASE_URL} from "./config";
 
+export const id = x => x;
+export const nop = () => {};
+
 export const ACCESS_TOKEN_READ = {
   audience: AUTH_AUDIENCE,
   scope: "read:content",

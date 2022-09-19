@@ -41,6 +41,7 @@ const AssetAddView = () => {
   }, [getAccessTokenSilently, dispatch, navigate]);
 
   const onBack = useCallback(() => navigate(-1), [navigate]);
+  const onCancel = useCallback(() => navigate("/assets/list"), [navigate]);
 
   return <PageHeader
     onBack={onBack}
@@ -48,7 +49,7 @@ const AssetAddView = () => {
     title="Add Asset"
     subTitle="Create a new asset (image, video, or audio) for use in a station or page."
   >
-    <AssetForm onFinish={onFinish}/>
+    <AssetForm onFinish={onFinish} onCancel={onCancel} />
   </PageHeader>;
 };
 

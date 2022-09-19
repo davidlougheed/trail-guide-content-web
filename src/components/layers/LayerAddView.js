@@ -28,6 +28,7 @@ const LayerAddView = React.memo(() => {
   }, [getAccessTokenSilently, dispatch, navigate]);
 
   const onBack = useCallback(() => navigate(-1), [navigate]);
+  const onCancel = useCallback(() => navigate("/layers/list"), [navigate]);
 
   return <PageHeader
     onBack={onBack}
@@ -35,7 +36,7 @@ const LayerAddView = React.memo(() => {
     title="Add Layer"
     subTitle="Create a new layer to show on the map"
   >
-    <LayerForm onFinish={onFinish} loading={addingLayer} />
+    <LayerForm onFinish={onFinish} onCancel={onCancel} loading={addingLayer} />
   </PageHeader>;
 });
 

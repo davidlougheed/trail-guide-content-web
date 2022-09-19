@@ -2,10 +2,12 @@
 // Copyright (C) 2021-2022  David Lougheed
 // See NOTICE for more information.
 
-import React, {useMemo} from "react";
+import React from "react";
 
-import {Button, Col, Form, Row, Select, Switch, Upload} from "antd";
+import {Button, Col, Form, Row, Select, Space, Switch, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
+
+import ObjectForm, {RULES_REQUIRED_BASIC} from "../ObjectForm";
 
 const styles = {
   upload: {width: "100%"},
@@ -19,20 +21,14 @@ const ASSET_TYPES = [
   {value: "pdf", label: "PDF"},
 ];
 
-const RULE_REQUIRED = [{required: true}];
+const transformInitialValues = v => ({
+  enabled: true,
+  ...v,
+  // TODO
+});
 
-const AssetForm = ({initialValues, ...props}) => {
-  const [form] = Form.useForm();
-
-  const oldInitialValues = useMemo(() => initialValues ?? {}, [initialValues]);
-  console.log("initial values", oldInitialValues);
-  const newInitialValues = useMemo(() => ({
-    enabled: true,
-    ...oldInitialValues,
-    // TODO
-  }), [oldInitialValues]);
-
-  return <Form {...props} form={form} layout="vertical" initialValues={newInitialValues}>
+const AssetForm = ({...props}) => {
+  return <ObjectForm {...props} transformInitialValues={transformInitialValues}>
     <Row gutter={12}>
       <Col flex="80px">
         <Form.Item name="enabled" label="Enabled" valuePropName="checked">
@@ -40,7 +36,7 @@ const AssetForm = ({initialValues, ...props}) => {
         </Form.Item>
       </Col>
       <Col flex={1}>
-        <Form.Item name="asset_type" label="Asset Type" rules={RULE_REQUIRED}>
+        <Form.Item name="asset_type" label="Asset Type" rules={RULES_REQUIRED_BASIC}>
           <Select options={ASSET_TYPES} />
         </Form.Item>
       </Col>
@@ -49,7 +45,7 @@ const AssetForm = ({initialValues, ...props}) => {
                    label="File"
                    valuePropName="file"
                    getValueFromEvent={e => e.file}
-                   rules={RULE_REQUIRED}>
+                   rules={RULES_REQUIRED_BASIC}>
           <Upload maxCount={1}
                   showUploadList={{showRemoveIcon: false}}
                   beforeUpload={() => false}
@@ -59,10 +55,7 @@ const AssetForm = ({initialValues, ...props}) => {
         </Form.Item>
       </Col>
     </Row>
-    <Form.Item>
-      <Button type="primary" htmlType="submit">Submit</Button>
-    </Form.Item>
-  </Form>;
+  </ObjectForm>;
 };
 
 export default AssetForm;
