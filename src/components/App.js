@@ -131,8 +131,7 @@ const App = React.memo(() => {
   }, [isAuthenticated, getAccessTokenSilently]);
 
   const location = useLocation();
-  const defaultSelectedKeys = useMemo(
-    () => [location.pathname.split("/")[1] || "stations"], [location]);
+  const selectedKeys = useMemo(() => [location.pathname.split("/")[1] || "stations"], [location]);
 
   const urlParams = useMemo(() => Object.fromEntries(location.search.slice(1).split("&").map(p => {
     const ps = p.split("=");
@@ -168,7 +167,7 @@ const App = React.memo(() => {
       <Layout.Sider style={styles.sider}
                     collapsedWidth={0}
                     collapsed={!isAuthenticated || (isAuthenticated && isLoadingAuth)}>
-        <Menu theme="dark" defaultSelectedKeys={defaultSelectedKeys} items={MENU_ITEMS} />
+        <Menu theme="dark" selectedKeys={selectedKeys} items={MENU_ITEMS} />
       </Layout.Sider>
       <Layout.Content style={styles.content}>
         {isLoadingAuth
@@ -204,9 +203,7 @@ const App = React.memo(() => {
               {urlParams.hasOwnProperty("error_description") ? (
                 <div style={styles.signedOutAlertOuter}>
                   <div style={styles.signedOutAlertInner}>
-                    <Alert message="Authentication Error"
-                           description={urlParams["error_description"]}
-                           type="error"/>
+                    <Alert message="Authentication Error" description={urlParams["error_description"]} type="error"/>
                   </div>
                 </div>
               ) : null}
