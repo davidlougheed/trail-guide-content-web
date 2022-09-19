@@ -259,7 +259,7 @@ const StationForm = React.memo(({onFinish, initialValues, loading, localDataKey,
   useEffect(() => {
     // Reset fields to initial value if savedData changes
     form.resetFields();
-  }, [savedData])
+  }, [savedData]);
 
   const contentFieldChanged = (field, contentField) => (prevValues, newValues) => {
     const ct1 = prevValues.contents[field.name]?.[contentField];
