@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2022  David Lougheed
 // See NOTICE for more information.
 
-import React, {useCallback, useState} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 
@@ -28,23 +28,23 @@ const StationDetailView = React.memo(() => {
   const hideQrModal = useCallback(() => setQrModalOpen(false), []);
   const editStation = useCallback(() => navigate(`/stations/edit/${stationID}`), [navigate, stationID]);
 
+  const extra = useMemo(() => [
+    <Button key="qr" icon={<QrcodeOutlined />} onClick={showQrModal}>QR Code</Button>,
+    <Button key="edit" icon={<EditOutlined/>} onClick={editStation}>Edit</Button>,
+  ], [showQrModal, editStation]);
+
   const enabled = station?.enabled ? "Yes" : "No";
 
   return <PageHeader
     ghost={false}
     onBack={onBack}
-    title={fetchingStations ? "Loading..." : (station ? <span>Station: {station.title}</span> : "Station not found")}
-    extra={[
-      <Button key="qr" icon={<QrcodeOutlined />} onClick={showQrModal}>QR Code</Button>,
-      <Button key="edit" icon={<EditOutlined/>} onClick={editStation}>
-        Edit
-      </Button>,
-    ]}
+    title={fetchingStations ? "Loading..." : (station ? `Station: ${station.title}` : "Station not found")}
+    extra={extra}
   >
     <Modal open={qrModalOpen} onCancel={hideQrModal} footer={null}>
       {station ? <StationQR station={station} /> : null}
     </Modal>
-    <Descriptions bordered={true} size="small">
+    <Descriptions bordered={true} size="small" column={4}>
       <Descriptions.Item label="ID" span={2}>{station?.id ?? ""}</Descriptions.Item>
       <Descriptions.Item label="Title" span={2}>{station?.title ?? ""}</Descriptions.Item>
       <Descriptions.Item label="Long Title" span={2}>{station?.long_title ?? ""}</Descriptions.Item>
