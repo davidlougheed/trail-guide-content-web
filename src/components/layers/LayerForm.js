@@ -1,28 +1,32 @@
-import React, {useCallback, useMemo} from "react";
+// A web interface to manage a trail guide mobile app's content and data.
+// Copyright (C) 2021-2022  David Lougheed
+// See NOTICE for more information.
 
-import {Button, Col, Form, Input, InputNumber, Row, Switch} from "antd"
+import React from "react";
 
-const LayerForm = React.memo(({initialValues, onFinish, loading, ...props}) => {
-  const [form] = Form.useForm();
+import {Col, Form, Input, InputNumber, Row, Switch} from "antd";
 
-  const oldInitialValues = useMemo(() => initialValues ?? {}, [initialValues]);
-  console.log("initial values", oldInitialValues);
-  const newInitialValues = useMemo(() => ({
-    enabled: true,
-    rank: 0,
-    ...oldInitialValues,
-    geojson: oldInitialValues.geojson ? JSON.stringify(oldInitialValues.geojson, null, 2) : "",
-  }), [oldInitialValues]);
+import ObjectForm, {RULES_REQUIRED_BASIC} from "../ObjectForm";
 
-  const _onFinish = useCallback(v => onFinish({
-    ...v,
-    geojson: JSON.parse(v.geojson),
-  }), [onFinish]);
+const styles = {
+  textarea: {fontFamily: "monospace"},
+};
 
-  return <Form {...props} onFinish={_onFinish} form={form} layout="vertical" initialValues={newInitialValues}>
+const transformInitialValues = v => ({
+  enabled: true,
+  rank: 0,
+  ...v,
+  geojson: v.geojson ? JSON.stringify(v.geojson, null, 2) : "",
+});
+const transformFinalValues = v => ({...v, geojson: v.geojson ? JSON.parse(v.geojson) : null});
+
+const LayerForm = React.memo(({...props}) => {
+  return <ObjectForm {...props}
+                     transformInitialValues={transformInitialValues}
+                     transformFinalValues={transformFinalValues}>
     <Row gutter={12}>
       <Col span={16}>
-        <Form.Item name="name" label="Name" rules={[{required: true}]}>
+        <Form.Item name="name" label="Name" rules={RULES_REQUIRED_BASIC}>
           <Input />
         </Form.Item>
       </Col>
@@ -37,13 +41,10 @@ const LayerForm = React.memo(({initialValues, onFinish, loading, ...props}) => {
         </Form.Item>
       </Col>
     </Row>
-    <Form.Item name="geojson" label="GeoJSON" rules={[{required: true}]}>
-      <Input.TextArea rows={10} style={{fontFamily: "monospace"}} spellCheck={false} />
+    <Form.Item name="geojson" label="GeoJSON" rules={RULES_REQUIRED_BASIC}>
+      <Input.TextArea rows={10} style={styles.textarea} spellCheck={false} />
     </Form.Item>
-    <Form.Item>
-      <Button type="primary" htmlType="submit" loading={loading}>Submit</Button>
-    </Form.Item>
-  </Form>;
+  </ObjectForm>;
 });
 
 export default LayerForm;
