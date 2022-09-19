@@ -15,7 +15,7 @@ import {
 import StationQR from "./StationQR";
 import {useUrlPagination} from "../../hooks/pages";
 import {deleteStation, updateStation} from "../../modules/stations/actions";
-import {ACCESS_TOKEN_MANAGE} from "../../utils";
+import {ACCESS_TOKEN_MANAGE, timestampToString} from "../../utils";
 
 const styles = {
   qrModal: {top: 36},
@@ -60,7 +60,7 @@ const StationListView = React.memo(() => {
     },
     {
       title: "Last Modified",
-      render: station => (new Date(station.revision.timestamp)).toLocaleString(),
+      render: station => timestampToString(station.revision.timestamp),
     },
     {
       title: "Actions",

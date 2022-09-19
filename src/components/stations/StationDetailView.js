@@ -9,7 +9,8 @@ import {useNavigate, useParams} from "react-router-dom";
 import {Button, Descriptions, Divider, Modal, PageHeader} from "antd";
 import {EditOutlined, QrcodeOutlined} from "@ant-design/icons";
 
-import {findItemByID} from "../../utils";
+import {findItemByID, timestampToString} from "../../utils";
+
 import StationPreview from "./StationPreview";
 import StationQR from "./StationQR";
 
@@ -64,7 +65,9 @@ const StationDetailView = React.memo(() => {
     <Descriptions bordered={true} size="small" style={{marginTop: 16}}>
       <Descriptions.Item label="Revision" span={1}>{station?.revision?.number ?? ""}</Descriptions.Item>
       <Descriptions.Item label="Update" span={1}>{station?.revision?.message ?? ""}</Descriptions.Item>
-      <Descriptions.Item label="Last Updated" span={1}>{station?.revision?.timestamp ?? ""}</Descriptions.Item>
+      <Descriptions.Item label="Last Updated" span={1}>
+        {timestampToString(station?.revision?.timestamp) ?? ""}
+      </Descriptions.Item>
     </Descriptions>
 
     <Divider />

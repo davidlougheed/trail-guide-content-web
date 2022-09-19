@@ -1,40 +1,19 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useState} from "react";
 
 // TODO: De-duplicate with app itself
 
-import {assetIdToBytesUrl} from "../../utils";
 import {Button, Image, Typography} from "antd";
+
 import Quiz from "../Quiz";
 import HTMLContent from "../HTMLContent";
+import TGCPreviewHeader from "../TGCPreviewHeader";
+import TGCPreviewContent from "../TGCPreviewContent";
 
-const textShadow = {
-  textShadow: "1px 3px 3px rgba(0, 0, 0, 0.8)",
-};
+import {pageAndStationStyles} from "../../styles";
+import {assetIdToBytesUrl} from "../../utils";
 
 const styles = {
-  header: {
-    backgroundColor: "#0F7470",
-    margin: 0,
-    marginBottom: 16,
-  },
-  headerBackground: {
-    display: "flex",
-    flexDirection: "column",
-
-    padding: 16,
-  },
-  headerTitle: {
-    fontSize: 32,
-    marginBottom: 12,
-    color: "white",
-    ...textShadow,
-  },
-  subtitle: {
-    fontSize: 14,
-    marginBottom: 8,
-    color: "white",
-    ...textShadow,
-  },
+  ...pageAndStationStyles,
   coordinatesBox: {
     display: "flex",
     flexDirection: "column",
@@ -46,14 +25,13 @@ const styles = {
   coordinatesTitle: {
     color: "white",
     fontWeight: "bold",
-    ...textShadow,
+    ...pageAndStationStyles.textShadow,
   },
   coordinatesItem: {
     color: "white",
     marginTop: 4,
-    ...textShadow,
+    ...pageAndStationStyles.textShadow,
   },
-  boldText: {fontWeight: "bold"},
 
   quiz: {marginBottom: 8},
 
@@ -98,41 +76,21 @@ const RenderedContent = React.memo(({id, content}) => {
 const StationPreview = React.memo(({long_title, subtitle, coordinates_utm, header_image, contents}) => {
   const {zone, north, east} = coordinates_utm ?? {};
 
-  useEffect(() => {
-    document.querySelectorAll("tgcs-audio").forEach(el => {
-      el.addEventListener("click", () => {
-        const audio = el.querySelector("audio");
-        if (audio.paused) { audio.play().catch(console.error); }
-        else { audio.load(); }
-      });
-    });
-  }, [contents]);
-
-  const headerImageStyle = useMemo(() => ({
-    ...(header_image ? {
-      background: `url(${assetIdToBytesUrl(header_image)})`,
-      backgroundSize: "cover",
-    } : {}),
-    ...styles.headerBackground,
-  }), [header_image]);
-
-  return <div className="station-preview">
-    <div style={styles.header}>
-      <div style={headerImageStyle}>
-        <span style={styles.headerTitle}>{long_title}</span>
-        {subtitle ? <span style={styles.subtitle}>{subtitle}</span> : null}
-        {coordinates_utm ? (
-          <div style={styles.coordinatesBox}>
-            <span style={styles.coordinatesTitle}>UTM Coordinates (Zone {zone ?? ""})</span>
-            <span style={styles.coordinatesItem}>
+  return <div className="tgc-preview station-preview">
+    <TGCPreviewHeader headerImage={header_image} longTitle={long_title} subtitle={subtitle}>
+      {coordinates_utm ? (
+        <div style={styles.coordinatesBox}>
+          <span style={styles.coordinatesTitle}>UTM Coordinates (Zone {zone ?? ""})</span>
+          <span style={styles.coordinatesItem}>
               <span style={styles.boldText}>East:</span> {east ?? ""}</span>
-            <span style={styles.coordinatesItem}>
+          <span style={styles.coordinatesItem}>
               <span style={styles.boldText}>North:</span> {north ?? ""}</span>
-          </div>
-        ) : null}
-      </div>
-    </div>
-    {(contents ?? []).map((c, i) => <RenderedContent id={`station-${i}`} content={c} key={i} />)}
+        </div>
+      ) : null}
+    </TGCPreviewHeader>
+    <TGCPreviewContent>
+      {(contents ?? []).map((c, i) => <RenderedContent id={`station-${i}`} content={c} key={i} />)}
+    </TGCPreviewContent>
   </div>;
 });
 
