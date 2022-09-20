@@ -28,7 +28,24 @@ import {
 } from "@dnd-kit/sortable";
 import {CSS} from "@dnd-kit/utilities";
 
+import {helpText as helpTextStyle} from "../styles";
 import {assetIdToBytesUrl} from "../utils";
+
+
+const styles = {
+  sortableItemStyle: {
+    border: "1px solid #f0f0f0",
+    margin: "8px 24px",
+  },
+  sortableItemDragHandle: {marginBottom: 8, cursor: "pointer"},
+  sortableItemDragHandleText: {color: "#AAA"},
+  listItem: {padding: 12},
+  listItemDescription: {display: "flex", flexDirection: "row", alignItems: "center", gap: 16},
+
+  helpParagraph: {...helpTextStyle, marginBottom: 0},
+  footerDivider: {marginTop: 0},
+  assetSelect: {width: 400},
+};
 
 
 const SortableItem = React.memo(({id, asset, caption, remove, onChangeCaption}) => {
@@ -46,34 +63,50 @@ const SortableItem = React.memo(({id, asset, caption, remove, onChangeCaption}) 
   const style = useMemo(() => ({
     transform: CSS.Translate.toString(transform),
     transition,
+    ...styles.sortableItemStyle,
   }), [transform, transition]);
 
+  const actions = useMemo(() => [<a key="remove-item" onClick={() => remove(id)}>Remove</a>], [remove]);
+
   return <div ref={setNodeRef} style={style}>
-    <List.Item extra={
-      <img height={100}
-           alt={asset?.file_name ?? ""}
-           src={assetIdToBytesUrl(asset?.id)}
-      />
-    } actions={[<a key="remove-item" onClick={() => remove(id)}>Remove</a>]}>
-      <div {...attributes} {...listeners} style={{marginBottom: 8, cursor: "pointer"}}>
-        <DragOutlined /> <span style={{color: "#CCC"}}>Drag to Rearrange</span>
+    <List.Item style={styles.listItem} extra={
+      <img height={100} alt={asset?.file_name ?? ""} src={assetIdToBytesUrl(asset?.id)} />
+    } actions={actions}>
+      <div {...attributes} {...listeners} style={styles.sortableItemDragHandle}>
+        <DragOutlined /> <span style={styles.sortableItemDragHandleText}>Drag to Rearrange</span>
       </div>
       <List.Item.Meta
         title={asset?.file_name ?? ""}
-        description={`${((asset?.file_size ?? 0) / 1000).toFixed(0)} KB`} />
-      <Input value={caption} onChange={e => onChangeCaption(e.target.value)} placeholder="Caption" />
+        description={<div style={styles.listItemDescription}>
+          <span>{((asset?.file_size ?? 0) / 1000).toFixed(0)}&nbsp;KB</span>
+          <Input value={caption} onChange={e => onChangeCaption(e.target.value)} placeholder="Caption" />
+        </div>} />
     </List.Item>
   </div>;
 });
+
+
+const SortableGalleryInputHeader = React.memo(() => <div>
+  <p style={styles.helpParagraph}>
+    Select image assets to add to the gallery. Added images can then be given a caption and
+    rearranged as desired.
+  </p>
+</div>);
 
 
 const SortableGalleryInput = React.memo(({value, onChange}) => {
   const [toAdd, setToAdd] = useState(null);
 
   const items = value ?? [];
+  const itemAssets = useMemo(() => items.map(item => item.asset), [items]);
 
   const assets = useSelector(state => state.assets.items.filter(a => a.asset_type === "image"));
   const assetsByID = useMemo(() => Object.fromEntries(assets.map(a => [a.id, a])), [assets]);
+
+  const imageAssetItems = useMemo(() => assets
+    .filter(a => items.find(i => i.asset === a.id) === undefined)
+    .map(a => ({value: a.id, label: a.file_name})),
+    [assets]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -92,24 +125,23 @@ const SortableGalleryInput = React.memo(({value, onChange}) => {
     ));
   }, [onChange, items]);
 
+  const onAssetSelectChange = useCallback(a => setToAdd(a), []);
+  const onImageAdd = useCallback(() => {
+    if (toAdd !== null) {
+      onChange([...items, {asset: toAdd, caption: ""}]);
+      setToAdd(null);
+    }
+  }, [onChange, toAdd]);
+  const onItemRemove = useCallback(
+    asset3 => onChange(items.filter(({asset: asset2}) => asset2 !== asset3)),
+    [onChange, items]);
+
   // noinspection JSValidateTypes
-  return <List itemLayout="vertical" bordered={true} footer={<div>
-    <Divider style={{marginTop: 0}} />
+  return <List itemLayout="vertical" bordered={true} header={<SortableGalleryInputHeader />} footer={<div>
+    {!!items.length && <Divider style={styles.footerDivider} />}
     <Input.Group compact={true}>
-      <Select
-        style={{width: 400}}
-        value={toAdd}
-        onChange={a => setToAdd(a)}
-        options={assets
-          .filter(a => items.find(i => i.asset === a.id) === undefined)
-          .map(a => ({value: a.id, label: a.file_name}))}
-      />
-      <Button onClick={() => {
-        if (toAdd !== null) {
-          onChange([...items, {asset: toAdd, caption: ""}]);
-          setToAdd(null);
-        }
-      }}>Add</Button>
+      <Select style={styles.assetSelect} value={toAdd} onChange={onAssetSelectChange} options={imageAssetItems} />
+      <Button onClick={onImageAdd}>Add</Button>
     </Input.Group>
   </div>}>
     <DndContext
@@ -118,10 +150,7 @@ const SortableGalleryInput = React.memo(({value, onChange}) => {
       modifiers={[restrictToVerticalAxis]}
       onDragEnd={handleDragEnd}
     >
-      <SortableContext
-        items={items.map(item => item.asset)}
-        strategy={verticalListSortingStrategy}
-      >
+      <SortableContext items={itemAssets} strategy={verticalListSortingStrategy}>
         {items.map(({asset, caption}) =>
           <SortableItem
             key={asset}
@@ -132,7 +161,7 @@ const SortableGalleryInput = React.memo(({value, onChange}) => {
               onChange(items.map(i => i.asset === asset
                 ? {asset, caption: newCaption}
                 : i))}
-            remove={asset3 => onChange(items.filter(({asset: asset2}) => asset2 !== asset3))}
+            remove={onItemRemove}
           />)}
       </SortableContext>
     </DndContext>
