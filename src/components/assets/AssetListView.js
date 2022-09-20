@@ -3,12 +3,13 @@ import {useDispatch, useSelector} from "react-redux";
 import {Link, useNavigate} from "react-router-dom";
 import {useAuth0} from "@auth0/auth0-react";
 
-import {Button, PageHeader, Space, Table} from "antd";
+import {Button, Modal, PageHeader, Space, Table} from "antd";
 import {CheckSquareOutlined, CloseSquareOutlined, DeleteOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
 
-import {updateAsset} from "../../modules/assets/actions";
+import {deleteAsset, updateAsset} from "../../modules/assets/actions";
 import {ACCESS_TOKEN_MANAGE} from "../../utils";
 import {useUrlPagination} from "../../hooks/pages";
+import {updateStation} from "../../modules/stations/actions";
 
 const styles = {
   footerLabel: {fontWeight: "bold"},
@@ -25,6 +26,8 @@ const AssetListView = React.memo(() => {
   const assets = useSelector(state => state.assets.items);
   const assetTypes = useSelector(state => state.assetTypes.items);
 
+  const [delAsset, setDelAsset] = useState(null);
+
   const setAssetEnable = useCallback(async (assetID, enabledValue) => {
     setAssetsLoading({...assetsLoading, [assetID]: true});
     try {
@@ -32,10 +35,31 @@ const AssetListView = React.memo(() => {
       body.set("enabled", enabledValue ? "1" : "");
       const token = await getAccessTokenSilently(ACCESS_TOKEN_MANAGE);
       await dispatch(updateAsset(assetID, body, token));
+    } catch (e) {
+      console.error(e);
     } finally {
       setAssetsLoading({...assetsLoading, [assetID]: undefined});
     }
   }, [assetsLoading, getAccessTokenSilently, dispatch]);
+
+  const closeDelModal = useCallback(() => setDelAsset(null), []);
+
+  const onDelAssetDisable = useCallback(async () => {
+    if (!delAsset) return;
+    await setAssetEnable(delAsset.id, false);
+    closeDelModal();
+  }, [setAssetEnable, delAsset]);
+
+  const onDelete = useCallback(async () => {
+    if (!delAsset) return;
+    try {
+      const token = await getAccessTokenSilently(ACCESS_TOKEN_MANAGE);
+      await dispatch(deleteAsset(delAsset.id, token));
+    } catch (e) {
+      console.error(e);
+    }
+    closeDelModal();
+  }, [dispatch, getAccessTokenSilently, delAsset]);
 
   // noinspection JSUnusedGlobalSymbols,JSUnresolvedVariable
   const columns = useMemo(() => [
@@ -82,7 +106,7 @@ const AssetListView = React.memo(() => {
           )}
           {/*<Button icon={<EditOutlined />}*/}
           {/*        onClick={() => navigate(`edit/${asset.id}`)}>Edit</Button>*/}
-          <Button icon={<DeleteOutlined/>} danger={true} disabled={true}>Delete</Button>
+          <Button icon={<DeleteOutlined/>} danger={true} onClick={() => setDelAsset(asset)}>Delete</Button>
         </Space>
       )
     },
@@ -113,23 +137,41 @@ const AssetListView = React.memo(() => {
 
   const pagination = useUrlPagination();
 
-  return <PageHeader
-    ghost={false}
-    title="Assets"
-    subTitle="View and edit app assets (images, videos, and audio)"
-    extra={extra}
-  >
-    <Table
-      bordered={true}
-      size="small"
-      loading={loadingAssets}
-      columns={columns}
-      dataSource={assets}
-      footer={footer}
-      rowKey="id"
-      pagination={pagination}
-    />
-  </PageHeader>;
+  return <>
+    <Modal title={`Delete asset: ${delAsset?.file_name}`}
+           open={!!delAsset}
+           onCancel={closeDelModal}
+           footer={<Space>
+             <Button type="primary" danger={true} icon={<DeleteOutlined />} onClick={onDelete}>Delete</Button>
+             {delAsset?.enabled
+               ? <Button type="primary" icon={<CloseSquareOutlined />} onClick={onDelAssetDisable}>Disable</Button>
+               : null}
+             <Button onClick={closeDelModal}>Cancel</Button>
+           </Space>}>
+      Are you sure you wish to delete the asset &ldquo;{delAsset?.file_name}&rdquo;? If other content refers to
+      this asset, those links will be <strong>broken</strong>.&nbsp;
+      {delAsset?.enabled ? <span>
+        If you wish, you can instead <a href="#" onClick={onDelAssetDisable}>disable</a> this asset.
+      </span> : ""}
+    </Modal>
+    <PageHeader
+      ghost={false}
+      title="Assets"
+      subTitle="View and edit app assets (images, videos, and audio)"
+      extra={extra}
+    >
+      <Table
+        bordered={true}
+        size="small"
+        loading={loadingAssets}
+        columns={columns}
+        dataSource={assets}
+        footer={footer}
+        rowKey="id"
+        pagination={pagination}
+      />
+    </PageHeader>
+  </>;
 });
 
 export default AssetListView;

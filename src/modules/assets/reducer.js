@@ -1,4 +1,4 @@
-import {ADD_ASSET, FETCH_ASSETS, UPDATE_ASSET} from "./actions";
+import {ADD_ASSET, DELETE_ASSET, FETCH_ASSETS, UPDATE_ASSET} from "./actions";
 import {makeGenericNetworkReducer} from "../../utils";
 
-export default makeGenericNetworkReducer(FETCH_ASSETS, ADD_ASSET, UPDATE_ASSET);
+export default makeGenericNetworkReducer(FETCH_ASSETS, ADD_ASSET, UPDATE_ASSET, DELETE_ASSET);
