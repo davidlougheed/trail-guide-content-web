@@ -69,6 +69,11 @@ export const useObjectForm = ({
     }
   }, [localDataKey]);
 
+  const setLastSavedNow = useCallback(() => {
+    const date = new Date(Date.now());
+    setLastSavedTime(`${date.toLocaleDateString()}, ${date.getHours()}:${date.getMinutes()}`);
+  }, []);
+
   // noinspection JSCheckFunctionSignatures
   const processLocalChanges = useCallback(throttle((providedValues=undefined) => {
     if (!form) return;
@@ -84,8 +89,7 @@ export const useObjectForm = ({
     if (localStorage.getItem(localDataKey) !== valuesJSON) {
       console.log("saving locally", values);
       localStorage.setItem(localDataKey, JSON.stringify(values));
-      const date = new Date(Date.now());
-      setLastSavedTime(`${date.toLocaleDateString()}, ${date.getHours()}:${date.getMinutes()}`);
+      setLastSavedNow();
     }
   }, 500), [form, localDataKey, initialFormRetrievedValues]);
 
@@ -111,6 +115,7 @@ export const useObjectForm = ({
     v => {
       const fv = transformFinalValues({...newInitialValues, ...v});
       (onFinish ?? nop)(fv);
+      // TODO: Handle saved data here for when edit mode also has it
       clearLocalData();
     },
     [transformFinalValues, newInitialValues, onFinish, clearLocalData]);
@@ -127,6 +132,7 @@ export const useObjectForm = ({
   const resetChanges = useCallback(() => {
     setSavedData({});
     clearLocalData();
+    setLastSavedNow();
   }, [clearLocalData]);
 
   return {
@@ -200,7 +206,7 @@ const ObjectForm = React.memo(
               <Button onClick={submitAndView} icon={<CheckOutlined />}>Save and View</Button>
             )
           )}
-          <Button disabled={isInInitialState} onClick={resetChanges}>Reset Changes</Button>
+          <Button disabled={editMode && isInInitialState} onClick={resetChanges}>Reset Changes</Button>
 
           {/* TODO: Modal for discarding changes instead of disabling */}
           {onCancel && (
