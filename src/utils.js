@@ -112,7 +112,12 @@ export const networkAction = (types, url, method = "GET", multipart = false) =>
   };
 
 export const makeIfNeededAction = (action, reducer) => (...args) => (dispatch, getState) => {
-  if (getState()[reducer]?.isFetching) return;
+  if (
+    getState()[reducer]?.isFetching ||
+    getState()[reducer]?.isAdding ||
+    getState()[reducer]?.isUpdating ||
+    getState()[reducer]?.isDeleting
+  ) return;
   return dispatch(action(...args));
 };
 
