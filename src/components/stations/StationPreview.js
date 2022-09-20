@@ -35,7 +35,12 @@ const styles = {
 
   quiz: {marginBottom: 8},
 
-  galleryItem: {display: "inline-block", paddingRight: 16, paddingBottom: 8},
+  galleryItem: {
+    display: "inline-block",
+    verticalAlign: "top",
+    paddingRight: 16,
+    paddingBottom: 8,
+  },
 };
 
 const RenderedContent = React.memo(({id, content}) => {
