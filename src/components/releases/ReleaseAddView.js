@@ -20,12 +20,8 @@ const ReleaseAddView = React.memo(() => {
   const onFinish = useCallback(async v => {
     console.log("adding release", v);
 
-    const body = {
-      ...v,
-    };
-
     const accessToken = await getAccessTokenSilently(ACCESS_TOKEN_MANAGE);
-    const result = await dispatch(addRelease(body, accessToken));
+    const result = await dispatch(addRelease(v, accessToken));
 
     if (!result.error) {
       message.success(`Added new release: ${result.data.version}`);
