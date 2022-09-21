@@ -47,17 +47,72 @@ import StationsPage from "./stations/StationsPage";
 import SettingsPage from "./settings/SettingsPage";
 import SearchBar from "./SearchBar";
 
-const MENU_ITEMS = [
-  {key: "stations", label: <Link to="/stations">Stations</Link>, icon: <EnvironmentOutlined />},
-  {key: "sections", label: <Link to="/sections">Sections</Link>, icon: <DatabaseOutlined />},
-  {key: "pages", label: <Link to="/pages">Pages</Link>, icon: <FileOutlined />},
-  {key: "modals", label: <Link to="/modals">Modals</Link>, icon: <CloseSquareOutlined />},
-  {key: "assets", label: <Link to="/assets">Assets</Link>, icon: <PictureOutlined />},
-  {key: "layers", label: <Link to="/layers">Layers</Link>, icon: <GlobalOutlined />},
-  {key: "releases", label: <Link to="/releases">Releases</Link>, icon: <AppstoreOutlined />},
-  {key: "feedback", label: <Link to="/feedback">Feedback</Link>, icon: <SolutionOutlined />},
-  {key: "settings", label: <Link to="/settings">Settings</Link>, icon: <SettingOutlined />},
-];
+const OBJECT_TYPES = [
+  {
+    key: "stations",
+    label: <Link to="/stations">Stations</Link>,
+    icon: <EnvironmentOutlined />,
+    fetchAll: fetchStationsIfNeeded,
+  },
+  {
+    key: "sections",
+    label: <Link to="/sections">Sections</Link>,
+    icon: <DatabaseOutlined />,
+    fetchAll: fetchSectionsIfNeeded,
+  },
+  {
+    key: "pages",
+    label: <Link to="/pages">Pages</Link>,
+    icon: <FileOutlined />,
+    fetchAll: fetchPagesIfNeeded,
+  },
+  {
+    key: "modals",
+    label: <Link to="/modals">Modals</Link>,
+    icon: <CloseSquareOutlined />,
+    fetchAll: fetchModalsIfNeeded,
+  },
+  {
+    key: "assets",
+    label: <Link to="/assets">Assets</Link>,
+    icon: <PictureOutlined />,
+    fetchAll: fetchAssetsIfNeeded,
+  },
+  {
+    key: "layers",
+    label: <Link to="/layers">Layers</Link>,
+    icon: <GlobalOutlined />,
+    fetchAll: fetchLayersIfNeeded,
+  },
+  {
+    key: "releases",
+    label: <Link to="/releases">Releases</Link>,
+    icon: <AppstoreOutlined />,
+    fetchAll: fetchReleasesIfNeeded,
+  },
+  {
+    key: "feedback",
+    label: <Link to="/feedback">Feedback</Link>,
+    icon: <SolutionOutlined />,
+    fetchAll: fetchFeedbackIfNeeded,
+  },
+  {
+    key: "settings",
+    label: <Link to="/settings">Settings</Link>,
+    icon: <SettingOutlined />,
+    fetchAll: fetchSettingsIfNeeded,
+  },
+
+  {
+    key: "assetTypes",
+    fetchAll: fetchAssetTypesIfNeeded,
+  },
+  {
+    key: "categories",
+    fetchAll: fetchCategoriesIfNeeded,
+  },
+]
+const MENU_ITEMS = OBJECT_TYPES.filter(t => t.label).map(t => ({key: t.key, label: t.label, icon: t.icon}));
 
 const styles = {
   layout: {height: "100vh"},
@@ -99,6 +154,21 @@ const App = React.memo(() => {
   } = useAuth0();
 
   const dispatch = useDispatch();
+  const location = useLocation();
+
+  const updateObjects = useCallback((isInitial) => {
+    if (!isAuthenticated) return;
+    // TODO: Don't update if not initial and on an edit page
+    const asyncWrapper = async () => {
+      const accessToken = await getAccessTokenSilently(ACCESS_TOKEN_READ);
+      const typesToUpdate = OBJECT_TYPES
+        .filter(t => isInitial || !t.label || (t.label && !location.pathname.startsWith(`/${t.key}/edit`)));
+      console.debug("updating object types", typesToUpdate.map(t => t.key));
+      // TODO: Alert if we've actually changed something and we're on a detail page
+      return await Promise.all(typesToUpdate.map(t => dispatch(t.fetchAll({}, {}, accessToken))));
+    };
+    return asyncWrapper();
+  }, [isAuthenticated, getAccessTokenSilently, location])
 
   useEffect(() => {
     const initialFetch = async () => {
@@ -106,31 +176,21 @@ const App = React.memo(() => {
 
       try {
         await dispatch(fetchServerConfigIfNeeded());
-
-        const accessToken = await getAccessTokenSilently(ACCESS_TOKEN_READ);
-
-        [
-          fetchAssetTypesIfNeeded,
-          fetchAssetsIfNeeded,
-          fetchCategoriesIfNeeded,
-          fetchFeedbackIfNeeded,
-          fetchLayersIfNeeded,
-          fetchModalsIfNeeded,
-          fetchPagesIfNeeded,
-          fetchReleasesIfNeeded,
-          fetchSectionsIfNeeded,
-          fetchSettingsIfNeeded,
-          fetchStationsIfNeeded,
-        ].map(a => dispatch(a({}, {}, accessToken)));
+        await updateObjects(true);
       } catch (e) {
         console.error(e.message);
       }
     };
 
     initialFetch().catch(e => console.error(e.message));
-  }, [isAuthenticated, getAccessTokenSilently]);
 
-  const location = useLocation();
+    // Set 20-second update interval to fetch changes to other objects
+    // const interval = setInterval(() => updateObjects(false), 20000);
+    // return () => {
+    //   clearInterval(interval);
+    // };
+  }, [isAuthenticated, updateObjects]);
+
   const selectedKeys = useMemo(() => [location.pathname.split("/")[1] || "stations"], [location]);
 
   const urlParams = useMemo(() => Object.fromEntries(location.search.slice(1).split("&").map(p => {
