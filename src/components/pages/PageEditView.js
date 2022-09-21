@@ -34,13 +34,11 @@ const PageEditView = React.memo(() => {
 
   const onBack = useCallback(() => navigate(-1), [navigate]);
 
-  if (fetchingPages) return <div>Loading...</div>;
-
   const title = useMemo(
     () => fetchingPages ? "Loading..." : (page ? `Edit Page: ${page.title}` : "Page not found"),
     [fetchingPages, page]);
   const subtitle = useMemo(() => page ? "Press submit to save your changes." : "", [page]);
-
+  
   return <PageHeader onBack={onBack} ghost={false} title={title} subTitle={subtitle}>
     {page && <PageForm initialValues={page} onFinish={onFinish} loading={updatingPage} />}
   </PageHeader>;
