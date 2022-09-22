@@ -1,6 +1,22 @@
 import React from "react";
 import {GeoJSON, MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
 import {Link} from "react-router-dom";
+import {Icon} from "leaflet";
+
+// import leaflet from "leaflet";
+import "leaflet/dist/leaflet.css";
+import iconPng from "leaflet/dist/images/marker-icon.png";
+import icon2XPng from "leaflet/dist/images/marker-icon-2x.png";
+import iconShadowPng from "leaflet/dist/images/marker-shadow.png";
+
+const icon = new Icon({
+  iconUrl: iconPng,
+  iconRetinaUrl: icon2XPng,
+  iconSize: {x: 25, y: 41},
+  iconAnchor: {x: 12, y: 41},
+  popupAnchor: {x: 1, y: -41},
+  shadowUrl: iconShadowPng,
+});
 
 import {transformCoords} from "../../utils";
 
@@ -34,7 +50,7 @@ const MapPreview = React.memo(({layers, stations}) => {
       )}
       {(stations ?? []).filter(station => station.enabled).map(station => {
         const t = transformCoords(station.coordinates_utm);
-        return <Marker position={[t.latitude, t.longitude]} key={station.id}>
+        return <Marker icon={icon} position={[t.latitude, t.longitude]} key={station.id}>
           <Popup>
             <Link to={`/stations/detail/${station.id}`}>{station.title}</Link>
           </Popup>

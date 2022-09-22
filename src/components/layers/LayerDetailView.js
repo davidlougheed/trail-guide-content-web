@@ -42,6 +42,7 @@ const LayerDetailView = React.memo(() => {
     <Button key="edit" icon={<EditOutlined/>} onClick={editLayer}>Edit</Button>,
   ], [showPreview, editLayer]);
 
+  // noinspection JSValidateTypes
   return <PageHeader ghost={false} onBack={onBack} title={title} extra={extra}>
     <Descriptions bordered={true} size="small">
       <Descriptions.Item label="Name">{layer?.name ?? ""}</Descriptions.Item>
@@ -50,8 +51,7 @@ const LayerDetailView = React.memo(() => {
     </Descriptions>
 
     <Card size="small" title="GeoJSON" style={styles.jsonCard}>
-      {/* TODO: revert defaultCOllapsed if groupArraysAfterLenght gets re-implemented */}
-      <JsonViewer value={geoJSON} defaultCollapsed={true} groupArraysAfterLength={50} />
+      <JsonViewer value={geoJSON} groupArraysAfterLength={50} />
     </Card>
 
     <Modal
