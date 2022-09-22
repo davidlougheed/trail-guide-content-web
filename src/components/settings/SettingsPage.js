@@ -19,7 +19,7 @@ const SettingsPage = React.memo(() => {
   const fetchingSettings = useSelector(state => state.settings.isFetching);
   const updatingSettings = useSelector(state => state.settings.isUpdating);
   const settings = useSelector(state => state.settings.data);
-  const serverConfig = useSelector(state => state.serverConfig.data);
+  const serverConfig = useSelector(state => state.server.config.data);
   const {getAccessTokenSilently} = useAuth0();
 
   const [configShown, setConfigShown] = useState(false);

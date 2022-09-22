@@ -38,7 +38,7 @@ const PageEditView = React.memo(() => {
     () => fetchingPages ? "Loading..." : (page ? `Edit Page: ${page.title}` : "Page not found"),
     [fetchingPages, page]);
   const subtitle = useMemo(() => page ? "Press submit to save your changes." : "", [page]);
-  
+
   return <PageHeader onBack={onBack} ghost={false} title={title} subTitle={subtitle}>
     {page && <PageForm initialValues={page} onFinish={onFinish} loading={updatingPage} />}
   </PageHeader>;

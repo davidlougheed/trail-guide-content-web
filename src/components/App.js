@@ -21,6 +21,8 @@ import {
 
 import {Link, Navigate, Route, Routes, useLocation} from "react-router-dom";
 
+import pkg from "../../package.json";
+
 import {fetchAssetTypesIfNeeded} from "../modules/asset_types/actions";
 import {fetchAssetsIfNeeded} from "../modules/assets/actions";
 import {fetchCategoriesIfNeeded} from "../modules/categories/actions";
@@ -31,7 +33,7 @@ import {fetchPagesIfNeeded} from "../modules/pages/actions";
 import {fetchReleasesIfNeeded} from "../modules/releases/actions";
 import {fetchSectionsIfNeeded} from "../modules/sections/actions";
 import {fetchSettingsIfNeeded} from "../modules/settings/actions";
-import {fetchServerConfigIfNeeded} from "../modules/server_config/actions";
+import {fetchServerInfoIfNeeded, fetchServerConfigIfNeeded} from "../modules/server/actions";
 import {fetchStationsIfNeeded} from "../modules/stations/actions";
 
 import {ACCESS_TOKEN_READ} from "../utils";
@@ -124,6 +126,14 @@ const styles = {
   signInLink: {color: "#CCC"},
 
   sider: {overflowY: "auto"},
+  versionContainer: {
+    color: "rgba(255, 255, 255, 0.4)",
+    padding: "8px 16px",
+    display: "flex",
+    flexDirection: "column",
+    fontFamily: "monospace",
+    fontSize: 12,
+  },
 
   content: {overflowY: "auto"},
 
@@ -175,6 +185,7 @@ const App = React.memo(() => {
       if (!isAuthenticated) return;
 
       try {
+        await dispatch(fetchServerInfoIfNeeded());
         await dispatch(fetchServerConfigIfNeeded());
         await updateObjects(true);
       } catch (e) {
@@ -198,8 +209,11 @@ const App = React.memo(() => {
     return [ps[0], decodeURIComponent(ps[1])];
   })), [location]);
 
-  const loadingConfig = useSelector(state => state.serverConfig.isFetching);
-  const serverConfig = useSelector(state => state.serverConfig.data);
+  const loadingServerInfo = useSelector(state => state.server.info.isFetching);
+  const serverInfo = useSelector(state => state.server.info.data);
+
+  const loadingConfig = useSelector(state => state.server.config.isFetching);
+  const serverConfig = useSelector(state => state.server.config.data);
 
   const siteTitle = useMemo(
     () => (loadingConfig || serverConfig === null) ? "" : (serverConfig?.APP_NAME || "Trail Guide"),
@@ -228,6 +242,10 @@ const App = React.memo(() => {
                     collapsedWidth={0}
                     collapsed={!isAuthenticated || (isAuthenticated && isLoadingAuth)}>
         <Menu theme="dark" selectedKeys={selectedKeys} items={MENU_ITEMS} />
+        <div style={styles.versionContainer}>
+          <span>Web v{pkg.version}</span>
+          <span>Server {!loadingServerInfo && serverInfo?.version ? (<span>v{serverInfo?.version}</span>) : null}</span>
+        </div>
       </Layout.Sider>
       <Layout.Content style={styles.content}>
         {isLoadingAuth

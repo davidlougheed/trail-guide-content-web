@@ -14,7 +14,7 @@ import pages from "./modules/pages/reducer";
 import releases from "./modules/releases/reducer";
 import search from "./modules/search/reducer";
 import sections from "./modules/sections/reducer";
-import serverConfig from "./modules/server_config/reducer";
+import server from "./modules/server/reducer";
 import settings from "./modules/settings/reducer";
 import stations from "./modules/stations/reducer";
 
@@ -29,7 +29,7 @@ export default combineReducers({
   releases,
   search,
   sections,
-  serverConfig,
+  server,
   settings,
   stations,
 });
