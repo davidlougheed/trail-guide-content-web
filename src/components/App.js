@@ -173,12 +173,11 @@ const App = React.memo(() => {
       const accessToken = await getAccessTokenSilently(ACCESS_TOKEN_READ);
       const typesToUpdate = OBJECT_TYPES
         .filter(t => isInitial || !t.label || (t.label && !location.pathname.startsWith(`/${t.key}/edit`)));
-      console.debug("updating object types", typesToUpdate.map(t => t.key));
       // TODO: Alert if we've actually changed something and we're on a detail page
       return await Promise.all(typesToUpdate.map(t => dispatch(t.fetchAll({}, {}, accessToken))));
     };
     return asyncWrapper();
-  }, [isAuthenticated, getAccessTokenSilently, location])
+  }, [isAuthenticated, getAccessTokenSilently, location.pathname])
 
   useEffect(() => {
     const initialFetch = async () => {
@@ -196,10 +195,10 @@ const App = React.memo(() => {
     initialFetch().catch(e => console.error(e.message));
 
     // Set 20-second update interval to fetch changes to other objects
-    // const interval = setInterval(() => updateObjects(false), 20000);
-    // return () => {
-    //   clearInterval(interval);
-    // };
+    const interval = setInterval(() => updateObjects(false), 20000);
+    return () => {
+      clearInterval(interval);
+    };
   }, [isAuthenticated, updateObjects]);
 
   const selectedKeys = useMemo(() => [location.pathname.split("/")[1] || "stations"], [location]);
