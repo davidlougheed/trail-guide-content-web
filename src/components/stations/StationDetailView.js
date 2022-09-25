@@ -9,17 +9,20 @@ import {useNavigate, useParams} from "react-router-dom";
 import {Button, Descriptions, Divider, Modal, PageHeader} from "antd";
 import {EditOutlined, QrcodeOutlined} from "@ant-design/icons";
 
-import {findItemByID, timestampToString} from "../../utils";
+import {detailTitle, findItemByID, timestampToString} from "../../utils";
 
 import StationPreview from "./StationPreview";
 import StationQR from "./StationQR";
+
+const stationDetailTitle = detailTitle("Station", "title");
 
 const StationDetailView = React.memo(() => {
   const navigate = useNavigate();
 
   const {id: stationID} = useParams();
 
-  const fetchingStations = useSelector(state => state.stations.isFetching);
+  const stationsInitialFetch = useSelector(state => state.stations.initialFetchDone);
+  const stationsFetching = useSelector(state => state.stations.isFetching);
   const station = useSelector(state => findItemByID(state.stations.items, stationID));
 
   const [qrModalOpen, setQrModalOpen] = useState(false);
@@ -29,6 +32,9 @@ const StationDetailView = React.memo(() => {
   const hideQrModal = useCallback(() => setQrModalOpen(false), []);
   const editStation = useCallback(() => navigate(`/stations/edit/${stationID}`), [navigate, stationID]);
 
+  const title = useMemo(
+    () => stationDetailTitle(station, stationsInitialFetch, stationsFetching),
+    [stationsInitialFetch, stationsFetching, station]);
   const extra = useMemo(() => [
     <Button key="qr" icon={<QrcodeOutlined />} onClick={showQrModal}>QR Code</Button>,
     <Button key="edit" icon={<EditOutlined/>} onClick={editStation}>Edit</Button>,
@@ -36,12 +42,7 @@ const StationDetailView = React.memo(() => {
 
   const enabled = station?.enabled ? "Yes" : "No";
 
-  return <PageHeader
-    ghost={false}
-    onBack={onBack}
-    title={fetchingStations ? "Loading..." : (station ? `Station: ${station.title}` : "Station not found")}
-    extra={extra}
-  >
+  return <PageHeader ghost={false} onBack={onBack} title={title} extra={extra}>
     <Modal open={qrModalOpen} onCancel={hideQrModal} footer={null}>
       {station ? <StationQR station={station} /> : null}
     </Modal>

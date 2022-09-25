@@ -23,7 +23,8 @@ const ReleaseDetailView = React.memo(() => {
 
   const intVersion = parseInt(strVersion, 10);
 
-  const fetchingReleases = useSelector(state => state.releases.isFetching);
+  const releasesInitialFetch = useSelector(state => state.releases.initialFetchDone);
+  const releasesFetching = useSelector(state => state.releases.isFetching);
   const release = useSelector(state => findItemByID(state.releases.items, intVersion, "version"));
 
   const {version, release_notes, bundle_path, bundle_size, submitted_dt, published_dt} = release ?? {};
@@ -31,8 +32,8 @@ const ReleaseDetailView = React.memo(() => {
   const onBack = useCallback(() => navigate(-1), [navigate]);
 
   const title = useMemo(
-    () => fetchingReleases ? "Loading..." : <span>Version {release?.version}</span>,
-    [fetchingReleases, release])
+    () => (!releasesInitialFetch && releasesFetching) ? "Loading..." : <span>Version {release?.version}</span>,
+    [releasesInitialFetch, releasesFetching, release])
 
   return <PageHeader ghost={false} onBack={onBack} title={title}>
     <Descriptions bordered={true} size="small">

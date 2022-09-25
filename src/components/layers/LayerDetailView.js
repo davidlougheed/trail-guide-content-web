@@ -11,12 +11,14 @@ import {EditOutlined, EyeOutlined} from "@ant-design/icons";
 
 import {JsonViewer} from "@textea/json-viewer";
 
-import {findItemByID} from "../../utils";
+import {detailTitle, findItemByID} from "../../utils";
 import MapPreview from "./MapPreview";
 
 const styles = {
   jsonCard: {marginTop: 16},
 };
+
+const layerDetailTitle = detailTitle("Layer", "name");
 
 const LayerDetailView = React.memo(() => {
   const navigate = useNavigate();
@@ -24,7 +26,9 @@ const LayerDetailView = React.memo(() => {
 
   const [previewShown, setPreviewShown] = useState(false);
 
-  const fetchingLayers = useSelector(state => state.layers.isFetching);
+  const layersInitialFetch = useSelector(state => state.layers.initialFetchDone);
+  const layersFetching = useSelector(state => state.layers.isFetching);
+
   const layer = useSelector(state => findItemByID(state.layers.items, layerID));
   const layerArr = useMemo(() => [layer], [layer]);
   const geoJSON = useMemo(() => layer?.geojson ?? {}, [layer]);
@@ -35,8 +39,8 @@ const LayerDetailView = React.memo(() => {
   const editLayer = useCallback(() => navigate(`/layers/edit/${layerID}`), [navigate, layerID]);
 
   const title = useMemo(
-    () => fetchingLayers ? "Loading..." : <span>Layer: {layer?.name}</span>,
-    [fetchingLayers, layer])
+    () => layerDetailTitle(layer, layersInitialFetch, layersFetching),
+    [layersFetching, layer])
   const extra = useMemo(() => [
     <Button key="preview" icon={<EyeOutlined />} onClick={showPreview}>Preview Layer</Button>,
     <Button key="edit" icon={<EditOutlined/>} onClick={editLayer}>Edit</Button>,

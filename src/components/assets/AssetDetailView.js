@@ -2,7 +2,7 @@
 // Copyright (C) 2021-2022  David Lougheed
 // See NOTICE for more information.
 
-import React, {useCallback} from "react";
+import React, {useCallback, useMemo} from "react";
 import {useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 
@@ -51,23 +51,18 @@ const AssetDetailView = React.memo(() => {
   const navigate = useNavigate();
   const {id: assetID} = useParams();
 
-  const fetchingAssets = useSelector(state => state.assets.isFetching);
+  const assetsInitialFetch = useSelector(state => state.assets.initialFetchDone);
+  const assetsFetching = useSelector(state => state.assets.isFetching);
   const asset = useSelector(state => findItemByID(state.assets.items, assetID));
 
   const onBack = useCallback(() => navigate(-1), [navigate]);
-
-  return <PageHeader
-    ghost={false}
-    onBack={onBack}
-    title={fetchingAssets
+  const title = useMemo(
+    () => (!assetsInitialFetch && assetsFetching)
       ? "Loading..."
-      : <span>Asset: <AssetTypeIcon type={asset?.asset_type}/> {asset?.file_name}</span>}
-    // extra={[
-    //   <Button key="edit" icon={<EditOutlined/>} onClick={() => navigate(`/assets/edit/${assetID}`)}>
-    //     Edit
-    //   </Button>,
-    // ]}
-  >
+      : <span>Asset: <AssetTypeIcon type={asset?.asset_type}/> {asset?.file_name}</span>,
+    [assetsInitialFetch, assetsFetching, asset]);
+
+  return <PageHeader ghost={false} onBack={onBack} title={title}>
     <Descriptions bordered={true} size="small">
       <Descriptions.Item label="ID">{asset?.id ?? ""}</Descriptions.Item>
       <Descriptions.Item label="File Name" span={2}>{asset?.file_name ?? ""}</Descriptions.Item>

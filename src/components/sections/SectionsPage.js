@@ -20,7 +20,8 @@ const COLUMNS = [
 ];
 
 const SectionsPage = React.memo(() => {
-  const loadingSections = useSelector(state => state.sections.isFetching);
+  const sectionsInitialFetch = useSelector(state => state.sections.initialFetchDone);
+  const sectionsFetching = useSelector(state => state.sections.isFetching);
   const sections = useSelector(state => state.sections.items);
 
   const pagination = useUrlPagination();
@@ -29,7 +30,7 @@ const SectionsPage = React.memo(() => {
     <Table
       bordered={true}
       size="small"
-      loading={loadingSections}
+      loading={!sectionsInitialFetch && sectionsFetching}
       columns={COLUMNS}
       dataSource={sections}
       rowKey="id"

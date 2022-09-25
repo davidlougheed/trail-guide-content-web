@@ -18,7 +18,8 @@ const LayerListView = React.memo(() => {
   const dispatch = useDispatch();
   const {getAccessTokenSilently} = useAuth0();
 
-  const loadingLayers = useSelector(state => state.layers.isFetching);
+  const layersInitialFetch = useSelector(state => state.layers.initialFetchDone);
+  const layersFetching = useSelector(state => state.layers.isFetching);
   const layers = useSelector(state => state.layers.items);
 
   const stations = useSelector(state => state.stations.items);
@@ -129,7 +130,7 @@ const LayerListView = React.memo(() => {
     <Table
       bordered={true}
       size="small"
-      loading={loadingLayers}
+      loading={!layersInitialFetch && layersFetching}
       columns={columns}
       dataSource={layers}
       rowKey="id"

@@ -2,6 +2,8 @@
 // Copyright (C) 2021-2022  David Lougheed
 // See NOTICE for more information.
 
+import React from "react";
+
 import {message} from "antd";
 import proj4 from "proj4";
 
@@ -12,6 +14,13 @@ export const nop = () => {};
 export const getFalse = () => false;
 
 export const timestampToString = timestamp => timestamp ? (new Date(timestamp)).toLocaleString() : undefined;
+
+export const detailTitle = (prefix, titleProp) => (obj, initialFetchDone, isFetching) =>
+  (!initialFetchDone && isFetching)
+    ? "Loading..."
+    : (obj
+      ? <span>{prefix ? `${prefix}: ${obj?.[titleProp]}` : obj?.[titleProp]}</span>
+      : `${prefix} not found`);
 
 export const ACCESS_TOKEN_READ = {
   audience: AUTH_AUDIENCE,
@@ -130,6 +139,7 @@ export const makeGenericNetworkReducer = (
   isArrayData=true,
 ) => (
   state = {
+    initialFetchDone: false,
     isFetching: false,
     isAdding: false,
     isUpdating: false,
@@ -146,6 +156,7 @@ export const makeGenericNetworkReducer = (
       return {
         ...state,
         isFetching: false,
+        initialFetchDone: true,
         ...(isArrayData
           ? {items: action.data}
           : {data: action.data}

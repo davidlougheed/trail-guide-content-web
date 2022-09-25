@@ -13,9 +13,11 @@ const ReleaseListView = React.memo(() => {
 
   const {isAuthenticated, getAccessTokenSilently} = useAuth0();
 
-  const loadingReleases = useSelector(state => state.releases.isFetching);
+  const releasesInitialFetch = useSelector(state => state.releases.initialFetchDone);
+  const releasesFetching = useSelector(state => state.releases.isFetching);
   const releases = useSelector(state => state.releases.items);
 
+  // noinspection JSUnusedGlobalSymbols
   const columns = useMemo(() => [
     {
       title: "Version",
@@ -77,7 +79,7 @@ const ReleaseListView = React.memo(() => {
     <Table
       bordered={true}
       size="small"
-      loading={loadingReleases}
+      loading={!releasesInitialFetch && releasesFetching}
       columns={columns}
       rowKey="version"
       dataSource={releases}

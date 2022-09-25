@@ -22,7 +22,8 @@ const AssetListView = React.memo(() => {
 
   const [assetsLoading, setAssetsLoading] = useState({});
 
-  const loadingAssets = useSelector(state => state.assets.isFetching);
+  const assetsInitialFetch = useSelector(state => state.assets.initialFetchDone);
+  const assetsFetching = useSelector(state => state.assets.isFetching);
   const assets = useSelector(state => state.assets.items);
   const assetTypes = useSelector(state => state.assetTypes.items);
 
@@ -130,9 +131,11 @@ const AssetListView = React.memo(() => {
   const footer = useCallback(
     () => <span>
         <span style={styles.footerLabel}>Total Enabled Asset Size:</span>&nbsp;
-        {loadingAssets ? `–` : `${(totalEnabledAssetSize / 1000).toFixed(0)} KB`}
+        {(!assetsInitialFetch && assetsFetching)
+          ? `–`
+          : `${(totalEnabledAssetSize / 1000).toFixed(0)} KB`}
       </span>,
-    [loadingAssets, totalEnabledAssetSize],
+    [assetsInitialFetch, assetsFetching, totalEnabledAssetSize],
   );
 
   const pagination = useUrlPagination();
@@ -163,7 +166,7 @@ const AssetListView = React.memo(() => {
       <Table
         bordered={true}
         size="small"
-        loading={loadingAssets}
+        loading={!assetsInitialFetch && assetsFetching}
         columns={columns}
         dataSource={assets}
         footer={footer}

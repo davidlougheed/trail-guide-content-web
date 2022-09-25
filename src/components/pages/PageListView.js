@@ -23,7 +23,8 @@ const QRModal = React.memo(({page, modalCancel}) => {
 const PageListView = React.memo(() => {
   const navigate = useNavigate();
 
-  const loadingPages = useSelector(state => state.pages.isFetching);
+  const pagesInitialFetch = useSelector(state => state.pages.initialFetchDone);
+  const pagesFetching = useSelector(state => state.pages.isFetching);
   const pages = useSelector(state => state.pages.items);
 
   const [qrPage, setQrPage] = useState(null);
@@ -68,7 +69,7 @@ const PageListView = React.memo(() => {
     <Table
       bordered={true}
       size="small"
-      loading={loadingPages}
+      loading={!pagesInitialFetch && pagesFetching}
       columns={columns}
       dataSource={pages}
       rowKey="id"

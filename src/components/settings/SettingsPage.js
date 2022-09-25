@@ -16,8 +16,11 @@ import * as c from "../../config";
 
 const SettingsPage = React.memo(() => {
   const dispatch = useDispatch();
+
+  const settingsInitialFetch = useSelector(state => state.settings.initialFetchDone);
   const fetchingSettings = useSelector(state => state.settings.isFetching);
   const updatingSettings = useSelector(state => state.settings.isUpdating);
+
   const settings = useSelector(state => state.settings.data);
   const serverConfig = useSelector(state => state.server.config.data);
   const {getAccessTokenSilently} = useAuth0();
@@ -53,7 +56,8 @@ const SettingsPage = React.memo(() => {
       </Form>
     </Modal>
     <PageHeader title="Settings" ghost={false} extra={[
-      <Button key="config" loading={fetchingSettings} onClick={showConfig}>View Instance Configuration</Button>
+      <Button key="config" loading={!settingsInitialFetch && fetchingSettings} onClick={showConfig}>
+        View Instance Configuration</Button>
     ]}>
       {settings
         ? <SettingsForm initialValues={settings} onFinish={onFinish} loading={updatingSettings} />

@@ -9,7 +9,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {Button, Descriptions, Divider, Modal, PageHeader} from "antd";
 import {EditOutlined, QrcodeOutlined} from "@ant-design/icons";
 
-import {findItemByID, timestampToString} from "../../utils";
+import {detailTitle, findItemByID, timestampToString} from "../../utils";
 
 import PageQR from "./PageQR";
 import HTMLContent from "../HTMLContent";
@@ -36,11 +36,14 @@ const PagePreview = React.memo(({page}) => {
   </div>;
 });
 
+const pageDetailTitle = detailTitle("Page", "title");
+
 const PageDetailView = React.memo(() => {
   const navigate = useNavigate();
   const {id: pageID} = useParams();
 
-  const fetchingPages = useSelector(state => state.pages.isFetching);
+  const pagesInitialFetch = useSelector(state => state.pages.initialFetchDone);
+  const pagesFetching = useSelector(state => state.pages.isFetching);
   const page = useSelector(state => findItemByID(state.pages.items, pageID));
 
   const [qrModalOpen, setQrModalOpen] = useState(false);
@@ -51,8 +54,8 @@ const PageDetailView = React.memo(() => {
   const editPage = useCallback(() => navigate(`/pages/edit/${pageID}`), [navigate, pageID]);
 
   const title = useMemo(
-    () => fetchingPages ? "Loading..." : (page ? <span>Page: {page.title}</span> : <span>Page not found</span>),
-    [fetchingPages, page]);
+    () => pageDetailTitle(page, pagesInitialFetch, pagesFetching),
+    [pagesInitialFetch, pagesFetching, page]);
   const extra = useMemo(() => [
     <Button key="qr" icon={<QrcodeOutlined />} onClick={showQrModal} disabled={!page}>QR Code</Button>,
     <Button key="edit" icon={<EditOutlined/>} onClick={editPage} disabled={!page}>Edit</Button>,

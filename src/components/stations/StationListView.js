@@ -26,8 +26,10 @@ const StationListView = React.memo(() => {
   const dispatch = useDispatch();
   const {getAccessTokenSilently} = useAuth0();
 
-  const loadingStations = useSelector(state => state.stations.isFetching);
+  const stationsInitialFetch = useSelector(state => state.stations.initialFetchDone);
+  const stationsFetching = useSelector(state => state.stations.isFetching);
   const stations = useSelector(state => state.stations.items);
+
   const sections = useSelector(state => state.sections.items);
   const categories = useSelector(state => state.categories.items);
 
@@ -154,7 +156,7 @@ const StationListView = React.memo(() => {
     <Table
       bordered={true}
       size="small"
-      loading={loadingStations}
+      loading={!stationsInitialFetch && stationsFetching}
       columns={columns}
       rowKey="id"
       dataSource={stations}

@@ -9,7 +9,8 @@ import {useUrlPagination} from "../../hooks/pages";
 const ModalListView = React.memo(() => {
   const navigate = useNavigate();
 
-  const loadingModals = useSelector(state => state.modals.isFetching);
+  const modalsInitialFetch = useSelector(state => state.modals.initialFetchDone);
+  const modalsFetching = useSelector(state => state.modals.isFetching);
   const modals = useSelector(state => state.modals.items);
 
   // noinspection JSUnusedGlobalSymbols
@@ -60,7 +61,7 @@ const ModalListView = React.memo(() => {
     <Table
       bordered={true}
       size="small"
-      loading={loadingModals}
+      loading={!modalsInitialFetch && modalsFetching}
       columns={columns}
       dataSource={modals}
       rowKey="id"
