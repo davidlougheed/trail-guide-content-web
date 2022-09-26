@@ -42,6 +42,7 @@ const PageListView = React.memo(() => {
     },
     {
       title: "Last Modified",
+      sorter: (a, b) => (new Date(a.revision.timestamp)) - (new Date(b.revision.timestamp)),
       render: page => timestampToString(page.revision.timestamp),
     },
     {

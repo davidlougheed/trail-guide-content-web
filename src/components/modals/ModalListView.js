@@ -25,6 +25,7 @@ const ModalListView = React.memo(() => {
     },
     {
       title: "Last Modified",
+      sorter: (a, b) => (new Date(a.revision.timestamp)) - (new Date(b.revision.timestamp)),
       render: station => (new Date(station.revision.timestamp)).toLocaleString(),
     },
     {
