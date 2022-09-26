@@ -9,7 +9,6 @@ import {CheckSquareOutlined, CloseSquareOutlined, DeleteOutlined, EyeOutlined, P
 import {deleteAsset, updateAsset} from "../../modules/assets/actions";
 import {ACCESS_TOKEN_MANAGE} from "../../utils";
 import {useUrlPagination} from "../../hooks/pages";
-import {updateStation} from "../../modules/stations/actions";
 
 const styles = {
   footerLabel: {fontWeight: "bold"},
@@ -115,11 +114,7 @@ const AssetListView = React.memo(() => {
   ], [navigate, assetsLoading, setAssetEnable]);
 
   const extra = useMemo(() => [
-    <Button key="add"
-            type="primary"
-            icon={<PlusOutlined/>}
-            onClick={() => navigate("/assets/add")}>
-      Add New</Button>,
+    <Button key="add" type="primary" icon={<PlusOutlined/>} onClick={() => navigate("/assets/add")}>Add New</Button>,
   ], [navigate]);
 
   // noinspection JSUnresolvedVariable
