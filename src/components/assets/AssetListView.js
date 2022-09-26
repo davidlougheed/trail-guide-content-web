@@ -79,6 +79,7 @@ const AssetListView = React.memo(() => {
     {
       title: "Size",
       dataIndex: "file_size",
+      sorter: (a, b) => a.file_size - b.file_size,
       shouldCellUpdate: (r, pr) => r.file_size !== pr.file_size,
       render: fileSize => <span>{(fileSize / 1000).toFixed(0)}&nbsp;KB</span>,
     },
