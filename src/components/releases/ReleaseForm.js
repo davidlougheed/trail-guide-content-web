@@ -24,7 +24,7 @@ const ReleaseForm = React.memo(({initialValues, ...props}) => {
 
   const {transformedInitialValues} = objectForm;
 
-  return <ObjectForm objectForm={objectForm}>
+  return <ObjectForm objectForm={objectForm} {...props}>
     <Row gutter={12}>
       <Col flex={1}>
         <Form.Item label="Version">
