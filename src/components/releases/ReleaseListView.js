@@ -5,8 +5,10 @@ import {useAuth0} from "@auth0/auth0-react";
 
 import {Button, PageHeader, Space, Table} from "antd";
 import {DownloadOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
-import {downloadVersionBundle} from "../../utils";
+
+import {API_BASE_URL} from "../../config";
 import {useUrlPagination} from "../../hooks/pages";
+import {downloadVersionBundle} from "../../utils";
 
 const ReleaseListView = React.memo(() => {
   const navigate = useNavigate();
@@ -63,14 +65,13 @@ const ReleaseListView = React.memo(() => {
     },
   ], [isAuthenticated, getAccessTokenSilently, navigate]);
 
+  const onBundle = useCallback(() => {
+    window.location.href = `${API_BASE_URL}/ad-hoc-bundle`;
+  }, [navigate]);
   const onAdd = useCallback(() => navigate("../add"), [navigate]);
   const extra = useMemo(() => [
-    <Button key="add"
-            type="primary"
-            icon={<PlusOutlined/>}
-            onClick={onAdd}>
-      Add Release
-    </Button>
+    <Button key="bundle" icon={<DownloadOutlined />} onClick={onBundle}>Download Ad Hoc Bundle</Button>,
+    <Button key="add" type="primary" icon={<PlusOutlined />} onClick={onAdd}>Add Release</Button>
   ], [onAdd]);
 
   const pagination = useUrlPagination();
