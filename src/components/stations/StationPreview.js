@@ -2,7 +2,7 @@ import React, {useState} from "react";
 
 // TODO: De-duplicate with app itself
 
-import {Button, Image, Typography} from "antd";
+import {Button, Divider, Image, Typography} from "antd";
 
 import Quiz from "../Quiz";
 import HTMLContent from "../HTMLContent";
@@ -14,6 +14,13 @@ import {assetIdToBytesUrl} from "../../utils";
 
 const styles = {
   ...pageAndStationStyles,
+
+  stationPreview: {
+    border: "4px solid #333",
+    borderRadius: 4,
+    paddingBottom: 16,
+  },
+
   coordinatesBox: {
     display: "flex",
     flexDirection: "column",
@@ -31,6 +38,12 @@ const styles = {
     color: "white",
     marginTop: 4,
     ...pageAndStationStyles.textShadow,
+  },
+
+  contentItem: {
+    borderTop: "2px solid #F9F9F9",
+    padding: 16,
+    paddingBottom: 0,
   },
 
   quiz: {marginBottom: 8},
@@ -81,7 +94,7 @@ const RenderedContent = React.memo(({id, content}) => {
 const StationPreview = React.memo(({long_title, subtitle, coordinates_utm, header_image, contents}) => {
   const {zone, north, east} = coordinates_utm ?? {};
 
-  return <div className="tgc-preview station-preview">
+  return <div className="tgc-preview station-preview" style={styles.stationPreview}>
     <TGCPreviewHeader headerImage={header_image} longTitle={long_title} subtitle={subtitle}>
       {coordinates_utm ? (
         <div style={styles.coordinatesBox}>
@@ -94,7 +107,9 @@ const StationPreview = React.memo(({long_title, subtitle, coordinates_utm, heade
       ) : null}
     </TGCPreviewHeader>
     <TGCPreviewContent>
-      {(contents ?? []).map((c, i) => <RenderedContent id={`station-${i}`} content={c} key={i} />)}
+      {(contents ?? []).map((c, i) => <div key={i} style={styles.contentItem}>
+        <RenderedContent id={`station-${i}`} content={c} />
+      </div>)}
     </TGCPreviewContent>
   </div>;
 });
