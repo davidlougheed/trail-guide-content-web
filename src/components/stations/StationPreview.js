@@ -20,6 +20,7 @@ const styles = {
     borderRadius: 9,
     paddingBottom: 16,
     overflow: "hidden",
+    maxWidth: 768,
   },
 
   coordinatesBox: {

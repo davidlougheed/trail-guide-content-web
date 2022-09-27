@@ -14,6 +14,15 @@ import {detailTitle, findItemByID, timestampToString} from "../../utils";
 import StationPreview from "./StationPreview";
 import StationQR from "./StationQR";
 
+const styles = {
+  revision: {marginTop: 16},
+  stationPreviewContainer: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+  },
+};
+
 const stationDetailTitle = detailTitle("Station", "title");
 
 const StationDetailView = React.memo(() => {
@@ -73,7 +82,9 @@ const StationDetailView = React.memo(() => {
 
     <Divider />
 
-    <StationPreview {...(station ?? {})} />
+    <div style={styles.stationPreviewContainer}>
+      <StationPreview {...(station ?? {})} />
+    </div>
   </PageHeader>;
 });
 
