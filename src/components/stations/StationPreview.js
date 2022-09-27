@@ -17,8 +17,9 @@ const styles = {
 
   stationPreview: {
     border: "4px solid #333",
-    borderRadius: 4,
+    borderRadius: 9,
     paddingBottom: 16,
+    overflow: "hidden",
   },
 
   coordinatesBox: {
