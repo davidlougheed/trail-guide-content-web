@@ -27,33 +27,35 @@ const HTMLContent = React.memo(({id, htmlContent}) => {
   const [modalShown, setModalShown] = useState(null);
   const hideModal = useCallback(() => setModalShown(null), []);
 
-  useEffect(() => {
-    if (!htmlContent || !modalsById) return;
+  const addHrefHandlers = useCallback(anchorEl => {
+    const href = anchorEl.getAttribute("href");
+    if (!href) return;
+    if (href.startsWith(MODAL_PREFIX)) {
+      anchorEl.addEventListener("click", e => {
+        e.preventDefault();
+        const modalId = href.replace(MODAL_PREFIX, "");
+        if (modalsById.hasOwnProperty(modalId)) setModalShown(modalsById[modalId]);
+      });
+    } else if (href.startsWith(PAGE_PREFIX)) {
+      anchorEl.addEventListener("click", e => {
+        e.preventDefault();
+        const pageId = href.replace(PAGE_PREFIX, "");
+        if (pagesById.hasOwnProperty(pageId)) navigate(`/pages/detail/${pageId}`);
+      });
+    } else if (href.startsWith(STATION_PREFIX)) {
+      anchorEl.addEventListener("click", e => {
+        e.preventDefault();
+        const stationId = href.replace(STATION_PREFIX, "");
+        if (stationsById.hasOwnProperty(stationId)) navigate(`/stations/detail/${stationId}`);
+      });
+    }
+  }, [modalsById, pagesById, stationsById, navigate]);
 
-    document.querySelectorAll(`#${id} a`).forEach(anchorEl => {
-      const href = anchorEl.getAttribute("href");
-      if (!href) return;
-      if (href.startsWith(MODAL_PREFIX)) {
-        anchorEl.addEventListener("click", e => {
-          e.preventDefault();
-          const modalId = href.replace(MODAL_PREFIX, "");
-          if (modalsById.hasOwnProperty(modalId)) setModalShown(modalsById[modalId]);
-        });
-      } else if (href.startsWith(PAGE_PREFIX)) {
-        anchorEl.addEventListener("click", e => {
-          e.preventDefault();
-          const pageId = href.replace(PAGE_PREFIX, "");
-          if (pagesById.hasOwnProperty(pageId)) navigate(`/pages/detail/${pageId}`);
-        });
-      } else if (href.startsWith(STATION_PREFIX)) {
-        anchorEl.addEventListener("click", e => {
-          e.preventDefault();
-          const stationId = href.replace(STATION_PREFIX, "");
-          if (stationsById.hasOwnProperty(stationId)) navigate(`/stations/detail/${stationId}`);
-        });
-      }
-    });
-  }, [htmlContent, modalsById, navigate, pagesById]);
+  useEffect(() => {
+    if (!htmlContent) return;
+    document.querySelectorAll(`#${id} a`).forEach(addHrefHandlers);
+    if (modalShown) document.querySelectorAll(`#${id}-modal a`).forEach(addHrefHandlers);
+  }, [htmlContent, addHrefHandlers, modalShown]);
 
   /** @type React.ReactNode */
   const footer = useMemo(
@@ -71,7 +73,9 @@ const HTMLContent = React.memo(({id, htmlContent}) => {
       title={modalShown?.title}
       footer={footer}
     >
-      {modalShown ? <div className="html-content" dangerouslySetInnerHTML={modalContentObj} /> : null}
+      {modalShown
+        ? <div className="html-content" id={`${id}-modal`} dangerouslySetInnerHTML={modalContentObj} />
+        : null}
     </Modal>
     <div className="html-content" id={id} dangerouslySetInnerHTML={htmlContentObj} />
   </div>;
