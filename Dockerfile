@@ -1,4 +1,4 @@
-FROM nginx:1.21
+FROM nginx:1.23
 
 COPY nginx.conf /etc/nginx/nginx.conf
 RUN apt-get update && \
