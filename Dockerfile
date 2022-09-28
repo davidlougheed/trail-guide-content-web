@@ -12,3 +12,4 @@ COPY . /tgcw/
 WORKDIR /tgcw
 RUN npm ci
 RUN npm run build
+RUN rm -rf ./node_modules && apt-get purge -y nodejs
