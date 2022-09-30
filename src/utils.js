@@ -233,10 +233,10 @@ export const findItemByID = (items, id, idKey="id") =>
 
 
 // TODO: Dedup with app
-export const transformCoords = ({zone, east, north}) => {
+export const transformCoords = ({zone, east, north, crs="WGS84"}) => {
   const [longitude, latitude] = proj4(
     `+proj=utm +zone=${zone}`,
-    "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs",
+    `+proj=longlat +ellps=${crs} +datum=${crs} +no_defs`,
     [east, north]
   );
 

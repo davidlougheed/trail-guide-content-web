@@ -94,13 +94,13 @@ const RenderedContent = React.memo(({id, content}) => {
 });
 
 const StationPreview = React.memo(({long_title, subtitle, coordinates_utm, header_image, contents}) => {
-  const {zone, north, east} = coordinates_utm ?? {};
+  const {crs, zone, north, east} = coordinates_utm ?? {};
 
   return <div className="tgc-preview station-preview" style={styles.stationPreview}>
     <TGCPreviewHeader headerImage={header_image} longTitle={long_title} subtitle={subtitle}>
       {coordinates_utm ? (
         <div style={styles.coordinatesBox}>
-          <span style={styles.coordinatesTitle}>UTM Coordinates (Zone {zone ?? ""})</span>
+          <span style={styles.coordinatesTitle}>UTM Coordinates ({crs ?? ""} Zone {zone ?? ""})</span>
           <span style={styles.coordinatesItem}>
               <span style={styles.boldText}>East:</span> {east ?? ""}</span>
           <span style={styles.coordinatesItem}>

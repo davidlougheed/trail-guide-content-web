@@ -44,6 +44,19 @@ const styles = {
 // Maximum number of days each month can have.
 const MONTH_DAYS = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
+const zoneOptions = [];
+for (let i = 1; i < 61; i++) {
+  const numeral = String(i).padStart(2, "0");
+  for (let li = 67; li < 91; li++) {
+    const str = `${numeral}${String.fromCharCode(li)}`;
+    zoneOptions.push({value: str, label: str});
+  }
+}
+zoneOptions.push(
+  {value: "A", label: "A"},
+  {value: "B", label: "B"},
+);
+
 const contentTypes = [
   {value: "html", label: "Rich Text"},
   {value: "gallery", label: "Gallery"},
@@ -64,6 +77,7 @@ const quizAnswerOptions = [
 const fieldPaths = {
   visible_from: ["visible", "from"],
   visible_to: ["visible", "to"],
+  coordinates_utm_crs: ["coordinates_utm", "crs"],
   coordinates_utm_zone: ["coordinates_utm", "zone"],
   coordinates_utm_east: ["coordinates_utm", "east"],
   coordinates_utm_north: ["coordinates_utm", "north"],
@@ -127,6 +141,10 @@ const monthDayValidator = (r, v) => {
   return Promise.resolve();
 };
 
+const filterOption = (input, option) => {
+  return option.label.toLowerCase().includes(input.toLowerCase());
+}
+
 
 const StationForm = React.memo(({...props}) => {
   const navigate = useNavigate();
@@ -148,7 +166,8 @@ const StationForm = React.memo(({...props}) => {
   const transformInitialValues = useCallback(v => ({
     rank: numStations,  // Add station to the end of the list in the app by default
     coordinates_utm: {
-      zone: "18N",
+      crs: "NAD83",
+      zone: "18T",
       ...(v.coordinates_utm ?? {}),
     },
     ...v,
@@ -293,19 +312,24 @@ const StationForm = React.memo(({...props}) => {
       </Col>
     </Row>
     <Row gutter={12}>
-      <Col span={8}>
-        <Form.Item name={fieldPaths.coordinates_utm_zone} label="UTM Zone" rules={RULES_REQUIRED_BASIC}>
+      <Col span={6}>
+        <Form.Item name={fieldPaths.coordinates_utm_crs} label="CRS" rules={RULES_REQUIRED_BASIC}>
           <Select>
-            <Select.Option value="18N">18N</Select.Option>
+            <Select.Option value="NAD83">NAD83</Select.Option>
           </Select>
         </Form.Item>
       </Col>
-      <Col span={8}>
+      <Col span={6}>
+        <Form.Item name={fieldPaths.coordinates_utm_zone} label="UTM Zone" rules={RULES_REQUIRED_BASIC}>
+          <Select showSearch={true} filterOption={filterOption} options={zoneOptions} />
+        </Form.Item>
+      </Col>
+      <Col span={6}>
         <Form.Item name={fieldPaths.coordinates_utm_east} label="Easting" rules={RULES_REQUIRED_BASIC}>
           <Input type="number" addonAfter="E" />
         </Form.Item>
       </Col>
-      <Col span={8}>
+      <Col span={6}>
         <Form.Item name={fieldPaths.coordinates_utm_north} label="Northing" rules={RULES_REQUIRED_BASIC}>
           <Input type="number" addonAfter="N" />
         </Form.Item>

@@ -66,7 +66,8 @@ const StationDetailView = React.memo(() => {
       <Descriptions.Item label="Enabled" span={2}>{station?.enabled ? "Yes" : "No"}</Descriptions.Item>
       <Descriptions.Item label="Rank" span={2}>{station?.rank}</Descriptions.Item>
       <Descriptions.Item label="Coordinates" span={2}>
-        {station?.coordinates_utm?.zone ?? ""}&nbsp;
+        {station?.coordinates_utm?.crs ?? ""}&nbsp;
+        Zone&nbsp;{station?.coordinates_utm?.zone ?? ""}&nbsp;
         {station?.coordinates_utm?.north ?? ""}N&nbsp;
         {station?.coordinates_utm?.east ?? ""}E
       </Descriptions.Item>
