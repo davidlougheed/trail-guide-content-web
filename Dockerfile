@@ -1,15 +1,19 @@
-FROM nginx:1.23
-
-COPY nginx.conf /etc/nginx/nginx.conf
-RUN apt-get update && \
-    apt-get install -y curl && \
-    curl -fsSL https://deb.nodesource.com/setup_16.x | bash && \
-    apt-get install -y nodejs
-
-RUN mkdir /tgcw
-COPY . /tgcw/
+FROM node:18-bullseye-slim
 
 WORKDIR /tgcw
-RUN npm ci
+
+COPY package.json package.json
+COPY package-lock.json package-lock.json
+
+RUN npm ci --production
+
+COPY . .
+
 RUN npm run build
-RUN rm -rf ./node_modules && apt-get purge -y nodejs
+
+FROM nginx:1.23
+
+WORKDIR /tgcw
+
+COPY --from=0 /tgcw/dist ./dist
+COPY nginx.conf /etc/nginx/nginx.conf
