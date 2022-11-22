@@ -84,13 +84,29 @@ const fieldPaths = {
   revision_message: ["revision", "message"],
 };
 
+const WYSIWYG_BLANKS = [
+  "",
+  "&nbsp;",
+  "<p></p>",
+  "<p><br></p>",
+  "<p>&nbsp;</p>",
+];
+
 const normalizeHTMLContent = content => {
   if (!content) return "";
+
   content = content.trim();
-  if (["", "<p><br></p>", "<p></p>"].includes(content)) {
-    // Annoying WYSIWYG "blanks"
+
+  if (WYSIWYG_BLANKS.includes(content)) {
+    // Annoying fake-empty content
     return "";
   }
+
+  // These "narrow non-breaking spaces" were popping up a lot
+  // with pastes from Word and created unintentionally strange
+  // wrapping behaviour. Replace them with normal spaces.
+  content = content.replace("\u202f", " ");
+
   return content;
 };
 
@@ -106,7 +122,7 @@ const normalizeContents = c => c ? ({
 
   ...(c.content_type === "gallery" ? {
     description: normalizeHTMLContent(c.description),
-    items: c.items || []
+    items: c.items || [],
   } : {}),
 
   ...(c.content_type === "quiz" ? {
