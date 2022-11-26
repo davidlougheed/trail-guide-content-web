@@ -4,7 +4,7 @@
 
 import React, {useCallback, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 
 import {Button, Descriptions, Divider, Modal, PageHeader} from "antd";
 import {EditOutlined, QrcodeOutlined} from "@ant-design/icons";
@@ -73,8 +73,10 @@ const StationDetailView = React.memo(() => {
       </Descriptions.Item>
     </Descriptions>
 
-    <Descriptions bordered={true} size="small" style={{marginTop: 16}}>
-      <Descriptions.Item label="Revision" span={1}>{station?.revision?.number ?? ""}</Descriptions.Item>
+    <Descriptions bordered={true} size="small" style={styles.revision}>
+      <Descriptions.Item label="Revision" span={1}>
+        <Link to={`/stations/revision/${station?.id}`}>{station?.revision?.number ?? ""}</Link>
+      </Descriptions.Item>
       <Descriptions.Item label="Update" span={1}>{station?.revision?.message ?? ""}</Descriptions.Item>
       <Descriptions.Item label="Last Updated" span={1}>
         {timestampToString(station?.revision?.timestamp) ?? ""}

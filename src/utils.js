@@ -42,8 +42,23 @@ export const fetchOtt = async accessToken => {
     return await req.json();
   } else {
     console.error("Failed to get OTT", req);
+    return null;
   }
 };
+
+export const fetchRevision = objectsType => async (objectID, revisionID, accessToken) => {
+  const req = await fetch(`${API_BASE_URL}/${objectsType}/${objectID}/revision/${revisionID}`, {
+    headers: {"Authorization": `Bearer ${accessToken}`},
+  });
+
+  if (req.ok) {
+    return await req.json();
+  } else {
+    console.error("Failed to get revision", req);
+    return null;
+  }
+};
+export const fetchStationRevision = fetchRevision("stations");
 
 export const downloadVersionBundle = (version, isAuthenticated, getAccessTokenSilently) => async () => {
   if (!isAuthenticated) return;
