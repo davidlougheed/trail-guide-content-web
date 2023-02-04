@@ -12,7 +12,8 @@ import {downloadVersionBundle, findItemByID} from "../../utils";
 import {useAuth0} from "@auth0/auth0-react";
 
 const styles = {
-  nowrap: {whiteSpace: "nowrap"},
+  noWrap: {whiteSpace: "nowrap"},
+  preWrap: {whiteSpace: "pre-wrap"},
 };
 
 const ReleaseDetailView = React.memo(() => {
@@ -39,16 +40,18 @@ const ReleaseDetailView = React.memo(() => {
     <Descriptions bordered={true} size="small">
       <Descriptions.Item label="Version">{version ?? ""}</Descriptions.Item>
       <Descriptions.Item label="Submitted">
-        <span style={styles.nowrap}>{(new Date(submitted_dt)).toLocaleDateString()}</span></Descriptions.Item>
+        <span style={styles.noWrap}>{(new Date(submitted_dt)).toLocaleDateString()}</span></Descriptions.Item>
       <Descriptions.Item label="Published">
-        <span style={styles.nowrap}>{published_dt ? (new Date(published_dt)).toLocaleDateString() : "–"}</span>
+        <span style={styles.noWrap}>{published_dt ? (new Date(published_dt)).toLocaleDateString() : "–"}</span>
       </Descriptions.Item>
-      <Descriptions.Item label="Release Notes" span={3}>{release_notes ?? ""}</Descriptions.Item>
+      <Descriptions.Item label="Release Notes" span={3}>
+        <div style={styles.preWrap}>{release_notes ?? ""}</div>
+      </Descriptions.Item>
       <Descriptions.Item label="Bundle Path">
         <a onClick={downloadVersionBundle(version, isAuthenticated, getAccessTokenSilently)}>{bundle_path ?? ""}</a>
       </Descriptions.Item>
       <Descriptions.Item label="Bundle Size">
-        <span style={styles.nowrap}>{bundle_size ? `${(bundle_size / 1000000).toFixed(1)} MB` : "—"}</span>
+        <span style={styles.noWrap}>{bundle_size ? `${(bundle_size / 1000000).toFixed(1)} MB` : "—"}</span>
       </Descriptions.Item>
     </Descriptions>
   </PageHeader>;
