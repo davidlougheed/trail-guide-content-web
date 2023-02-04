@@ -4,9 +4,9 @@ import {Link, useNavigate} from "react-router-dom";
 import {useAuth0} from "@auth0/auth0-react";
 
 import {Button, Modal, PageHeader, Space, Table} from "antd";
-import {CheckSquareOutlined, CloseSquareOutlined, DeleteOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
+import {DeleteOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
 
-import {deleteAsset, updateAsset} from "../../modules/assets/actions";
+import {deleteAsset} from "../../modules/assets/actions";
 import {ACCESS_TOKEN_MANAGE} from "../../utils";
 import {useUrlPagination} from "../../hooks/pages";
 
@@ -19,8 +19,6 @@ const AssetListView = React.memo(() => {
   const dispatch = useDispatch();
   const {getAccessTokenSilently} = useAuth0();
 
-  const [assetsLoading, setAssetsLoading] = useState({});
-
   const assetsInitialFetch = useSelector(state => state.assets.initialFetchDone);
   const assetsFetching = useSelector(state => state.assets.isFetching);
   const assets = useSelector(state => state.assets.items);
@@ -28,27 +26,7 @@ const AssetListView = React.memo(() => {
 
   const [delAsset, setDelAsset] = useState(null);
 
-  const setAssetEnable = useCallback(async (assetID, enabledValue) => {
-    setAssetsLoading({...assetsLoading, [assetID]: true});
-    try {
-      const body = new FormData();
-      body.set("enabled", enabledValue ? "1" : "");
-      const token = await getAccessTokenSilently(ACCESS_TOKEN_MANAGE);
-      await dispatch(updateAsset(assetID, body, token));
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setAssetsLoading({...assetsLoading, [assetID]: undefined});
-    }
-  }, [assetsLoading, getAccessTokenSilently, dispatch]);
-
   const closeDelModal = useCallback(() => setDelAsset(null), []);
-
-  const onDelAssetDisable = useCallback(async () => {
-    if (!delAsset) return;
-    await setAssetEnable(delAsset.id, false);
-    closeDelModal();
-  }, [setAssetEnable, delAsset]);
 
   const onDelete = useCallback(async () => {
     if (!delAsset) return;
@@ -64,7 +42,7 @@ const AssetListView = React.memo(() => {
   // noinspection JSUnusedGlobalSymbols,JSUnresolvedVariable
   const columns = useMemo(() => [
     {
-      title: "File Name",
+      title: "File name",
       dataIndex: "file_name",
       shouldCellUpdate: (r, pr) => r.id !== pr.id || r.file_name !== pr.file_name,
       render: (fileName, asset) => <Link to={`/assets/detail/${asset.id}`}>{fileName}</Link>,
@@ -82,56 +60,52 @@ const AssetListView = React.memo(() => {
       shouldCellUpdate: (r, pr) => r.file_size !== pr.file_size,
       render: fileSize => <span>{(fileSize / 1000).toFixed(0)}&nbsp;KB</span>,
     },
+    // TODO: Link this to modal
     {
-      title: "Enabled?",
-      dataIndex: "enabled",
-      shouldCellUpdate: (r, pr) => r.enabled !== pr.enabled,
-      render: enabled => enabled ? "Yes" : "No",
+      title: "Times used (total / enabled)",
+      width: 210,
+      shouldCellUpdate: (r, pr) =>
+        (r.times_used_by_all !== pr.times_used_by_all) ||
+        (r.times_used_by_enabled !== pr.times_used_by_enabled),
+      render: asset => `${asset.times_used_by_all} / ${asset.times_used_by_enabled}`,
     },
     {
       title: "Actions",
       key: "actions",
       shouldCellUpdate: (r, pr) => r.id !== pr.id || r.enabled !== pr.enabled,
-      render: asset => (
+      render: asset => console.log(asset) || (
         <Space size="small">
           <Button icon={<EyeOutlined/>}
                   onClick={() => navigate(`/assets/detail/${asset.id}`)}>View</Button>
-          {asset.enabled ? (
-            <Button loading={assetsLoading[asset.id]}
-                    icon={<CloseSquareOutlined />}
-                    onClick={() => setAssetEnable(asset.id, false)}>Disable</Button>
-          ) : (
-            <Button loading={assetsLoading[asset.id]}
-                    icon={<CheckSquareOutlined />}
-                    onClick={() => setAssetEnable(asset.id, true)}>Enable</Button>
-          )}
-          {/*<Button icon={<EditOutlined />}*/}
-          {/*        onClick={() => navigate(`edit/${asset.id}`)}>Edit</Button>*/}
-          <Button icon={<DeleteOutlined/>} danger={true} onClick={() => setDelAsset(asset)}>Delete</Button>
+          <Button
+            icon={<DeleteOutlined/>}
+            disabled={asset.times_used_by_all !== 0}
+            danger={true}
+            onClick={() => setDelAsset(asset)}>Delete</Button>
         </Space>
       )
     },
-  ], [navigate, assetsLoading, setAssetEnable]);
+  ], [navigate]);
 
   const extra = useMemo(() => [
     <Button key="add" type="primary" icon={<PlusOutlined/>} onClick={() => navigate("/assets/add")}>Add New</Button>,
   ], [navigate]);
 
   // noinspection JSUnresolvedVariable
-  const totalEnabledAssetSize = useMemo(
+  const totalUsedAssetSize = useMemo(
     () => assets
-      .filter(a => a.enabled)
+      .filter(a => a.times_used_by_enabled > 0)
       .reduce(((acc, asset) => acc + asset.file_size), 0),
     [assets]);
 
   const footer = useCallback(
     () => <span>
-        <span style={styles.footerLabel}>Total Enabled Asset Size:</span>&nbsp;
+        <span style={styles.footerLabel}>Total Used Asset Size:</span>&nbsp;
         {(!assetsInitialFetch && assetsFetching)
           ? `–`
-          : `${(totalEnabledAssetSize / 1000).toFixed(0)} KB`}
+          : `${(totalUsedAssetSize / 1000).toFixed(0)} KB`}
       </span>,
-    [assetsInitialFetch, assetsFetching, totalEnabledAssetSize],
+    [assetsInitialFetch, assetsFetching, totalUsedAssetSize],
   );
 
   const pagination = useUrlPagination();
@@ -142,16 +116,9 @@ const AssetListView = React.memo(() => {
            onCancel={closeDelModal}
            footer={<Space>
              <Button type="primary" danger={true} icon={<DeleteOutlined />} onClick={onDelete}>Delete</Button>
-             {delAsset?.enabled
-               ? <Button type="primary" icon={<CloseSquareOutlined />} onClick={onDelAssetDisable}>Disable</Button>
-               : null}
              <Button onClick={closeDelModal}>Cancel</Button>
            </Space>}>
-      Are you sure you wish to delete the asset &ldquo;{delAsset?.file_name}&rdquo;? If other content refers to
-      this asset, those links will be <strong>broken</strong>.&nbsp;
-      {delAsset?.enabled ? <span>
-        If you wish, you can instead <a href="#" onClick={onDelAssetDisable}>disable</a> this asset.
-      </span> : ""}
+      Are you sure you wish to delete the asset &ldquo;{delAsset?.file_name}&rdquo;?
     </Modal>
     <PageHeader
       ghost={false}

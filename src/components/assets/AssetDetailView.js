@@ -64,13 +64,20 @@ const AssetDetailView = React.memo(() => {
 
   return <PageHeader ghost={false} onBack={onBack} title={title}>
     <Descriptions bordered={true} size="small">
-      <Descriptions.Item label="ID">{asset?.id ?? ""}</Descriptions.Item>
+      <Descriptions.Item label="ID">
+        <span style={{fontFamily: "monospace"}}>{asset?.id ?? ""}</span>
+      </Descriptions.Item>
       <Descriptions.Item label="File Name" span={2}>{asset?.file_name ?? ""}</Descriptions.Item>
       <Descriptions.Item label="Type" span={1}>{asset?.asset_type ?? ""}</Descriptions.Item>
-      <Descriptions.Item label="File Size" span={1}>
+      <Descriptions.Item label="File Size" span={3}>
         {((asset?.file_size ?? 0) / 1000).toFixed(0)} KB</Descriptions.Item>
-      <Descriptions.Item label="Enabled" span={2}>{asset?.enabled ? "Yes" : "No"}</Descriptions.Item>
-      <Descriptions.Item label="SHA1 Checksum" span={3}>{asset?.sha1_checksum ?? ""}</Descriptions.Item>
+      <Descriptions.Item label="Times used (total)" span={1}>
+        {(asset?.times_used_by_all ?? "").toString()}</Descriptions.Item>
+      <Descriptions.Item label="Times used (enabled)" span={2}>
+        {(asset?.times_used_by_enabled ?? "").toString()}</Descriptions.Item>
+      <Descriptions.Item label="SHA1 Checksum" span={3}>
+        <span style={{fontFamily: "monospace"}}>{asset?.sha1_checksum ?? ""}</span>
+      </Descriptions.Item>
     </Descriptions>
 
     <Card size="small" title="Preview" style={{marginTop: 16}}>
