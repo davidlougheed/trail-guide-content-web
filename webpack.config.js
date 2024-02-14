@@ -1,21 +1,26 @@
 // noinspection JSValidateTypes
 
-const path = require("path");
+const path = require("node:path");
 const CopyPlugin = require("copy-webpack-plugin");
 const DotenvPlugin = require("dotenv-webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = env => ({
-    entry: ["babel-polyfill", path.resolve(__dirname, "./src/index.js")],
+    entry: ["./src/index.tsx"],
     module: {
         rules: [
             {
+                test: /\.[tj]sx?$/,
+                loader: "ts-loader",
+                exclude: /node_modules/,
+            },
+            {
                 test: /\.(js|mjs)$/,
-                enforce: "pre",
+                // enforce: "pre",
                 use: ["source-map-loader"],
             },
             {
-                test: /\.(js|jsx)$/,
+                test: /\.jsx?$/,
                 exclude: /node_modules/,
                 use: ["babel-loader"]
             },
@@ -30,14 +35,15 @@ module.exports = env => ({
         ]
     },
     resolve: {
-        extensions: ["*", ".js", ".jsx"]
+        extensions: ["*", ".webpack.js", ".ts", ".tsx", ".js", ".jsx"],
     },
     output: {
         path: path.resolve(__dirname, "dist"),
         filename: "[name].[chunkhash:8].js",
-        sourceMapFilename: "[name].[chunkhash:8].map",
+        sourceMapFilename: "[file].map[query]",
         chunkFilename: "[name].[chunkhash:8].js",
     },
+    devtool: "source-map",
     optimization: {
         splitChunks: {
             chunks: "all"

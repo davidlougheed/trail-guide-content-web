@@ -11,7 +11,7 @@ module.exports = {
     ["import", {
       "libraryName": "antd",
       "style": "css"
-    }],
+    }, "antd"],
     ["lodash"],
   ],
 };

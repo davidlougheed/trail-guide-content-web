@@ -4,7 +4,7 @@ export default (
   state = {
     isFetching: false,
     isUpdating: false,
-    data: {},
+    data: null,
     error: "",
   },
   action,
