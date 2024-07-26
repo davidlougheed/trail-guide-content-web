@@ -34,8 +34,8 @@ const StationListView = React.memo(() => {
   const sections = useAppSelector(state => state.sections.items);
   const categories = useAppSelector(state => state.categories.items);
 
-  const [qrStation, setQrStation] = useState(null);
-  const [delStation, setDelStation] = useState(null);
+  const [qrStation, setQrStation] = useState<Station | null>(null);
+  const [delStation, setDelStation] = useState<Station | null>(null);
 
   const columns = useMemo(() => [
     {

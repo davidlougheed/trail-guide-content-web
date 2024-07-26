@@ -1,6 +1,6 @@
+import type {ThunkAction} from "redux-thunk";
 import {makeIfNeededAction, networkAction, networkActionTypes} from "../../utils";
-import {ThunkAction} from "redux-thunk";
-import {RootState} from "../../store";
+import type {RootState} from "../../store";
 
 import type {Asset} from "./types";
 
@@ -11,7 +11,7 @@ export const DELETE_ASSET = networkActionTypes("DELETE_ASSET");
 const fetchAssets = networkAction(FETCH_ASSETS, "/assets");
 export const fetchAssetsIfNeeded = makeIfNeededAction(fetchAssets, "assets");
 
-const _addAsset = networkAction<FormData, Asset>(ADD_ASSET, "/assets", "POST");
+const _addAsset = networkAction<Asset, FormData>(ADD_ASSET, "/assets", "POST");
 export const addAsset = (body: FormData, accessToken: string): ThunkAction<any, RootState, unknown, any> =>
   (dispatch, getState) => {
     const state = getState();
@@ -23,6 +23,6 @@ export const deleteAsset = (assetID: string, accessToken: string): ThunkAction<a
   (dispatch, getState) => {
     const state = getState();
     if (state.assets.isFetching || state.assets.isAdding || state.assets.isUpdating || state.assets.isDeleting) return;
-    return dispatch(networkAction<{}, {message: string}>(DELETE_ASSET, `/assets/${assetID}`, "DELETE")(
+    return dispatch(networkAction<{message: string}>(DELETE_ASSET, `/assets/${assetID}`, "DELETE")(
       {}, {id: assetID}, accessToken));
   };

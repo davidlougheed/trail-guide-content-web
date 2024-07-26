@@ -118,7 +118,7 @@ export interface NetworkActionResponse<T> {
   message?: string;
 }
 
-export const networkAction = <BodyType, ReturnType>(
+export const networkAction = <ReturnType, BodyType = {}>(
   types: NetworkActionTypes,
   url: string,
   method: "GET" | "POST" | "PATCH" | "PUT" | "DELETE" = "GET",

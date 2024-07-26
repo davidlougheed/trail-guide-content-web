@@ -40,7 +40,7 @@ export type CIQuiz = {
 
 export type StationContentItem = CIHTML | CIGallery | CIQuiz;
 
-export type Station = {
+type StationBase = {
   id: string;
   title: string;
   long_title: string;
@@ -56,9 +56,19 @@ export type Station = {
   contents: StationContentItem[];
   enabled: boolean;
   rank: number;
+};
+
+export type Station = StationBase & {
   revision: {
     timestamp: string;
     number: number;
     message: string;
-  }
+  };
+};
+
+export type StationUpdate = Station | {
+  enabled: boolean;
+  revision: {
+    working_copy: number;
+  };
 };

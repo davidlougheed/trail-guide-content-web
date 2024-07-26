@@ -16,9 +16,9 @@ const StationEditView = React.memo(() => {
   const {id: stationID} = useParams();
   const {getAccessTokenSilently} = useAuth0();
 
-  const fetchingStations = useAppSelector(state => state.stations.isFetching);
-  const updatingStations = useAppSelector(state => state.stations.isUpdating);
-  const station = useAppSelector(state => findItemByID<Station>(state.stations.items, stationID));
+  const fetchingStations = useAppSelector((state) => state.stations.isFetching);
+  const updatingStations = useAppSelector((state) => state.stations.isUpdating);
+  const station = useAppSelector((state) => findItemByID<Station>(state.stations.items, stationID));
 
   const onFinish = useCallback(async (v) => {
     console.log("saving station", v);

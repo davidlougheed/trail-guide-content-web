@@ -1,3 +1,7 @@
+// A web interface to manage a trail guide mobile app's content and data.
+// Copyright (C) 2021-2024  David Lougheed
+// See NOTICE for more information.
+
 import React, {useCallback, useMemo, useRef} from "react";
 import {useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
@@ -9,7 +13,7 @@ import ObjectForm, {RULES_REQUIRED_BASIC, useObjectForm} from "../ObjectForm";
 
 const REVISION_MESSAGE_PATH = ["revision", "message"];
 
-const PageForm = props => {
+const PageForm = (props) => {
   const navigate = useNavigate();
 
   const quillRef = useRef(undefined);
@@ -53,24 +57,24 @@ const PageForm = props => {
     <Row gutter={12}>
       <Col span={8}>
         <Form.Item name="title" label="Title" rules={RULES_REQUIRED_BASIC}>
-          <Input/>
+          <Input />
         </Form.Item>
       </Col>
       <Col span={16}>
         <Form.Item name="long_title" label="Long Title" rules={RULES_REQUIRED_BASIC}>
-          <Input/>
+          <Input />
         </Form.Item>
       </Col>
     </Row>
     <Row gutter={12}>
       <Col span={16}>
         <Form.Item name="subtitle" label="Subtitle">
-          <Input/>
+          <Input />
         </Form.Item>
       </Col>
       <Col span={4}>
         <Form.Item name="enabled" label="Enabled" valuePropName="checked">
-          <Switch/>
+          <Switch />
         </Form.Item>
       </Col>
       <Col span={4}>
@@ -83,7 +87,7 @@ const PageForm = props => {
       <Select placeholder="Select header image for this station" allowClear={true} options={assetOptions} />
     </Form.Item>
     <Form.Item label="Content">
-      <HTMLEditor initialValue={transformedInitialValues.content ?? ""} innerRef={quillRef}/>
+      <HTMLEditor initialValue={transformedInitialValues.content ?? ""} innerRef={quillRef} />
     </Form.Item>
     <Divider />
     <Form.Item name={REVISION_MESSAGE_PATH} label="Revision Message">
