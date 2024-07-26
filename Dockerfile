@@ -11,7 +11,7 @@ COPY . .
 
 RUN npm run build
 
-FROM nginx:1.25
+FROM nginx:1.26
 
 WORKDIR /tgcw
 
