@@ -4,16 +4,18 @@ import {PageHeader, Table} from "antd";
 
 import {useUrlPagination} from "../../hooks/pages";
 import {useCategories} from "../../modules/categories/hooks";
+import CategoryIcon from "./CategoryIcon";
 
 const COLUMNS = [
   {
-    "title": "ID",
-    "dataIndex": "id",
+    title: "ID",
+    dataIndex: "id",
   },
-  // {
-  //   "title": "Icon",
-  //   "dataIndex": "icon_svg",
-  // },
+  {
+    title: "Icon",
+    dataIndex: "icon_svg",
+    render: (path: string) => path ? <CategoryIcon path={path} /> : null,
+  },
   // {
   //     "title": "Actions",
   //     "key": "actions",
