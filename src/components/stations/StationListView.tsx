@@ -2,7 +2,7 @@ import React, {useCallback, useMemo, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useAuth0} from "@auth0/auth0-react";
 
-import {Button, Modal, PageHeader, Space, Table, Tooltip} from "antd";
+import {Button, Modal, PageHeader, Space, Table, type TableColumnsType, Tooltip} from "antd";
 import {
   CloseSquareOutlined,
   DeleteOutlined,
@@ -38,7 +38,7 @@ const StationListView = React.memo(() => {
   const [qrStation, setQrStation] = useState<Station | null>(null);
   const [delStation, setDelStation] = useState<Station | null>(null);
 
-  const columns = useMemo(() => [
+  const columns = useMemo<TableColumnsType<Station>>(() => [
     {
       title: "Title",
       dataIndex: "title",
@@ -85,7 +85,7 @@ const StationListView = React.memo(() => {
         </Space>
       ),
     },
-  ], [navigate]);
+  ], [navigate, sections, categories]);
 
   const onAdd = useCallback(() => navigate("../add"), [navigate]);
   const extra = useMemo(() => [
