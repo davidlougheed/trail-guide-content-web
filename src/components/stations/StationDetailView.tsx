@@ -15,6 +15,7 @@ import StationQR from "./StationQR";
 
 import {useAppSelector} from "../../hooks";
 import type {Station} from "../../modules/stations/types";
+import SectionText from "../sections/SectionText";
 
 const styles: Record<string, CSSProperties> = {
   id: {fontFamily: "monospace"},
@@ -84,7 +85,7 @@ const StationDetailView = React.memo(() => {
     </Modal>
     <Descriptions bordered={true} size="small" column={3}>
       <Descriptions.Item label="ID" span={1}><span style={styles.id}>{station.id}</span></Descriptions.Item>
-      <Descriptions.Item label="Section" span={1}>{station.section}</Descriptions.Item>
+      <Descriptions.Item label="Section" span={1}><SectionText id={station.section} /></Descriptions.Item>
       <Descriptions.Item label="Category" span={1}>{station.category}</Descriptions.Item>
       <Descriptions.Item label="Title" span={1}>{station.title}</Descriptions.Item>
       <Descriptions.Item label="Long Title" span={2}>{station.long_title}</Descriptions.Item>

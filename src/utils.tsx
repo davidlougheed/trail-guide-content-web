@@ -192,7 +192,7 @@ export const makeIfNeededAction = <ReturnType,>(
   };
 
 
-export type GenericNetworkReducerState<DataType> = {
+export type GenericNetworkReducerState<DataType, IDType extends string | number = string> = {
   initialFetchDone: boolean;
   isFetching: boolean;
   isAdding: boolean;
@@ -200,6 +200,7 @@ export type GenericNetworkReducerState<DataType> = {
   isDeleting: boolean;
   // TODO: how to express items/data
   items?: DataType[];
+  itemsByID?: Record<IDType, DataType>;
   data?: DataType | null;
   error: string;
 }
@@ -217,7 +218,7 @@ export type GenericNetworkReducerState<DataType> = {
 //   error: string;
 // }
 
-export const makeGenericNetworkReducer = <DataType,>(
+export const makeGenericNetworkReducer = <DataType, IDType extends string | number = string>(
   fetchTypes: NetworkActionTypes,
   addTypes: NetworkActionTypes | undefined = undefined,
   updateTypes: NetworkActionTypes | undefined = undefined,
@@ -225,17 +226,17 @@ export const makeGenericNetworkReducer = <DataType,>(
   idKey: string = "id",
   isArrayData: boolean = true,
 ) => (
-  state: GenericNetworkReducerState<DataType> = {
+  state: GenericNetworkReducerState<DataType, IDType> = {
     initialFetchDone: false,
     isFetching: false,
     isAdding: false,
     isUpdating: false,
     isDeleting: false,
-    ...(isArrayData ? {items: []} : {data: null}),
+    ...(isArrayData ? {items: [], itemsByID: {} as Record<IDType, DataType>} : {data: null}),
     error: "",
   },
   action,
-): GenericNetworkReducerState<DataType> => {
+): GenericNetworkReducerState<DataType, IDType> => {
   switch (action.type) {
     case fetchTypes.REQUEST:
       return {...state, isFetching: true};
@@ -245,8 +246,12 @@ export const makeGenericNetworkReducer = <DataType,>(
         isFetching: false,
         initialFetchDone: true,
         ...(isArrayData
-          ? {items: action.data as DataType[]}
-          : {data: action.data as DataType}
+          ? (
+            {
+              items: action.data as DataType[],
+              itemsByID: Object.fromEntries((action.data as DataType[]).map((d) => [d[idKey], d]))
+            }
+          ) : {data: action.data as DataType}
         ),
         error: "",
       };
@@ -263,8 +268,12 @@ export const makeGenericNetworkReducer = <DataType,>(
           ...state,
           isAdding: false,
           ...(isArrayData
-            ? {items: [...state.items, action.data]}
-            : {data: action.data}
+            ? (
+              {
+                items: [...state.items, action.data],
+                itemsByID: {...state.itemsByID, [action.data[idKey]]: action.data },
+              }
+            ) : {data: action.data}
           ),
           error: "",
         };
@@ -282,8 +291,12 @@ export const makeGenericNetworkReducer = <DataType,>(
           ...state,
           isUpdating: false,
           ...(isArrayData
-            ? {items: state.items.map(i => i[idKey] === action.data[idKey] ? action.data : i)}
-            : {data: action.data}
+            ? (
+              {
+                items: state.items.map(i => i[idKey] === action.data[idKey] ? action.data : i),
+                itemsByID: {...state.itemsByID, [action.data[idKey]]: action.data},
+              }
+            ) : {data: action.data}
           ),
           error: "",
         };
@@ -301,8 +314,13 @@ export const makeGenericNetworkReducer = <DataType,>(
           ...state,
           isDeleting: false,
           ...(isArrayData
-              ? {items: state.items.filter(i => i[idKey] !== action.params.id)}
-              : {data: null}
+              ? (
+                {
+                  items: state.items.filter(i => i[idKey] !== action.params.id),
+                  itemsByID: Object.fromEntries(Object.entries(state.itemsByID)
+                    .filter((e) => e[0] !== action.params.id)) as Record<IDType, DataType>,
+                }
+              ) : {data: null}
           ),
           error: "",
         };

@@ -18,6 +18,8 @@ import {deleteStation, updateStation} from "../../modules/stations/actions";
 import {ACCESS_TOKEN_MANAGE, timestampToString} from "../../utils";
 import {useAppDispatch, useAppSelector} from "../../hooks";
 import {Station} from "../../modules/stations/types";
+import {useSections} from "../../modules/sections/hooks";
+import SectionText from "../sections/SectionText";
 
 const styles = {
   qrModal: {top: 36},
@@ -32,7 +34,7 @@ const StationListView = React.memo(() => {
   const stationsFetching = useAppSelector(state => state.stations.isFetching);
   const stations = useAppSelector(state => state.stations.items);
 
-  const sections = useAppSelector(state => state.sections.items);
+  const {items: sections} = useSections();
   const {items: categories} = useCategories();
 
   const [qrStation, setQrStation] = useState<Station | null>(null);
@@ -46,8 +48,9 @@ const StationListView = React.memo(() => {
     {
       title: "Section",
       dataIndex: "section",
-      filters: sections.map(s => ({text: s.id, value: s.id})),
+      filters: sections.map(s => ({text: s.title, value: s.id})),
       onFilter: (value, record) => record.section === value,
+      render: (section: string) => <SectionText id={section} />,
     },
     {
       title: "Category",
