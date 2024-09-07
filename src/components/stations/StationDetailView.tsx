@@ -14,8 +14,11 @@ import StationPreview from "./StationPreview";
 import StationQR from "./StationQR";
 
 import {useAppSelector} from "../../hooks";
+import {useCategories} from "../../modules/categories/hooks";
+import {useSections} from "../../modules/sections/hooks";
 import type {Station} from "../../modules/stations/types";
 import SectionText from "../sections/SectionText";
+import CategoryIcon from "../categories/CategoryIcon";
 
 const styles: Record<string, CSSProperties> = {
   id: {fontFamily: "monospace"},
@@ -38,6 +41,8 @@ const StationDetailView = React.memo(() => {
   const stationsFetching = useAppSelector(state => state.stations.isFetching);
   const stations  = useAppSelector(state => state.stations.items);
   const station: Station | undefined = useMemo(() => findItemByID(stations, stationID), [stations, stationID]);
+  const {itemsByID: sections} = useSections();
+  const {itemsByID: categories} = useCategories();
 
   const [qrModalOpen, setQrModalOpen] = useState(false);
 
@@ -77,6 +82,8 @@ const StationDetailView = React.memo(() => {
     }
   }
 
+  const section = sections[station.section];
+  const category = categories[station.category];
   const enabled = station.enabled ? "Yes" : "No";
 
   return <PageHeader ghost={false} onBack={onBack} title={title} extra={extra}>
@@ -86,7 +93,14 @@ const StationDetailView = React.memo(() => {
     <Descriptions bordered={true} size="small" column={3}>
       <Descriptions.Item label="ID" span={1}><span style={styles.id}>{station.id}</span></Descriptions.Item>
       <Descriptions.Item label="Section" span={1}><SectionText id={station.section} /></Descriptions.Item>
-      <Descriptions.Item label="Category" span={1}>{station.category}</Descriptions.Item>
+      <Descriptions.Item label="Category" span={1}>
+        {section && category && (
+          <div style={{display: "flex", alignItems: "center", gap: "0.4em"}}>
+            <CategoryIcon path={category.icon_svg} fill={`#${section.color}`} size={24} />
+            <span>{station.category}</span>
+          </div>
+        )}
+      </Descriptions.Item>
       <Descriptions.Item label="Title" span={1}>{station.title}</Descriptions.Item>
       <Descriptions.Item label="Long Title" span={2}>{station.long_title}</Descriptions.Item>
       <Descriptions.Item label="Subtitle" span={3}>{station.subtitle}</Descriptions.Item>
