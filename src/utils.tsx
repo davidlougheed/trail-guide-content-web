@@ -192,7 +192,7 @@ export const makeIfNeededAction = <ReturnType,>(
   };
 
 
-class GenericNetworkReducerState<DataType> {
+export type GenericNetworkReducerState<DataType> = {
   initialFetchDone: boolean;
   isFetching: boolean;
   isAdding: boolean;

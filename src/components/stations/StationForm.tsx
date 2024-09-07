@@ -19,6 +19,7 @@ import SortableGalleryInput from "../SortableGalleryInput";
 import ObjectForm, {BaseParentObjectFormProps, RULES_REQUIRED_BASIC, useObjectForm} from "../ObjectForm";
 import {useAppSelector} from "../../hooks";
 import {Station} from "../../modules/stations/types";
+import {useCategories} from "../../modules/categories/hooks";
 
 const styles: {[key: string]: React.CSSProperties} = {
   contentItemCard: {
@@ -170,7 +171,7 @@ const StationForm = React.memo((props: BaseParentObjectFormProps<Station>) => {
 
   const sections = useAppSelector(state => state.sections.items);
   const numStations = useAppSelector(state => state.stations.items.length);
-  const categories = useAppSelector(state => state.categories.items);
+  const {items: categories} = useCategories();
   const assets = useAppSelector(state => state.assets.items);
 
   const headerImageOptions = useMemo(() => assets
@@ -180,7 +181,7 @@ const StationForm = React.memo((props: BaseParentObjectFormProps<Station>) => {
   const sectionOptions = useMemo(
     () => sections.map(({id, title}) => ({value: id, label: title})),
     [sections]);
-  const categoryOptions = useMemo(() => categories.map(value => ({value})), [categories]);
+  const categoryOptions = useMemo(() => categories.map(({ id: value }) => ({ value })), [categories]);
 
   const transformInitialValues = useCallback((v: Station) => ({
     rank: numStations,  // Add station to the end of the list in the app by default

@@ -1,4 +1,7 @@
+import {type GenericNetworkReducerState, makeGenericNetworkReducer} from "../../utils";
 import {ADD_CATEGORY, FETCH_CATEGORIES, UPDATE_CATEGORY} from "./actions";
-import {makeGenericNetworkReducer} from "../../utils";
+import type {Category} from "./types";
 
-export default makeGenericNetworkReducer<string>(FETCH_CATEGORIES, ADD_CATEGORY, UPDATE_CATEGORY);
+export type CategoryState = GenericNetworkReducerState<Category>;
+
+export default makeGenericNetworkReducer<Category>(FETCH_CATEGORIES, ADD_CATEGORY, UPDATE_CATEGORY);

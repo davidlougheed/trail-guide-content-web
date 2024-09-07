@@ -13,6 +13,7 @@ import {
 } from "@ant-design/icons";
 import StationQR from "./StationQR";
 import {useUrlPagination} from "../../hooks/pages";
+import {useCategories} from "../../modules/categories/hooks";
 import {deleteStation, updateStation} from "../../modules/stations/actions";
 import {ACCESS_TOKEN_MANAGE, timestampToString} from "../../utils";
 import {useAppDispatch, useAppSelector} from "../../hooks";
@@ -32,7 +33,7 @@ const StationListView = React.memo(() => {
   const stations = useAppSelector(state => state.stations.items);
 
   const sections = useAppSelector(state => state.sections.items);
-  const categories = useAppSelector(state => state.categories.items);
+  const {items: categories} = useCategories();
 
   const [qrStation, setQrStation] = useState<Station | null>(null);
   const [delStation, setDelStation] = useState<Station | null>(null);
@@ -51,7 +52,7 @@ const StationListView = React.memo(() => {
     {
       title: "Category",
       dataIndex: "category",
-      filters: categories.map(c => ({text: c, value: c})),
+      filters: categories.map(({id: c}) => ({text: c, value: c})),
       onFilter: (value, record) => record.category === value,
     },
     {
