@@ -16,6 +16,7 @@ import {
   EnvironmentOutlined,
   FileOutlined,
   GlobalOutlined,
+  PartitionOutlined,
   PictureOutlined,
   SettingOutlined,
   SolutionOutlined,
@@ -41,6 +42,7 @@ import {fetchStationsIfNeeded} from "../modules/stations/actions";
 import {ACCESS_TOKEN_READ} from "../utils";
 
 import AssetsPage from "./assets/AssetsPage";
+import CategoriesPage from "./categories/CategoriesPage";
 import FeedbackPage from "./feedback/FeedbackPage";
 import LayerPage from "./layers/LayerPage";
 import ModalsPage from "./modals/ModalsPage";
@@ -72,6 +74,12 @@ const OBJECT_TYPES: ObjectType[] = [
     label: <Link to="/sections">Sections</Link>,
     icon: <DatabaseOutlined />,
     fetchAll: fetchSectionsIfNeeded,
+  },
+  {
+    key: "categories",
+    label: <Link to="/categories">Categories</Link>,
+    icon: <PartitionOutlined />,
+    fetchAll: fetchCategoriesIfNeeded,
   },
   {
     key: "pages",
@@ -119,10 +127,6 @@ const OBJECT_TYPES: ObjectType[] = [
   {
     key: "assetTypes",
     fetchAll: fetchAssetTypesIfNeeded,
-  },
-  {
-    key: "categories",
-    fetchAll: fetchCategoriesIfNeeded,
   },
 ]
 
@@ -272,6 +276,7 @@ const App = React.memo(() => {
             <Spin spinning={false}>
               <Routes>
                 <Route path="/assets/*" element={<AssetsPage />} />
+                <Route path="/categories/*" element={<CategoriesPage />} />
                 <Route path="/feedback/*" element={<FeedbackPage />} />
                 <Route path="/layers/*" element={<LayerPage />} />
                 <Route path="/modals/*" element={<ModalsPage />} />
