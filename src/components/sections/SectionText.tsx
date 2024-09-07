@@ -1,5 +1,6 @@
 import React from "react";
 import {useSections} from "../../modules/sections/hooks";
+import SectionColorCircle from "./SectionColorCircle";
 
 type SectionTextProps = {
   id: string;
@@ -10,7 +11,7 @@ const SectionText = ({ id }: SectionTextProps) => {
   const section = sections[id];
   if (!section) return <strong>SECTION NOT FOUND</strong>;
   return <div style={{ display: "flex", gap: "0.7em", alignItems: "center" }}>
-    <div style={{ backgroundColor: `#${section.color}`, width: "1.2em", height: "1.2em", borderRadius: "100%" }} />
+    <SectionColorCircle hex={section.color} />
     <span style={{ flex: 1 }}>{section.title}</span>
   </div>
 };

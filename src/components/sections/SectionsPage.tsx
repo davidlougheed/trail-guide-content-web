@@ -1,17 +1,24 @@
 import React from "react";
 
-import {PageHeader, Table} from "antd";
+import {PageHeader, Table, type TableColumnsType} from "antd";
 import {useUrlPagination} from "../../hooks/pages";
 import {useAppSelector} from "../../hooks";
+import type {Section} from "../../modules/sections/types";
+import SectionColorCircle from "./SectionColorCircle";
 
-const COLUMNS = [
+const COLUMNS: TableColumnsType<Section> = [
   {
-    "title": "ID",
-    "dataIndex": "id",
+    title: "ID",
+    dataIndex: "id",
   },
   {
-    "title": "Title",
-    "dataIndex": "title",
+    title: "Title",
+    dataIndex: "title",
+  },
+  {
+    title: "Colour",
+    dataIndex: "color",
+    render: (color) => <SectionColorCircle hex={color} />,
   },
   // {
   //     "title": "Actions",
