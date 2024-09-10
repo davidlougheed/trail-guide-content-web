@@ -18,7 +18,10 @@ const COLUMNS: TableColumnsType<Section> = [
   {
     title: "Colour",
     dataIndex: "color",
-    render: (color) => <SectionColorCircle hex={color} />,
+    render: (color) => <div style={{ display: "flex", gap: "0.7rem", alignItems: "center" }}>
+      <SectionColorCircle hex={color} />
+      <span style={{ fontFamily: "monospace" }}>#{color}</span>
+    </div>,
   },
   // {
   //     "title": "Actions",
