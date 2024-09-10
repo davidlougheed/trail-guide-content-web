@@ -17,8 +17,8 @@ import {useAppSelector} from "../../hooks";
 import {useCategories} from "../../modules/categories/hooks";
 import {useSections} from "../../modules/sections/hooks";
 import type {Station} from "../../modules/stations/types";
+import CategoryTextRaw from "../categories/CategoryTextRaw";
 import SectionText from "../sections/SectionText";
-import CategoryIcon from "../categories/CategoryIcon";
 
 const styles: Record<string, CSSProperties> = {
   id: {fontFamily: "monospace"},
@@ -95,10 +95,7 @@ const StationDetailView = React.memo(() => {
       <Descriptions.Item label="Section" span={1}><SectionText id={station.section} /></Descriptions.Item>
       <Descriptions.Item label="Category" span={1}>
         {section && category && (
-          <div style={{display: "flex", alignItems: "center", gap: "0.4em"}}>
-            <CategoryIcon path={category.icon_svg} fill={`#${section.color}`} size={24} />
-            <span>{station.category}</span>
-          </div>
+          <CategoryTextRaw id={station.category} path={category.icon_svg} color={section.color} />
         )}
       </Descriptions.Item>
       <Descriptions.Item label="Title" span={1}>{station.title}</Descriptions.Item>

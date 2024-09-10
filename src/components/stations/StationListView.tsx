@@ -20,6 +20,7 @@ import {useAppDispatch, useAppSelector} from "../../hooks";
 import {Station} from "../../modules/stations/types";
 import {useSections} from "../../modules/sections/hooks";
 import SectionText from "../sections/SectionText";
+import CategoryText from "../categories/CategoryText";
 
 const styles = {
   qrModal: {top: 36},
@@ -34,7 +35,7 @@ const StationListView = React.memo(() => {
   const stationsFetching = useAppSelector(state => state.stations.isFetching);
   const stations = useAppSelector(state => state.stations.items);
 
-  const {items: sections} = useSections();
+  const {items: sections, itemsByID: sectionsByID} = useSections();
   const {items: categories} = useCategories();
 
   const [qrStation, setQrStation] = useState<Station | null>(null);
@@ -57,6 +58,7 @@ const StationListView = React.memo(() => {
       dataIndex: "category",
       filters: categories.map(({id: c}) => ({text: c, value: c})),
       onFilter: (value, record) => record.category === value,
+      render: (category, {section}) => <CategoryText id={category} color={sectionsByID[section]?.color} />,
     },
     {
       title: "Visible",

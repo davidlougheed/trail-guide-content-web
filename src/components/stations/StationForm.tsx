@@ -20,6 +20,7 @@ import ObjectForm, {BaseParentObjectFormProps, RULES_REQUIRED_BASIC, useObjectFo
 import {useAppSelector} from "../../hooks";
 import {Station} from "../../modules/stations/types";
 import {useCategories} from "../../modules/categories/hooks";
+import SectionTextRaw from "../sections/SectionTextRaw";
 
 const styles: {[key: string]: React.CSSProperties} = {
   contentItemCard: {
@@ -179,7 +180,7 @@ const StationForm = React.memo((props: BaseParentObjectFormProps<Station>) => {
     .map(a => ({value: a.id, label: a.file_name})),
     [assets]);
   const sectionOptions = useMemo(
-    () => sections.map(({id, title}) => ({value: id, label: title})),
+    () => sections.map(({id, title, color}) => ({value: id, label: <SectionTextRaw title={title} color={color} />})),
     [sections]);
   const categoryOptions = useMemo(() => categories.map(({ id: value }) => ({ value })), [categories]);
 
