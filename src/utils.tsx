@@ -28,6 +28,19 @@ export const detailTitle = (prefix: string, titleProp: string) =>
         ? <span>{prefix ? `${prefix}: ${obj?.[titleProp]}` : obj?.[titleProp]}</span>
         : `${prefix} not found`);
 
+export const getLocalStorageJSON = (k: string | undefined): any => {
+  if (!k) {
+    return {};
+  }
+  const ls = localStorage.getItem(k);
+  return ls ? JSON.parse(ls) : {};
+};
+
+export const setLocalStorageJSON = (k: string | undefined, v: any): void => {
+  if (!k) return;
+  localStorage.setItem(k, JSON.stringify(v));
+};
+
 interface TGCSTokenOptions {
   audience: string;
   scope: "read:content" | "manage:content";

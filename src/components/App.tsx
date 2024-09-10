@@ -54,6 +54,7 @@ import SettingsPage from "./settings/SettingsPage";
 import SearchBar from "./SearchBar";
 
 import {useAppDispatch, useAppSelector} from "../hooks";
+import {useSiteTitle} from "../modules/server/hooks";
 
 interface ObjectType {
   key: string;
@@ -229,12 +230,8 @@ const App = React.memo(() => {
   const loadingServerInfo = useAppSelector(state => state.server.info.isFetching);
   const serverInfo = useAppSelector(state => state.server.info.data);
 
-  const loadingConfig = useAppSelector(state => state.server.config.isFetching);
-  const serverConfig = useAppSelector(state => state.server.config.data);
+  const siteTitle = useSiteTitle();
 
-  const siteTitle = useMemo(
-    () => (loadingConfig || serverConfig === null) ? "" : (serverConfig?.APP_NAME || "Trail Guide"),
-    [loadingConfig, serverConfig]);
   document.title = siteTitle || "Trail Guide";
 
   const signIn = useCallback(() => loginWithRedirect(), [loginWithRedirect]);

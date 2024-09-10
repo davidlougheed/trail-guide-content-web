@@ -12,7 +12,7 @@ import {updateSettings} from "../../modules/settings/actions";
 import {ACCESS_TOKEN_MANAGE} from "../../utils";
 
 import * as c from "../../config";
-import {useAppDispatch, useAppSelector} from "../../hooks";
+import {useAppDispatch, useAppSelector, useCachedServerConfig} from "../../hooks";
 
 const SettingsPage = React.memo(() => {
   const dispatch = useAppDispatch();
@@ -22,7 +22,7 @@ const SettingsPage = React.memo(() => {
   const updatingSettings = useAppSelector(state => state.settings.isUpdating);
 
   const settings = useAppSelector(state => state.settings.data);
-  const serverConfig = useAppSelector(state => state.server.config.data);
+  const {config: serverConfig} = useCachedServerConfig();
   const {getAccessTokenSilently} = useAuth0();
 
   const [configShown, setConfigShown] = useState(false);
@@ -50,9 +50,11 @@ const SettingsPage = React.memo(() => {
       </Form>
       <Typography.Title level={3}>Back End</Typography.Title>
       <Form>
-        {Object.entries(serverConfig ?? {}).map(([ck, cv]) => <Form.Item label={ck} key={ck}>
-          <Input value={cv.toString()} />
-        </Form.Item>)}
+        {Object.entries(serverConfig).map(([ck, cv]) => (
+          <Form.Item label={ck} key={ck}>
+            <Input value={cv.toString()} />
+          </Form.Item>
+        ))}
       </Form>
     </Modal>
     <PageHeader title="Settings" ghost={false} extra={[

@@ -8,20 +8,12 @@ import {isEqual, throttle} from "lodash";
 import {Button, Form, FormInstance, Space} from "antd";
 import {CheckOutlined, EyeOutlined, SaveOutlined} from "@ant-design/icons";
 
-import {id, nop} from "../utils";
+import {id, nop, getLocalStorageJSON, setLocalStorageJSON} from "../utils";
 
 export const RULES_REQUIRED_BASIC = [{required: true}];
 
 const styles: {[key: string]: CSSProperties} = {
   lastSaved: {color: "#AAA", fontStyle: "italic"},
-};
-
-const getLocalStorageValues = (k: string | undefined): any => {
-  if (!k) {
-    return {};
-  }
-  const ls = localStorage.getItem(k);
-  return ls ? JSON.parse(ls) : {};
 };
 
 export interface BaseParentObjectFormProps<ValuesType> {
@@ -82,7 +74,7 @@ export const useObjectForm = <ValuesType,>({
 
   const editMode = useMemo(() => !!Object.keys(initialValues ?? {}).length, [initialValues]);
 
-  const [savedData, setSavedData] = useState(getLocalStorageValues(localDataKey));
+  const [savedData, setSavedData] = useState(getLocalStorageJSON(localDataKey));
   const [lastSavedTime, setLastSavedTime] = useState<string | null>(null);
 
   const [initialFormRetrievedValues, setInitialFormRetrievedValues] = useState(null);
@@ -125,7 +117,7 @@ export const useObjectForm = <ValuesType,>({
 
     if (localStorage.getItem(localDataKey) !== valuesJSON) {
       console.log("saving locally", values);
-      localStorage.setItem(localDataKey, JSON.stringify(values));
+      setLocalStorageJSON(localDataKey, values);
       setLastSavedNow();
     }
   }, 500), [form, localDataKey, initialFormRetrievedValues]);
