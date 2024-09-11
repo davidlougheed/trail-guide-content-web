@@ -8,11 +8,12 @@ import {useAuth0} from "@auth0/auth0-react";
 import {Button, Form, Input, message, Modal, PageHeader, Skeleton, Typography} from "antd";
 
 import SettingsForm from "./SettingsForm";
+import {useCachedServerConfig} from "../../modules/server/hooks";
 import {updateSettings} from "../../modules/settings/actions";
 import {ACCESS_TOKEN_MANAGE} from "../../utils";
 
 import * as c from "../../config";
-import {useAppDispatch, useAppSelector, useCachedServerConfig} from "../../hooks";
+import {useAppDispatch, useAppSelector} from "../../hooks";
 
 const SettingsPage = React.memo(() => {
   const dispatch = useAppDispatch();
