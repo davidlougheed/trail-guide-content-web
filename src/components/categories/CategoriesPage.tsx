@@ -1,43 +1,19 @@
+// A web interface to manage a trail guide mobile app's content and data.
+// Copyright (C) 2021-2024  David Lougheed
+// See NOTICE for more information.
+
 import React from "react";
+import {Navigate, Route, Routes} from "react-router-dom";
 
-import {PageHeader, Table} from "antd";
+import CategoryAddView from "./CategoryAddView";
+import CategoryEditView from "./CategoryEditView";
+import CategoryListView from "./CategoryListView";
 
-import {useUrlPagination} from "../../hooks/pages";
-import {useCategories} from "../../modules/categories/hooks";
-import CategoryIcon from "./CategoryIcon";
-
-const COLUMNS = [
-  {
-    title: "ID",
-    dataIndex: "id",
-  },
-  {
-    title: "Icon",
-    dataIndex: "icon_svg",
-    render: (path: string) => path ? <CategoryIcon path={path} /> : null,
-  },
-  // {
-  //     "title": "Actions",
-  //     "key": "actions",
-  // },
-];
-
-const CategoriesPage = React.memo(() => {
-  const { initialFetchDone, isFetching, items } = useCategories();
-
-  const pagination = useUrlPagination();
-
-  return <PageHeader ghost={false} title="Categories" subTitle="View station categories">
-    <Table
-      bordered={true}
-      size="small"
-      loading={!initialFetchDone && isFetching}
-      columns={COLUMNS}
-      dataSource={items}
-      rowKey="id"
-      pagination={pagination}
-    />
-  </PageHeader>;
-});
+const CategoriesPage = React.memo(() => <Routes>
+  <Route path="list" element={<CategoryListView />} />
+  <Route path="add" element={<CategoryAddView />} />
+  <Route path="edit/:id" element={<CategoryEditView />} />
+  <Route path="*" element={<Navigate to="list" replace={true} />} />
+</Routes>);
 
 export default CategoriesPage;
