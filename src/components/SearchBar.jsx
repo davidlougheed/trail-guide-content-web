@@ -1,3 +1,7 @@
+// A web interface to manage a trail guide mobile app's content and data.
+// Copyright (C) 2021-2024  David Lougheed
+// See NOTICE for more information.
+
 import React, {useCallback, useMemo} from "react";
 import {useNavigate} from "react-router-dom";
 import {useAuth0} from "@auth0/auth0-react";
