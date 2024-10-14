@@ -5,6 +5,7 @@ import {Button, Modal} from "antd";
 
 import {APP_BASE_URL} from "../config";
 import {useAppSelector} from "../hooks";
+import {useStations} from "../modules/stations/hooks";
 
 const MODAL_PREFIX = `${APP_BASE_URL}/modals/`;
 const PAGE_PREFIX = `${APP_BASE_URL}/pages/`;
@@ -26,7 +27,7 @@ const HTMLContent = React.memo(({id, htmlContent}: HTMLContentProps) => {
   const pages = useAppSelector(state => state.pages.items);
   const pagesById = useMemo(byIdFactory(pages), [pages]);
 
-  const stations = useAppSelector(state => state.stations.items);
+  const {items: stations} = useStations();
   const stationsById = useMemo(byIdFactory(stations), [stations]);
 
   const [modalShown, setModalShown] = useState(null);

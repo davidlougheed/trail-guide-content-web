@@ -11,16 +11,19 @@ import {
   PlusOutlined,
   QrcodeOutlined
 } from "@ant-design/icons";
-import StationQR from "./StationQR";
+
 import {useUrlPagination} from "../../hooks/pages";
+import {useAppDispatch} from "../../hooks";
 import {useCategories} from "../../modules/categories/hooks";
 import {deleteStation, updateStation} from "../../modules/stations/actions";
-import {ACCESS_TOKEN_MANAGE, timestampToString} from "../../utils";
-import {useAppDispatch, useAppSelector} from "../../hooks";
 import {Station} from "../../modules/stations/types";
 import {useSections} from "../../modules/sections/hooks";
 import SectionText from "../sections/SectionText";
 import CategoryText from "../categories/CategoryText";
+import {useStations} from "../../modules/stations/hooks";
+import {ACCESS_TOKEN_MANAGE, timestampToString} from "../../utils";
+
+import StationQR from "./StationQR";
 
 const styles = {
   qrModal: {top: 36},
@@ -31,9 +34,7 @@ const StationListView = React.memo(() => {
   const dispatch = useAppDispatch();
   const {getAccessTokenSilently} = useAuth0();
 
-  const stationsInitialFetch = useAppSelector(state => state.stations.initialFetchDone);
-  const stationsFetching = useAppSelector(state => state.stations.isFetching);
-  const stations = useAppSelector(state => state.stations.items);
+  const {items: stations, initialFetchDone: stationsInitialFetch, isFetching: stationsFetching} = useStations();
 
   const {items: sections, itemsByID: sectionsByID} = useSections();
   const {items: categories} = useCategories();

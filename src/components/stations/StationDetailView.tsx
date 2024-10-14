@@ -1,5 +1,5 @@
 // A web interface to manage a trail guide mobile app's content and data.
-// Copyright (C) 2021-2022  David Lougheed
+// Copyright (C) 2021-2024  David Lougheed
 // See NOTICE for more information.
 
 import React, {CSSProperties, useCallback, useMemo, useState} from "react";
@@ -13,9 +13,9 @@ import {detailTitle, findItemByID, timestampToString} from "../../utils";
 import StationPreview from "./StationPreview";
 import StationQR from "./StationQR";
 
-import {useAppSelector} from "../../hooks";
 import {useCategories} from "../../modules/categories/hooks";
 import {useSections} from "../../modules/sections/hooks";
+import {useStations} from "../../modules/stations/hooks";
 import type {Station} from "../../modules/stations/types";
 import CategoryTextRaw from "../categories/CategoryTextRaw";
 import SectionText from "../sections/SectionText";
@@ -37,9 +37,7 @@ const StationDetailView = React.memo(() => {
 
   const {id: stationID} = useParams();
 
-  const stationsInitialFetch = useAppSelector(state => state.stations.initialFetchDone);
-  const stationsFetching = useAppSelector(state => state.stations.isFetching);
-  const stations  = useAppSelector(state => state.stations.items);
+  const {items: stations, initialFetchDone: stationsInitialFetch, isFetching: stationsFetching} = useStations();
   const station: Station | undefined = useMemo(() => findItemByID(stations, stationID), [stations, stationID]);
   const {itemsByID: sections} = useSections();
   const {itemsByID: categories} = useCategories();

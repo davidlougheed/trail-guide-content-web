@@ -4,18 +4,19 @@ import {useAuth0} from "@auth0/auth0-react";
 
 import {message, PageHeader} from "antd";
 
-import StationForm from "./StationForm";
-
+import {useAppDispatch} from "../../hooks";
 import {addStation} from "../../modules/stations/actions";
-import {useAppDispatch, useAppSelector} from "../../hooks";
+import {useStations} from "../../modules/stations/hooks";
 import {ACCESS_TOKEN_MANAGE} from "../../utils";
+
+import StationForm from "./StationForm";
 
 const StationAddView = React.memo(() => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const {getAccessTokenSilently} = useAuth0();
 
-  const addingStation = useAppSelector((state) => state.stations.isAdding);
+  const {isAdding: addingStation} = useStations();
 
   const onFinish = useCallback(async v => {
     console.log("adding station", v);

@@ -1,12 +1,13 @@
-import React, {useCallback} from "react";
+import React, {useCallback, useMemo} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {useAuth0} from "@auth0/auth0-react";
 
 import {message, PageHeader} from "antd";
 
 import StationForm from "./StationForm";
-import {useAppDispatch, useAppSelector} from "../../hooks";
+import {useAppDispatch} from "../../hooks";
 import {updateStation} from "../../modules/stations/actions";
+import {useStations} from "../../modules/stations/hooks";
 import {Station} from "../../modules/stations/types";
 import {ACCESS_TOKEN_MANAGE, findItemByID} from "../../utils";
 
@@ -16,9 +17,9 @@ const StationEditView = React.memo(() => {
   const {id: stationID} = useParams();
   const {getAccessTokenSilently} = useAuth0();
 
-  const fetchingStations = useAppSelector((state) => state.stations.isFetching);
-  const updatingStations = useAppSelector((state) => state.stations.isUpdating);
-  const station = useAppSelector((state) => findItemByID<Station>(state.stations.items, stationID));
+  const {items: stations, isFetching: fetchingStations, isUpdating: updatingStations} = useStations();
+
+  const station = useMemo(() => findItemByID<Station>(stations, stationID), [stations, stationID]);
 
   const onFinish = useCallback(async (v) => {
     console.log("saving station", v);

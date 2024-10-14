@@ -13,7 +13,8 @@ import "./VideoBlot";
 
 import {assetIdToBytesUrl} from "../../utils";
 import {
-  CloseSquareOutlined, EnvironmentOutlined,
+  CloseSquareOutlined,
+  EnvironmentOutlined,
   FileOutlined,
   PictureOutlined,
   SoundOutlined,
@@ -23,6 +24,7 @@ import {APP_BASE_URL} from "../../config";
 import {useAppSelector} from "../../hooks";
 import {Asset} from "../../modules/assets/types";
 import {AssetType} from "../../modules/asset_types/types";
+import {useStations} from "../../modules/stations/hooks";
 
 const styles: {[key: string]: CSSProperties} = {
   modalFormSpace: {width: "100%"},
@@ -244,7 +246,7 @@ const HTMLEditor = ({initialValue, onChange, placeholder, innerRef, helpText}: H
   const [showViewer, setShowViewer] = useState<AssetType | OtherLinkType | null>(null);
 
   const assets = useAppSelector(state => state.assets.items);
-  const stations = useAppSelector(state => state.stations.items);
+  const {items: stations} = useStations();
   const modals = useAppSelector(state => state.modals.items);
   const pages = useAppSelector(state => state.pages.items);
 

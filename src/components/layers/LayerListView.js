@@ -11,6 +11,7 @@ import MapPreview from "./MapPreview";
 
 import {useUrlPagination} from "../../hooks/pages";
 import {deleteLayer, updateLayer} from "../../modules/layers/actions";
+import {useStations} from "../../modules/stations/hooks";
 import {ACCESS_TOKEN_MANAGE} from "../../utils";
 
 const LayerListView = React.memo(() => {
@@ -22,7 +23,7 @@ const LayerListView = React.memo(() => {
   const layersFetching = useSelector(state => state.layers.isFetching);
   const layers = useSelector(state => state.layers.items);
 
-  const stations = useSelector(state => state.stations.items);
+  const {items: stations} = useStations();
 
   const [previewShown, setPreviewShown] = useState(false);
   const [delLayer, setDelLayer] = useState(null);

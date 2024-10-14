@@ -21,6 +21,8 @@ import {useAppSelector} from "../../hooks";
 import {Station} from "../../modules/stations/types";
 import {useCategories} from "../../modules/categories/hooks";
 import SectionTextRaw from "../sections/SectionTextRaw";
+import {useStations} from "../../modules/stations/hooks";
+import {useSections} from "../../modules/sections/hooks";
 
 const styles: {[key: string]: React.CSSProperties} = {
   contentItemCard: {
@@ -170,8 +172,8 @@ const filterOption = (input: string, option: {label: string}): boolean => {
 const StationForm = React.memo((props: BaseParentObjectFormProps<Station>) => {
   const navigate = useNavigate();
 
-  const sections = useAppSelector(state => state.sections.items);
-  const numStations = useAppSelector(state => state.stations.items.length);
+  const sections = useSections().items;
+  const numStations = useStations().items.length;
   const {items: categories} = useCategories();
   const assets = useAppSelector(state => state.assets.items);
 

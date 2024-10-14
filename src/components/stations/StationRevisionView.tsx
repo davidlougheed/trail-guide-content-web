@@ -1,5 +1,5 @@
 // A web interface to manage a trail guide mobile app's content and data.
-// Copyright (C) 2021-2022  David Lougheed
+// Copyright (C) 2021-2024  David Lougheed
 // See NOTICE for more information.
 
 import React, {useCallback, useEffect, useMemo, useState} from "react";
@@ -9,9 +9,9 @@ import {useAuth0} from "@auth0/auth0-react";
 import {Button, Col, Divider, PageHeader, Row, Select} from "antd";
 import {EditOutlined, EyeOutlined} from "@ant-design/icons";
 
-import {ACCESS_TOKEN_READ, detailTitle, fetchStationRevision, findItemByID} from "../../utils";
-import {useAppSelector} from "../../hooks";
+import {useStations} from "../../modules/stations/hooks";
 import {Station} from "../../modules/stations/types";
+import {ACCESS_TOKEN_READ, detailTitle, fetchStationRevision, findItemByID} from "../../utils";
 
 const stationRevisionTitle = detailTitle("Station revisions", "title");
 
@@ -26,10 +26,8 @@ const StationRevisionView = React.memo(() => {
 
   const {id: stationID} = useParams();
 
-  const stationsInitialFetch = useAppSelector(state => state.stations.initialFetchDone);
-  const stationsFetching = useAppSelector(state => state.stations.isFetching);
-  const station: Station | undefined = useAppSelector(state =>
-    findItemByID<Station>(state.stations.items, stationID));
+  const {items: stations, initialFetchDone: stationsInitialFetch, isFetching: stationsFetching} = useStations();
+  const station: Station | undefined = useMemo(() => findItemByID<Station>(stations, stationID), [stations]);
 
   // ----
 
