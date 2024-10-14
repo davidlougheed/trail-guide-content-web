@@ -2,7 +2,15 @@
 // Copyright (C) 2021-2022  David Lougheed
 // See NOTICE for more information.
 
-import React, {CSSProperties, MouseEventHandler, useCallback, useEffect, useMemo, useState} from "react";
+import React, {
+  type CSSProperties,
+  type MouseEventHandler,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import {isEqual, throttle} from "lodash";
 
 import {Button, Form, FormInstance, Space} from "antd";
@@ -24,9 +32,9 @@ export interface BaseParentObjectFormProps<ValuesType> {
 }
 
 interface UseObjectFormProps<ValuesType> extends BaseParentObjectFormProps<ValuesType> {
-  transformInitialValues: (values: ValuesType) => any;
-  transformFinalValues: (values: any) => ValuesType;
-  onView: Function;
+  transformInitialValues?: (values: ValuesType) => any;
+  transformFinalValues?: (values: any) => ValuesType;
+  onView?: Function;
 }
 
 type ObjectForm<ValuesType> = {
@@ -39,7 +47,7 @@ type ObjectForm<ValuesType> = {
 
   resetChanges: MouseEventHandler<HTMLElement>;
   submitAndView: MouseEventHandler<HTMLElement>;
-  view: MouseEventHandler<HTMLElement>;
+  view?: MouseEventHandler<HTMLElement>;
 
   form: FormInstance;
 
@@ -65,8 +73,6 @@ export const useObjectForm = <ValuesType,>({
 
   transformInitialValues = transformInitialValues || id;
   transformFinalValues = transformFinalValues || id;
-
-  onView = onView || nop;
 
   // Set up hooks
 
@@ -149,13 +155,14 @@ export const useObjectForm = <ValuesType,>({
     },
     [transformFinalValues, newInitialValues, onFinish, clearLocalData]);
 
-  const view = useCallback(() => {
-    onView(newInitialValues);
-  }, [newInitialValues]);
+  const view = useMemo(
+    () => onView ? () => onView(newInitialValues) : undefined,
+    [onView, newInitialValues]
+  );
 
   const submitAndView = useCallback(() => {
     onFinish_(form.getFieldsValue(true));
-    view();
+    if (view) view();
   }, [form, view]);
 
   const resetChanges = useCallback(() => {
@@ -191,7 +198,7 @@ type ObjectFormProps<ValuesType> = {
   loading?: boolean;
   objectForm: ObjectForm<ValuesType>;
   onCancel?: MouseEventHandler<HTMLElement>;
-  children: JSX.Element[];
+  children: ReactNode;
   // TODO
 }
 
@@ -239,7 +246,7 @@ const ObjectForm = React.memo(
             loading={loading}
             icon={<SaveOutlined />}>{editMode ? "Save" : "Submit"}</Button>
 
-          {editMode && (
+          {view && editMode && (
             isInInitialState ? (
               <Button onClick={view} icon={<EyeOutlined />}>View</Button>
             ) : (
