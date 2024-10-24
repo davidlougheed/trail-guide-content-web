@@ -1,52 +1,19 @@
+// A web interface to manage a trail guide mobile app's content and data.
+// Copyright (C) 2021-2024  David Lougheed
+// See NOTICE for more information.
+
 import React from "react";
+import {Navigate, Route, Routes} from "react-router-dom";
 
-import {PageHeader, Table, type TableColumnsType} from "antd";
-import {useUrlPagination} from "../../hooks/pages";
-import {useAppSelector} from "../../hooks";
-import type {Section} from "../../modules/sections/types";
-import SectionColorCircle from "./SectionColorCircle";
+import SectionAddView from "./SectionAddView";
+import SectionEditView from "./SectionEditView";
+import SectionListView from "./SectionListView";
 
-const COLUMNS: TableColumnsType<Section> = [
-  {
-    title: "ID",
-    dataIndex: "id",
-  },
-  {
-    title: "Title",
-    dataIndex: "title",
-  },
-  {
-    title: "Colour",
-    dataIndex: "color",
-    render: (color) => <div style={{ display: "flex", gap: "0.7rem", alignItems: "center" }}>
-      <SectionColorCircle hex={color} />
-      <span style={{ fontFamily: "monospace" }}>#{color}</span>
-    </div>,
-  },
-  // {
-  //     "title": "Actions",
-  //     "key": "actions",
-  // },
-];
-
-const SectionsPage = React.memo(() => {
-  const sectionsInitialFetch = useAppSelector(state => state.sections.initialFetchDone);
-  const sectionsFetching = useAppSelector(state => state.sections.isFetching);
-  const sections = useAppSelector(state => state.sections.items);
-
-  const pagination = useUrlPagination();
-
-  return <PageHeader ghost={false} title="Sections" subTitle="View station sections">
-    <Table
-      bordered={true}
-      size="small"
-      loading={!sectionsInitialFetch && sectionsFetching}
-      columns={COLUMNS}
-      dataSource={sections}
-      rowKey="id"
-      pagination={pagination}
-    />
-  </PageHeader>;
-});
+const SectionsPage = React.memo(() => <Routes>
+  <Route path="list" element={<SectionListView />} />
+  <Route path="add" element={<SectionAddView />} />
+  <Route path="edit/:id" element={<SectionEditView />} />
+  <Route path="*" element={<Navigate to="list" replace={true} />} />
+</Routes>);
 
 export default SectionsPage;
