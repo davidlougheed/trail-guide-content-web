@@ -42,6 +42,7 @@ module.exports = env => ({
         filename: "[name].[chunkhash:8].js",
         sourceMapFilename: "[file].map[query]",
         chunkFilename: "[name].[chunkhash:8].js",
+        clean: true,
     },
     devtool: "source-map",
     optimization: {
