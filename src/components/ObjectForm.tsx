@@ -27,6 +27,7 @@ const styles: {[key: string]: CSSProperties} = {
 export interface BaseParentObjectFormProps<ValuesType> {
   initialValues?: ValuesType;
   onFinish: (v: ValuesType) => void;
+  onCancel?: MouseEventHandler<HTMLElement>;
   localDataKey?: string;
   loading?: boolean;
 }
@@ -38,8 +39,8 @@ interface UseObjectFormProps<ValuesType> extends BaseParentObjectFormProps<Value
 }
 
 type ObjectForm<ValuesType> = {
-  clearLocalData;
-  processLocalChanges;
+  clearLocalData: () => void;
+  processLocalChanges: (values?: ValuesType) => void;
   localDataKey?: string;
 
   onFinish_: (values: ValuesType) => void;
@@ -193,13 +194,9 @@ export const useObjectForm = <ValuesType,>({
   };
 };
 
-type ObjectFormProps<ValuesType> = {
-  initialValues?: ValuesType;
-  loading?: boolean;
+type ObjectFormProps<ValuesType> = BaseParentObjectFormProps<ValuesType> & {
   objectForm: ObjectForm<ValuesType>;
-  onCancel?: MouseEventHandler<HTMLElement>;
   children: ReactNode;
-  // TODO
 }
 
 const ObjectForm = React.memo(

@@ -4,10 +4,11 @@
 
 import React, {CSSProperties} from "react";
 
-import {Button, Col, Form, Row, Select, Switch, Upload} from "antd";
+import {Button, Col, Form, Row, Select, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
 
-import ObjectForm, {RULES_REQUIRED_BASIC, useObjectForm} from "../ObjectForm";
+import ObjectForm, {BaseParentObjectFormProps, RULES_REQUIRED_BASIC, useObjectForm} from "../ObjectForm";
+import type {Asset} from "../../modules/assets/types";
 import type {AssetType} from "../../modules/asset_types/types";
 import {getFalse} from "../../utils";
 
@@ -23,28 +24,14 @@ const ASSET_TYPES: ({label: string; value: AssetType})[] = [
   {value: "pdf", label: "PDF"},
 ];
 
-const transformInitialValues = (v) => ({
-  enabled: true,
-  ...v,
-  // TODO
-});
-
 const fileGetValueFromEvent = e => e.file;
 const showUploadList = {showRemoveIcon: false};
 
-const AssetForm = (props) => {
-  const objectForm = useObjectForm({
-    transformInitialValues,
-    ...props,
-  });
+const AssetForm = (props: BaseParentObjectFormProps<Asset>) => {
+  const objectForm = useObjectForm(props);
 
   return <ObjectForm objectForm={objectForm} {...props}>
     <Row gutter={12}>
-      <Col flex="80px">
-        <Form.Item name="enabled" label="Enabled" valuePropName="checked">
-          <Switch />
-        </Form.Item>
-      </Col>
       <Col flex={1}>
         <Form.Item name="asset_type" label="Asset Type" rules={RULES_REQUIRED_BASIC}>
           <Select options={ASSET_TYPES} />
