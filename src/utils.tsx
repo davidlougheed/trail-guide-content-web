@@ -1,5 +1,5 @@
 // A web interface to manage a trail guide mobile app's content and data.
-// Copyright (C) 2021-2024  David Lougheed
+// Copyright (C) 2021-2025  David Lougheed
 // See NOTICE for more information.
 
 import React from "react";
@@ -62,10 +62,13 @@ interface OTTResponse {
   expiry: string;  // ISO datetime string
 }
 
+export const makeAuthHeaders = (accessToken: string | null | undefined): HeadersInit =>
+  !accessToken ? {} : {"Authorization": `Bearer ${accessToken}`};
+
 export const fetchOtt = async (accessToken: string): Promise<OTTResponse | null> => {
   const req = await fetch(`${API_BASE_URL}/ott`, {
     method: "POST",
-    headers: {"Authorization": `Bearer ${accessToken}`},
+    headers: makeAuthHeaders(accessToken),
   });
 
   if (req.ok) {
@@ -79,7 +82,7 @@ export const fetchOtt = async (accessToken: string): Promise<OTTResponse | null>
 export const fetchRevision = (objectsType: string) =>
   async (objectID: string, revisionID: number, accessToken: string): Promise<object | null> => {
     const req = await fetch(`${API_BASE_URL}/${objectsType}/${objectID}/revision/${revisionID}`, {
-      headers: {"Authorization": `Bearer ${accessToken}`},
+      headers: makeAuthHeaders(accessToken),
     });
 
     if (req.ok) {
@@ -143,9 +146,7 @@ export const networkAction = <ReturnType, BodyType = {}>(
   async dispatch => {
     dispatch({params, type: types.REQUEST});
 
-    const authHeaders = accessToken === "" ? {} : {
-      "Authorization": `Bearer ${accessToken}`,
-    };
+    const authHeaders = makeAuthHeaders(accessToken);
 
     const urlParams = method === "GET" ? (Object.keys(params).length ? new URLSearchParams(params) : null) : null;
 
