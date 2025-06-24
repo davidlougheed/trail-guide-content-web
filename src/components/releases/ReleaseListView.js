@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 import {useAuth0} from "@auth0/auth0-react";
@@ -6,9 +6,9 @@ import {useAuth0} from "@auth0/auth0-react";
 import {Button, PageHeader, Space, Table} from "antd";
 import {DownloadOutlined, EyeOutlined, PlusOutlined} from "@ant-design/icons";
 
-import {API_BASE_URL} from "../../config";
+import {API_BASE_URL, AUTH_AUDIENCE} from "../../config";
 import {useUrlPagination} from "../../hooks/pages";
-import {downloadVersionBundle} from "../../utils";
+import {downloadVersionBundle, makeAuthHeaders} from "../../utils";
 
 const ReleaseListView = React.memo(() => {
   const navigate = useNavigate();
@@ -18,6 +18,8 @@ const ReleaseListView = React.memo(() => {
   const releasesInitialFetch = useSelector(state => state.releases.initialFetchDone);
   const releasesFetching = useSelector(state => state.releases.isFetching);
   const releases = useSelector(state => state.releases.items);
+
+  const [bundleLoading, setBundleLoading] = useState(false);
 
   // noinspection JSUnusedGlobalSymbols
   const columns = useMemo(() => [
@@ -66,11 +68,35 @@ const ReleaseListView = React.memo(() => {
   ], [isAuthenticated, getAccessTokenSilently, navigate]);
 
   const onBundle = useCallback(() => {
-    window.location.href = `${API_BASE_URL}/ad-hoc-bundle`;
-  }, [navigate]);
+    (async () => {
+      if (!isAuthenticated) return;
+
+      setBundleLoading(true);
+
+      try {
+        const accessToken = await getAccessTokenSilently({
+          audience: AUTH_AUDIENCE,
+          scope: "read:content",
+        });
+
+        const res = await fetch(`${API_BASE_URL}/ad-hoc-bundle`, { headers: makeAuthHeaders(accessToken) });
+        if (res.ok) {
+          const blob = await res.blob();
+          const bundleBlobUrl = window.URL.createObjectURL(blob);
+          window.location.href = bundleBlobUrl;
+          window.URL.revokeObjectURL(bundleBlobUrl);
+        }
+      } finally {
+        setBundleLoading(false);
+      }
+    })();
+  }, [navigate, getAccessTokenSilently]);
+
   const onAdd = useCallback(() => navigate("../add"), [navigate]);
   const extra = useMemo(() => [
-    <Button key="bundle" icon={<DownloadOutlined />} onClick={onBundle}>Download Ad Hoc Bundle</Button>,
+    <Button key="bundle" icon={<DownloadOutlined />} onClick={onBundle} loading={bundleLoading}>
+      Download Ad Hoc Bundle
+    </Button>,
     <Button key="add" type="primary" icon={<PlusOutlined />} onClick={onAdd}>Add Release</Button>
   ], [onAdd]);
 
