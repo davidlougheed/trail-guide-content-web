@@ -8,6 +8,7 @@ import React, {CSSProperties, useState} from "react";
 
 import {Button, Image, Typography} from "antd";
 
+import ErrorBoundary from "../ErrorBoundary";
 import Quiz from "../Quiz";
 import HTMLContent from "../HTMLContent";
 import TGCPreviewHeader from "../TGCPreviewHeader";
@@ -116,7 +117,9 @@ const StationPreview = React.memo(
       </TGCPreviewHeader>
       <TGCPreviewContent>
         {(contents ?? []).map((c, i) => <div key={i} style={styles.contentItem}>
-          <RenderedContent id={`station-${i}`} content={c} />
+          <ErrorBoundary>
+            <RenderedContent id={`station-${i}`} content={c} />
+          </ErrorBoundary>
         </div>)}
       </TGCPreviewContent>
     </div>;
