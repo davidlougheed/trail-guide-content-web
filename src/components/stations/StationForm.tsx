@@ -361,7 +361,12 @@ const StationForm = React.memo((props: BaseParentObjectFormProps<Station>) => {
     <Row gutter={12}>
       <Col span={8}>
         <Form.Item name="header_image" label="Header Image">
-          <Select placeholder="Select header image for this station" allowClear={true} options={headerImageOptions} />
+          <Select
+            placeholder="Select header image for this station"
+            allowClear={true}
+            showSearch={true}
+            options={headerImageOptions}
+          />
         </Form.Item>
       </Col>
       <Col span={8}>
